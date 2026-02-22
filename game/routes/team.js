@@ -4,38 +4,32 @@ const teamSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
-    unique: true,            // 🔥 Kein Teamname doppelt
+    unique: true,
     trim: true
   },
-
   shortName: {
     type: String,
     required: true,
-    unique: true,            // 🔥 Kein Kürzel doppelt
+    unique: true,
     trim: true
   },
-
   league: {
     type: String,
     required: true
   },
-
   country: {
     type: String,
     required: true
   },
-
   owner: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    unique: true             // 🔥 Ein User nur ein Team
+    unique: true
   },
-
   players: {
     type: Array,
     default: []
   },
-
   points: { type: Number, default: 0 },
   gamesPlayed: { type: Number, default: 0 },
   wins: { type: Number, default: 0 },
@@ -43,7 +37,7 @@ const teamSchema = new mongoose.Schema({
   losses: { type: Number, default: 0 },
   goalsFor: { type: Number, default: 0 },
   goalsAgainst: { type: Number, default: 0 }
-
 }, { timestamps: true });
 
-module.exports = mongoose.model("Team", teamSchema);
+module.exports =
+  mongoose.models.Team || mongoose.model("Team", teamSchema);
