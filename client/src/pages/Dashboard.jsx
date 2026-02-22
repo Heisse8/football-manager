@@ -27,7 +27,17 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchTeam = async () => {
       try {
-        const res = await fetch("https://football-manager-z7rr.onrender.com/api/team");
+        const token = localStorage.getItem("token");
+
+        const res = await fetch(
+          "https://football-manager-z7rr.onrender.com/api/team",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }
+        );
+
         const data = await res.json();
 
         if (data.name) {
@@ -37,7 +47,6 @@ export default function Dashboard() {
         if (data.leagueTable) {
           setTable(data.leagueTable);
         } else {
-          // Fallback Tabelle
           setTable([
             "FC Bayern",
             "Borussia Dortmund",
@@ -117,19 +126,27 @@ export default function Dashboard() {
           <div className="col-span-1 bg-black/50 backdrop-blur-md rounded-xl p-5">
             <h2 className="font-bold mb-4">Tabelle</h2>
             <div className="space-y-1 text-sm">
-              {table.map((club, index) => (
-                <div
-                  key={index}
-                  className={`flex justify-between px-2 py-1 rounded ${
-                    club === teamName
-                      ? "bg-yellow-500 text-black font-bold"
-                      : "hover:bg-white/10"
-                  }`}
-                >
-                  <span>{index + 1}. {club}</span>
-                  <span>{Math.floor(Math.random() * 50)}</span>
-                </div>
-              ))}
+              {table.map((club, index) => {
+                const isMyTeam = club === teamName;
+
+                return (
+                  <div
+                    key={index}
+                    className={`flex justify-between items-center px-3 py-2 rounded transition ${
+                      isMyTeam
+                        ? "bg-yellow-500 text-black font-bold border-l-4 border-yellow-300 shadow-lg"
+                        : "hover:bg-white/10"
+                    }`}
+                  >
+                    <span className="flex items-center gap-2">
+                      {isMyTeam && <span>⭐</span>}
+                      {index + 1}. {club}
+                    </span>
+
+                    <span>{Math.floor(Math.random() * 50)}</span>
+                  </div>
+                );
+              })}
             </div>
           </div>
 
