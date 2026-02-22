@@ -1,6 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import PrivateRoute from "./components/PrivateRoute";
+import Navbar from "./components/Navbar";
 
 import Register from "./pages/Register";
 import Login from "./pages/Login";
@@ -16,22 +17,28 @@ export default function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
 
-        {/* Dashboard als Startseite */}
+        {/* Geschützter Bereich */}
         <Route
-          path="/"
+          path="/*"
           element={
             <PrivateRoute>
-              <Dashboard />
-            </PrivateRoute>
-          }
-        />
+              <>
+                <Navbar />
 
-        {/* Teammanagement eigene Route */}
-        <Route
-          path="/team"
-          element={
-            <PrivateRoute>
-              <Teammanagement />
+                <Routes>
+                  {/* Startseite */}
+                  <Route path="/" element={<Dashboard />} />
+
+                  {/* Manager Seiten */}
+                  <Route path="/team" element={<Teammanagement />} />
+                  <Route path="/training" element={<div className="p-10 text-white">Training</div>} />
+                  <Route path="/transfermarkt" element={<div className="p-10 text-white">Transfermarkt</div>} />
+                  <Route path="/scouting" element={<div className="p-10 text-white">Scouting</div>} />
+                  <Route path="/stadion" element={<div className="p-10 text-white">Stadion</div>} />
+                  <Route path="/finanzen" element={<div className="p-10 text-white">Finanzen</div>} />
+                </Routes>
+
+              </>
             </PrivateRoute>
           }
         />

@@ -1,81 +1,67 @@
-import { NavLink } from "react-router-dom";
+
+import { NavLink, useNavigate } from "react-router-dom";
 
 export default function Navbar() {
-  const linkClass =
-    "px-4 py-2 rounded-lg transition font-semibold";
+  const navigate = useNavigate();
 
-  const activeClass =
-    "bg-green-600 text-white";
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
 
-  const inactiveClass =
-    "bg-black/40 text-gray-300 hover:bg-black/70";
+  const linkStyle =
+    "px-4 py-2 rounded hover:bg-white/10 transition";
+
+  const activeStyle =
+    "bg-yellow-500 text-black px-4 py-2 rounded font-bold";
 
   return (
-    <nav className="bg-black/60 backdrop-blur-md p-4 flex gap-4 justify-center shadow-lg">
+    <div className="bg-black/70 backdrop-blur-md border-b border-white/10">
+      <div className="max-w-[1600px] mx-auto flex justify-between items-center p-4 text-white">
+        
+        <div className="text-xl font-bold">
+          ⚽ Football Manager
+        </div>
 
-      <NavLink
-        to="/"
-        className={({ isActive }) =>
-          `${linkClass} ${isActive ? activeClass : inactiveClass}`
-        }
-      >
-        Startseite
-      </NavLink>
+        <div className="flex gap-2 text-sm">
 
-      <NavLink
-        to="/teammanagement"
-        className={({ isActive }) =>
-          `${linkClass} ${isActive ? activeClass : inactiveClass}`
-        }
-      >
-        Teammanagement
-      </NavLink>
+          <NavLink to="/" className={({isActive}) => isActive ? activeStyle : linkStyle}>
+            Dashboard
+          </NavLink>
 
-      <NavLink
-        to="/training"
-        className={({ isActive }) =>
-          `${linkClass} ${isActive ? activeClass : inactiveClass}`
-        }
-      >
-        Training
-      </NavLink>
+          <NavLink to="/team" className={({isActive}) => isActive ? activeStyle : linkStyle}>
+            Teammanagement
+          </NavLink>
 
-      <NavLink
-        to="/transfermarkt"
-        className={({ isActive }) =>
-          `${linkClass} ${isActive ? activeClass : inactiveClass}`
-        }
-      >
-        Transfermarkt
-      </NavLink>
+          <NavLink to="/training" className={({isActive}) => isActive ? activeStyle : linkStyle}>
+            Training
+          </NavLink>
 
-      <NavLink
-        to="/scouting"
-        className={({ isActive }) =>
-          `${linkClass} ${isActive ? activeClass : inactiveClass}`
-        }
-      >
-        Scouting
-      </NavLink>
+          <NavLink to="/transfermarkt" className={({isActive}) => isActive ? activeStyle : linkStyle}>
+            Transfermarkt
+          </NavLink>
 
-      <NavLink
-        to="/stadion"
-        className={({ isActive }) =>
-          `${linkClass} ${isActive ? activeClass : inactiveClass}`
-        }
-      >
-        Stadion
-      </NavLink>
+          <NavLink to="/scouting" className={({isActive}) => isActive ? activeStyle : linkStyle}>
+            Scouting
+          </NavLink>
 
-      <NavLink
-        to="/sponsoren"
-        className={({ isActive }) =>
-          `${linkClass} ${isActive ? activeClass : inactiveClass}`
-        }
-      >
-        Sponsoren
-      </NavLink>
+          <NavLink to="/stadion" className={({isActive}) => isActive ? activeStyle : linkStyle}>
+            Stadion
+          </NavLink>
 
-    </nav>
+          <NavLink to="/finanzen" className={({isActive}) => isActive ? activeStyle : linkStyle}>
+            Finanzen
+          </NavLink>
+
+          <button
+            onClick={handleLogout}
+            className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded"
+          >
+            Logout
+          </button>
+
+        </div>
+      </div>
+    </div>
   );
 }
