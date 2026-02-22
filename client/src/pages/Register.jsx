@@ -31,10 +31,10 @@ export default function Register() {
       }
 
       setMessage(
-        "Registrierung erfolgreich ✅ Bitte bestätige deine Email, um fortzufahren."
+        "Registrierung erfolgreich ✅ Bitte bestätige deine Email."
       );
 
-      // Optional: nach 3 Sekunden zur Login-Seite weiterleiten
+      // Automatische Weiterleitung nach 3 Sekunden
       setTimeout(() => {
         navigate("/login");
       }, 3000);
