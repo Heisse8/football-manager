@@ -11,11 +11,12 @@ export default function App() {
   return (
     <AuthProvider>
       <Routes>
+
         {/* Öffentliche Seiten */}
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
 
-        {/* Geschützte Seiten */}
+        {/* Dashboard als Startseite */}
         <Route
           path="/"
           element={
@@ -25,14 +26,16 @@ export default function App() {
           }
         />
 
+        {/* Teammanagement eigene Route */}
         <Route
-          path="/teammanagement"
+          path="/team"
           element={
             <PrivateRoute>
               <Teammanagement />
             </PrivateRoute>
           }
         />
+
       </Routes>
     </AuthProvider>
   );
