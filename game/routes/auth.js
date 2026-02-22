@@ -7,7 +7,6 @@ const crypto = require("crypto");
 
 const User = require("../models/User");
 
-
 // ================= REGISTER =================
 router.post("/register", async (req, res) => {
   const { username, email, password } = req.body;
@@ -25,11 +24,13 @@ router.post("/register", async (req, res) => {
       username,
       email,
       password: hashedPassword,
-      verificationToken
+      verificationToken,
+      isVerified: false
     });
 
     await newUser.save();
 
+    // ---------- Email Versand ----------
     const transporter = nodemailer.createTransport({
       service: "yahoo", // oder gmail
       auth: {
@@ -39,25 +40,35 @@ router.post("/register", async (req, res) => {
     });
 
     const verificationLink =
-      `https://football-manager-z7rr.onrender.com/api/auth/verify/${verificationToken}`;
+      `https://football-manager-2.onrender.com/api/auth/verify/${verificationToken}`;
 
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: email,
-      subject: "Bestätige deinen Football Manager Account",
-      html: `
-        <h2>Willkommen beim Football Manager ⚽</h2>
-        <p>Klicke auf den Link um deinen Account zu bestätigen:</p>
-        <a href="${verificationLink}">${verificationLink}</a>
-      `
-    });
+    try {
+      await transporter.sendMail({
+        from: process.env.EMAIL_USER,
+        to: email,
+        subject: "Bestätige deinen Football Manager Account",
+        html: `
+          <h2>Willkommen beim Football Manager ⚽</h2>
+          <p>Klicke auf den Link um deinen Account zu bestätigen:</p>
+          <a href="${verificationLink}">${verificationLink}</a>
+        `
+      });
 
+      console.log("✅ Email erfolgreich gesendet an:", email);
+
+    } catch (mailError) {
+      console.error("❌ Email Fehler:", mailError.message);
+      // Wichtig: Registrierung läuft trotzdem weiter!
+    }
+
+    // Immer Antwort zurückgeben
     res.status(201).json({
       message: "Registrierung erfolgreich. Bitte Email bestätigen."
     });
 
   } catch (err) {
-    res.status(500).json({ message: "Serverfehler", error: err.message });
+    console.error("❌ Register Fehler:", err);
+    res.status(500).json({ message: "Serverfehler" });
   }
 });
 
@@ -88,6 +99,7 @@ router.get("/verify/:token", async (req, res) => {
     );
 
   } catch (err) {
+    console.error("❌ Verify Fehler:", err);
     res.status(500).send("Serverfehler");
   }
 });
@@ -123,6 +135,7 @@ router.post("/login", async (req, res) => {
     res.json({ token });
 
   } catch (err) {
+    console.error("❌ Login Fehler:", err);
     res.status(500).json({ message: "Serverfehler" });
   }
 });
