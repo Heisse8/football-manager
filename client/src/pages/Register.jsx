@@ -18,8 +18,23 @@ export default function Register() {
       }
     );
 
-    const data = await res.json();
-    alert(data.message);
+    let data;
+
+try {
+  data = await res.json();
+} catch (err) {
+  const text = await res.text();
+  console.error("Server raw response:", text);
+  alert("Serverfehler – bitte später erneut versuchen.");
+  return;
+}
+
+if (!res.ok) {
+  alert(data.message || "Fehler bei Registrierung");
+  return;
+}
+
+alert(data.message);
   };
 
   return (
