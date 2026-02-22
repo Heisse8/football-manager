@@ -5,6 +5,7 @@ export default function Dashboard() {
 
   const [team, setTeam] = useState(null);
   const [leagueTeams, setLeagueTeams] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const budget = 12500000;
 
@@ -13,38 +14,58 @@ export default function Dashboard() {
       try {
         const token = localStorage.getItem("token");
 
-        // 1️⃣ Eigenes Team laden
+        if (!token) {
+          setLoading(false);
+          return;
+        }
+
+        // 🔹 Eigenes Team laden
         const teamRes = await fetch(
           `${import.meta.env.VITE_API_URL}/api/team`,
           {
-            headers: { Authorization: `Bearer ${token}` }
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
           }
         );
 
-        if (!teamRes.ok) return;
+        if (!teamRes.ok) {
+          setLoading(false);
+          return;
+        }
 
-        const myTeam = await teamRes.json();
-        setTeam(myTeam);
+        const teamData = await teamRes.json();
 
-        // 2️⃣ Liga laden
-        const leagueRes = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/league/${myTeam.league}`
-        );
+        if (!teamData || !teamData._id) {
+          setLoading(false);
+          return;
+        }
 
-        if (!leagueRes.ok) return;
+        setTeam(teamData);
 
-        const leagueData = await leagueRes.json();
-        setLeagueTeams(leagueData);
+        // 🔹 Liga laden
+        if (teamData.league) {
+          const leagueRes = await fetch(
+            `${import.meta.env.VITE_API_URL}/api/league/${teamData.league}`
+          );
+
+          if (leagueRes.ok) {
+            const leagueData = await leagueRes.json();
+            setLeagueTeams(leagueData);
+          }
+        }
 
       } catch (err) {
         console.error("Dashboard Fehler:", err);
       }
+
+      setLoading(false);
     };
 
     fetchData();
   }, []);
 
-  if (!team) {
+  if (loading) {
     return (
       <div className="p-10 text-white">
         Lade Dashboard...
@@ -52,9 +73,18 @@ export default function Dashboard() {
     );
   }
 
+  if (!team) {
+    return (
+      <div className="p-10 text-white">
+        Kein Team gefunden. Bitte erstelle ein Team.
+      </div>
+    );
+  }
+
   return (
     <div className="relative min-h-screen text-white overflow-hidden">
 
+      {/* Hintergrund */}
       <div
         className="absolute inset-0 bg-cover bg-center bg-fixed"
         style={{ backgroundImage: `url(${bgImage})` }}
@@ -76,11 +106,16 @@ export default function Dashboard() {
 
           {/* 🏆 TABELLE LINKS */}
           <div className="col-span-1 bg-black/50 backdrop-blur-md rounded-xl p-5">
-            <h2 className="font-bold mb-4">Tabelle – {team.league}</h2>
+            <h2 className="font-bold mb-4">
+              Tabelle – {team.league}
+            </h2>
 
             <div className="space-y-1 text-sm">
+
               {leagueTeams.length === 0 && (
-                <div className="opacity-60">Noch keine Teams in dieser Liga</div>
+                <div className="opacity-60">
+                  Noch keine Teams in dieser Liga
+                </div>
               )}
 
               {leagueTeams.map((club, index) => {
@@ -95,47 +130,65 @@ export default function Dashboard() {
                         : "hover:bg-white/10"
                     }`}
                   >
-                    <span>{index + 1}. {club.name}</span>
-                    <span>{club.points} P</span>
+                    <span>
+                      {index + 1}. {club.name}
+                    </span>
+
+                    <span>
+                      {club.points} P
+                    </span>
                   </div>
                 );
               })}
+
             </div>
           </div>
 
           {/* 📰 NEWS MITTE */}
           <div className="col-span-2 bg-black/50 backdrop-blur-md rounded-xl p-6">
-            <h2 className="text-xl font-bold mb-4">Manager News</h2>
+            <h2 className="text-xl font-bold mb-4">
+              Manager News
+            </h2>
 
             <div className="space-y-4">
+
               <div className="bg-black/40 p-4 rounded-lg">
                 🔥 Willkommen in {team.league}
               </div>
 
               <div className="bg-black/40 p-4 rounded-lg">
-                Dein Verein ist bereit für die Saison.
+                Dein Verein ist bereit für die neue Saison.
               </div>
 
               <div className="bg-black/40 p-4 rounded-lg">
-                Erste Spiele werden bald simuliert.
+                Transfers und Spielsimulation folgen bald.
               </div>
+
             </div>
           </div>
 
           {/* 📅 NÄCHSTE BEGEGNUNG RECHTS */}
           <div className="col-span-1 bg-black/50 backdrop-blur-md rounded-xl p-5">
-            <h2 className="font-bold mb-4">Nächste Begegnung</h2>
+            <h2 className="font-bold mb-4">
+              Nächste Begegnung
+            </h2>
 
             <div className="text-center bg-black/30 p-6 rounded-lg">
               <div>12.03.2026</div>
+
               <div className="text-2xl font-bold my-3">
                 {team.name}
               </div>
+
               <div>vs</div>
+
               <div className="text-2xl font-bold my-3">
                 Gegner
               </div>
-              <div className="text-yellow-400">Heimspiel</div>
+
+              <div className="text-yellow-400">
+                Heimspiel
+              </div>
             </div>
           </div>
 

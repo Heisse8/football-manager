@@ -13,7 +13,6 @@ app.use(express.json());
 // Routes
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/team", require("./routes/team")); // 🔥 DIESE ZEILE HINZUFÜGEN
-app.use("/api/team", require("./routes/team"));
 app.use("/api/league", require("./routes/league"));
 
 mongoose.connect(process.env.MONGO_URI)
