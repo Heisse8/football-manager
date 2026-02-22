@@ -12,13 +12,13 @@ const matchSchema = new mongoose.Schema({
     required: true
   },
   competition: {
-    type: String, // "LEAGUE" oder "CUP"
+    type: String, // LEAGUE oder CUP
     required: true
   },
-  league: String,   // z.B. GER_1
-  country: String,  // GER, ENG usw.
+  league: String,
+  country: String,
   matchday: Number,
-  round: Number,    // Pokalrunde
+  round: Number,
   date: Date,
   played: {
     type: Boolean,

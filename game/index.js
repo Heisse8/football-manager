@@ -16,6 +16,7 @@ app.use("/api/team", require("./routes/team")); // 🔥 DIESE ZEILE HINZUFÜGEN
 app.use("/api/league", require("./routes/league"));
 app.use("/api/league", require("./routes/league"));
 app.use("/api/schedule", require("./routes/schedule"));
+app.use("/api/season", require("./routes/season"));
 
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("✅ MongoDB verbunden"))
