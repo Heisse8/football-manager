@@ -7,6 +7,7 @@ import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Teammanagement from "./pages/Teammanagement";
+import CreateTeam from "./pages/CreateTeam";
 
 export default function App() {
   return (
@@ -17,7 +18,7 @@ export default function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
 
-        {/* Geschützte Seiten */}
+        {/* Dashboard */}
         <Route
           path="/"
           element={
@@ -30,6 +31,7 @@ export default function App() {
           }
         />
 
+        {/* Team */}
         <Route
           path="/team"
           element={
@@ -42,6 +44,7 @@ export default function App() {
           }
         />
 
+        {/* Training */}
         <Route
           path="/training"
           element={
@@ -54,6 +57,7 @@ export default function App() {
           }
         />
 
+        {/* Transfermarkt */}
         <Route
           path="/transfermarkt"
           element={
@@ -66,6 +70,7 @@ export default function App() {
           }
         />
 
+        {/* Scouting */}
         <Route
           path="/scouting"
           element={
@@ -78,6 +83,7 @@ export default function App() {
           }
         />
 
+        {/* Stadion */}
         <Route
           path="/stadion"
           element={
@@ -90,6 +96,7 @@ export default function App() {
           }
         />
 
+        {/* Finanzen */}
         <Route
           path="/finanzen"
           element={
@@ -98,6 +105,16 @@ export default function App() {
                 <Navbar />
                 <div className="p-10 text-white">Finanzen</div>
               </>
+            </PrivateRoute>
+          }
+        />
+
+        {/* Create Team – nur EINMAL definiert */}
+        <Route
+          path="/create-team"
+          element={
+            <PrivateRoute>
+              <CreateTeam />
             </PrivateRoute>
           }
         />
