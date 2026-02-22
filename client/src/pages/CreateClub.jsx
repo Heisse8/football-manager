@@ -40,24 +40,34 @@ export default function CreateClub() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/clubs/create`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData)
-    });
+    try {
+      const token = localStorage.getItem("token");
 
-    const data = await response.json();
+      const response = await fetch("/api/clubs/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(formData)
+      });
 
-    if (!response.ok) {
-      console.error(data);
-      alert("Fehler beim Erstellen des Clubs");
-      return;
+      const data = await response.json();
+
+      if (!response.ok) {
+        console.error(data);
+        alert("Fehler beim Erstellen des Clubs");
+        return;
+      }
+
+      localStorage.setItem("clubId", data.club._id);
+
+      alert("Club erstellt 🔥");
+      navigate("/");
+
+    } catch (err) {
+      alert("Serverfehler");
     }
-
-    localStorage.setItem("clubId", data.club._id);
-
-    alert("Club erstellt 🔥");
-    navigate("/");   // 👈 Weiterleitung zur Startseite
   };
 
   return (
@@ -160,7 +170,6 @@ export default function CreateClub() {
     </div>
   );
 }
-
 
 /* ================= LOGO PREVIEW ================= */
 

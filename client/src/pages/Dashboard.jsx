@@ -19,14 +19,11 @@ export default function Dashboard() {
         }
 
         // 🔹 Eigenes Team laden
-        const teamRes = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/team`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const teamRes = await fetch("/api/team", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
         if (!teamRes.ok) {
           setLoading(false);
@@ -36,10 +33,8 @@ export default function Dashboard() {
         const teamData = await teamRes.json();
         setTeam(teamData);
 
-        // 🔹 Liga im Hintergrund laden
-        fetch(
-          `${import.meta.env.VITE_API_URL}/api/league/${teamData.league}`
-        )
+        // 🔹 Liga laden
+        fetch(`/api/league/${teamData.league}`)
           .then((res) => res.json())
           .then((data) => setLeagueTeams(data))
           .catch(() => setLeagueTeams([]));
@@ -70,22 +65,14 @@ export default function Dashboard() {
     );
   }
 
-  // 🔥 SORTIERLOGIK
+  // 🔥 Sortierung
   const sortedLeague = [...leagueTeams].sort((a, b) => {
-    // 1️⃣ Punkte
-    if (b.points !== a.points) {
-      return b.points - a.points;
-    }
+    if (b.points !== a.points) return b.points - a.points;
 
-    // 2️⃣ Tordifferenz
     const diffA = (a.goalsFor || 0) - (a.goalsAgainst || 0);
     const diffB = (b.goalsFor || 0) - (b.goalsAgainst || 0);
+    if (diffB !== diffA) return diffB - diffA;
 
-    if (diffB !== diffA) {
-      return diffB - diffA;
-    }
-
-    // 3️⃣ Alphabetisch
     return a.name.localeCompare(b.name);
   });
 
@@ -112,14 +99,13 @@ export default function Dashboard() {
 
         <main className="grid grid-cols-4 gap-6 p-8 max-w-[1800px] mx-auto">
 
-          {/* 🏆 TABELLE LINKS */}
+          {/* 🏆 Tabelle */}
           <div className="col-span-1 bg-black/50 backdrop-blur-md rounded-xl p-5">
             <h2 className="font-bold mb-4">
               Tabelle – {team.league}
             </h2>
 
             <div className="space-y-1 text-sm">
-
               {sortedLeague.length === 0 && (
                 <div className="opacity-60">
                   Noch keine Teams in dieser Liga
@@ -141,7 +127,6 @@ export default function Dashboard() {
                     <span>
                       {index + 1}. {club.name}
                     </span>
-
                     <span>
                       {club.points} P
                     </span>
@@ -151,14 +136,13 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* 📰 NEWS MITTE */}
+          {/* 📰 News */}
           <div className="col-span-2 bg-black/50 backdrop-blur-md rounded-xl p-6">
             <h2 className="text-xl font-bold mb-4">
               Manager News
             </h2>
 
             <div className="space-y-4">
-
               <div className="bg-black/40 p-4 rounded-lg">
                 🔥 Willkommen in {team.league}
               </div>
@@ -170,11 +154,10 @@ export default function Dashboard() {
               <div className="bg-black/40 p-4 rounded-lg">
                 Transfers & Spieltage folgen bald.
               </div>
-
             </div>
           </div>
 
-          {/* 📅 NÄCHSTE BEGEGNUNG RECHTS */}
+          {/* 📅 Nächste Begegnung */}
           <div className="col-span-1 bg-black/50 backdrop-blur-md rounded-xl p-5">
             <h2 className="font-bold mb-4">
               Nächste Begegnung

@@ -15,23 +15,25 @@ export default function Kalender() {
         const token = localStorage.getItem("token");
         if (!token) return;
 
-        const teamRes = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/team`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
+        // 🔥 Team laden
+        const teamRes = await fetch("/api/team", {
+          headers: { Authorization: `Bearer ${token}` }
+        });
 
         if (!teamRes.ok) return;
         const teamData = await teamRes.json();
         setMyTeamId(teamData._id);
 
+        // 🔥 Matches laden
         const matchRes = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/match/my-month?year=${year}&month=${month}`,
+          `/api/match/my-month?year=${year}&month=${month}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
         if (!matchRes.ok) return;
         const matchData = await matchRes.json();
         setMatches(Array.isArray(matchData) ? matchData : []);
+
       } catch (err) {
         console.error("Kalender Fehler:", err);
       }
@@ -42,7 +44,7 @@ export default function Kalender() {
 
   const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-  // 🔥 Wochentag des 1. Tages (Montag = 0)
+  // Montag = 0
   const firstDay = new Date(year, month, 1).getDay();
   const startOffset = firstDay === 0 ? 6 : firstDay - 1;
 
@@ -149,24 +151,21 @@ export default function Kalender() {
                     key={match._id}
                     className="text-xs p-2 mb-2 rounded bg-gray-900 border border-gray-700 relative"
                   >
-                    {/* Heim/Auswärts Icon */}
+                    {/* Heim/Auswärts */}
                     <div className="absolute top-1 right-1 text-xs">
                       {isHome ? "🏠" : "✈"}
                     </div>
 
-                    {/* Wettbewerb */}
                     <div className="font-semibold text-gray-300">
                       {match.competition === "LEAGUE"
                         ? "Liga"
                         : "Pokal"}
                     </div>
 
-                    {/* Gegner */}
                     <div className="text-gray-400">
                       vs {opponent}
                     </div>
 
-                    {/* Ergebnis */}
                     {match.played && (
                       <div className="mt-1 font-bold text-white">
                         {match.homeGoals} : {match.awayGoals}

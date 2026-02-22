@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-export default function Kalender() {
+export default function Kader() {
   const [matches, setMatches] = useState([]);
   const [currentDate, setCurrentDate] = useState(new Date());
 
@@ -10,19 +10,27 @@ export default function Kalender() {
   // 🔄 Matches laden bei Monatswechsel
   useEffect(() => {
     const fetchMatches = async () => {
-      const token = localStorage.getItem("token");
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) return;
 
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/match/my-month?year=${year}&month=${month}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
+        const res = await fetch(
+          `/api/match/my-month?year=${year}&month=${month}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
           }
-        }
-      );
+        );
 
-      const data = await res.json();
-      setMatches(data);
+        if (!res.ok) return;
+
+        const data = await res.json();
+        setMatches(Array.isArray(data) ? data : []);
+
+      } catch (err) {
+        console.error("Kader Fehler:", err);
+      }
     };
 
     fetchMatches();
@@ -32,6 +40,7 @@ export default function Kalender() {
 
   const getMatchesForDay = (day) => {
     return matches.filter(match => {
+      if (!match.date) return false;
       const matchDate = new Date(match.date);
       return matchDate.getDate() === day;
     });
@@ -82,6 +91,8 @@ export default function Kalender() {
               <div className="font-bold mb-2">{day}</div>
 
               {dayMatches.map(match => {
+                if (!match.homeTeam || !match.awayTeam) return null;
+
                 const isHome = match.homeTeam._id === match.myTeamId;
 
                 const opponent =
@@ -98,8 +109,9 @@ export default function Kalender() {
                         : "bg-red-600"
                     }`}
                   >
-                    {match.competition === "LEAGUE" ? "Liga" : "Pokal"}  
+                    {match.competition === "LEAGUE" ? "Liga" : "Pokal"}
                     {" vs "} {opponent}
+                    {isHome ? " 🏠" : " ✈"}
                   </div>
                 );
               })}

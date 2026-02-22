@@ -15,12 +15,9 @@ export default function Navbar() {
           return;
         }
 
-        const res = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/team`,
-          {
-            headers: { Authorization: `Bearer ${token}` }
-          }
-        );
+        const res = await fetch("/api/team", {
+          headers: { Authorization: `Bearer ${token}` }
+        });
 
         if (!res.ok) {
           setTeamName(null);
@@ -46,6 +43,7 @@ export default function Navbar() {
 
   const logout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("clubId");
     navigate("/login");
   };
 
