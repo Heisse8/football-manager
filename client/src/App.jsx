@@ -4,6 +4,7 @@ import PrivateRoute from "./components/PrivateRoute";
 
 import Register from "./pages/Register";
 import Login from "./pages/Login";
+import Dashboard from "./pages/Dashboard";
 import Teammanagement from "./pages/Teammanagement";
 
 export default function App() {
@@ -14,9 +15,18 @@ export default function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
 
-        {/* Geschützte Seite */}
+        {/* Geschützte Seiten */}
         <Route
           path="/"
+          element={
+            <PrivateRoute>
+              <Dashboard />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/teammanagement"
           element={
             <PrivateRoute>
               <Teammanagement />

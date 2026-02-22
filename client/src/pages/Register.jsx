@@ -23,13 +23,12 @@ export default function Register() {
 
     const data = await res.json();
 
-    if (data.token) {
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("clubId", data.clubId);
-      navigate("/");
-    } else {
-      alert(data.message);
-    }
+   if (data.token) {
+  localStorage.setItem("token", data.token);
+  navigate("/");
+} else {
+  alert(data.message);
+}
   };
 
   return (
