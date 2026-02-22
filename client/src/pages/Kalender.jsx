@@ -2,28 +2,38 @@ import { useEffect, useState } from "react";
 
 export default function Kalender() {
   const [matches, setMatches] = useState([]);
+  const [myTeamId, setMyTeamId] = useState(null);
   const [currentDate, setCurrentDate] = useState(new Date());
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
   const today = new Date();
 
+  // 🔥 Team + Matches laden
   useEffect(() => {
-    const fetchMatches = async () => {
+    const fetchData = async () => {
       const token = localStorage.getItem("token");
 
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/match/my-month?year=${year}&month=${month}`,
-        {
-          headers: { Authorization: `Bearer ${token}` }
-        }
+      // Eigenes Team laden
+      const teamRes = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/team`,
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      const data = await res.json();
-      setMatches(data);
+      const teamData = await teamRes.json();
+      setMyTeamId(teamData._id);
+
+      // Matches laden
+      const matchRes = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/match/my-month?year=${year}&month=${month}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      const matchData = await matchRes.json();
+      setMatches(matchData);
     };
 
-    fetchMatches();
+    fetchData();
   }, [year, month]);
 
   const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -44,38 +54,38 @@ export default function Kalender() {
   };
 
   return (
-    <div className="p-8 text-white">
+    <div className="p-8 bg-gray-100 min-h-screen">
 
       {/* Monatsnavigation */}
       <div className="flex justify-between items-center mb-6">
         <button
           onClick={prevMonth}
-          className="bg-gray-700 px-4 py-2 rounded hover:bg-gray-600"
+          className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400"
         >
           ◀
         </button>
 
-        <h1 className="text-3xl font-bold">
+        <h1 className="text-3xl font-bold text-black">
           {currentDate.toLocaleString("de-DE", { month: "long" })} {year}
         </h1>
 
         <button
           onClick={nextMonth}
-          className="bg-gray-700 px-4 py-2 rounded hover:bg-gray-600"
+          className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400"
         >
           ▶
         </button>
       </div>
 
       {/* Wochentage */}
-      <div className="grid grid-cols-7 gap-4 mb-2 text-center font-bold opacity-70">
+      <div className="grid grid-cols-7 gap-2 mb-2 text-center font-bold text-black">
         {["Mo","Di","Mi","Do","Fr","Sa","So"].map(day => (
           <div key={day}>{day}</div>
         ))}
       </div>
 
       {/* Kalender */}
-      <div className="grid grid-cols-7 gap-4">
+      <div className="grid grid-cols-7 gap-2">
         {Array.from({ length: daysInMonth }, (_, i) => i + 1).map(day => {
 
           const dayMatches = getMatchesForDay(day);
@@ -88,38 +98,33 @@ export default function Kalender() {
           return (
             <div
               key={day}
-              className={`bg-black/50 p-3 rounded-lg min-h-[120px] relative ${
-                isToday ? "border-2 border-yellow-400" : ""
+              className={`bg-white border rounded p-2 min-h-[120px] relative ${
+                isToday ? "border-yellow-500 border-2" : "border-gray-300"
               }`}
             >
               {/* Tageszahl */}
-              <div className="font-bold mb-2">{day}</div>
+              <div className="font-bold text-black mb-2">
+                {day}
+              </div>
 
               {dayMatches.map(match => {
 
-                const myTeamId =
-                  match.homeTeam.owner === undefined
-                    ? null
-                    : match.homeTeam.owner;
+                if (!match.homeTeam || !match.awayTeam || !myTeamId) return null;
 
-                const isHome =
-                  match.homeTeam._id === match.homeTeam._id;
+                const isHome = match.homeTeam._id === myTeamId;
 
-                const opponent =
-                  match.homeTeam._id === match.homeTeam._id
-                    ? match.awayTeam.name
-                    : match.homeTeam.name;
+                const opponent = isHome
+                  ? match.awayTeam.name
+                  : match.homeTeam.name;
 
                 return (
                   <div
                     key={match._id}
-                    className="text-xs p-1 rounded mb-1 bg-gray-800 relative"
+                    className="text-xs p-1 mb-1 border rounded bg-gray-50 text-black relative"
                   >
-                    {/* Heim/Auswärts Icon */}
+                    {/* Heim / Auswärts Icon */}
                     <div className="absolute top-1 right-1 text-xs">
-                      {match.homeTeam._id === match.homeTeam._id
-                        ? "🏠"
-                        : "✈"}
+                      {isHome ? "🏠" : "✈"}
                     </div>
 
                     {/* Wettbewerb */}
