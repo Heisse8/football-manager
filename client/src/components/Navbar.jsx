@@ -1,9 +1,35 @@
 import { NavLink, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function Navbar() {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [teamName, setTeamName] = useState("");
+
+  useEffect(() => {
+    const fetchTeam = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) return;
+
+        const res = await fetch(
+          `${import.meta.env.VITE_API_URL}/api/team`,
+          {
+            headers: { Authorization: `Bearer ${token}` }
+          }
+        );
+
+        if (!res.ok) return;
+
+        const data = await res.json();
+        setTeamName(data.name);
+      } catch (err) {
+        console.error("Navbar Team Fehler:", err);
+      }
+    };
+
+    fetchTeam();
+  }, []);
 
   const logout = () => {
     localStorage.removeItem("token");
@@ -20,9 +46,9 @@ export default function Navbar() {
   return (
     <nav className="bg-black border-b border-gray-800 px-6 py-4 flex justify-between items-center">
 
-      {/* Logo / Titel */}
+      {/* 🔥 Teamname links */}
       <div className="text-xl font-bold text-yellow-400">
-        Football Manager
+        {teamName || "Lade Team..."}
       </div>
 
       {/* Desktop Menü */}
@@ -35,7 +61,6 @@ export default function Navbar() {
         <NavLink to="/transfermarkt" className={linkClass}>Transfermarkt</NavLink>
         <NavLink to="/finanzen" className={linkClass}>Finanzen</NavLink>
 
-        {/* Logout */}
         <button
           onClick={logout}
           className="ml-4 bg-red-600 px-3 py-2 rounded hover:bg-red-500"
