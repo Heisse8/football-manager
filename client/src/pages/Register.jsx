@@ -18,9 +18,10 @@ export default function Register() {
       }
     );
 
-    const data = await res.json();
-    alert(data.message);
-  };
+    console.log("Status:", res.status);
+
+const text = await res.text();
+console.log("RAW RESPONSE:", text);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white">
