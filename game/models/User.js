@@ -5,22 +5,34 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+
   email: {
     type: String,
     required: true,
     unique: true
   },
+
   password: {
     type: String,
     required: true
   },
+
   isVerified: {
     type: Boolean,
     default: false
   },
+
   verificationToken: {
     type: String
+  },
+
+  // 🔥 GANZ WICHTIG
+  club: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Team",
+    default: null
   }
+
 }, { timestamps: true });
 
 module.exports = mongoose.model("User", userSchema);
