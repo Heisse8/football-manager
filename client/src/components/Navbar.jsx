@@ -1,4 +1,4 @@
-import { useNavigate, Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -9,20 +9,30 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="bg-black/80 backdrop-blur-md text-white px-6 py-4 flex justify-between items-center shadow-lg">
+    <nav className="bg-black/80 backdrop-blur-md text-white px-8 py-4 flex justify-between items-center shadow-lg">
 
-      <div className="text-xl font-bold">
+      {/* LOGO / TITEL LINKS */}
+      <div className="text-xl font-bold tracking-wide">
         ⚽ Football Manager
       </div>
 
-      <div className="flex space-x-6 items-center">
+      {/* NAVIGATION RECHTS */}
+      <div className="flex items-center space-x-6 text-sm font-medium">
 
         <Link to="/" className="hover:text-green-400 transition">
           Dashboard
         </Link>
 
         <Link to="/team" className="hover:text-green-400 transition">
-          Team
+          Teammanagement
+        </Link>
+
+        <Link to="/kalender" className="hover:text-green-400 transition">
+          Kalender
+        </Link>
+
+        <Link to="/tabelle" className="hover:text-green-400 transition">
+          Tabelle
         </Link>
 
         <Link to="/training" className="hover:text-green-400 transition">
@@ -31,6 +41,10 @@ export default function Navbar() {
 
         <Link to="/transfermarkt" className="hover:text-green-400 transition">
           Transfermarkt
+        </Link>
+
+        <Link to="/finanzen" className="hover:text-green-400 transition">
+          Finanzen
         </Link>
 
         <button
