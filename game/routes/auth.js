@@ -2,10 +2,12 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const nodemailer = require("nodemailer");
 const crypto = require("crypto");
+const sgMail = require("@sendgrid/mail");
 
 const User = require("../models/User");
+
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 // ================= REGISTER =================
 router.post("/register", async (req, res) => {
@@ -30,26 +32,17 @@ router.post("/register", async (req, res) => {
 
     await newUser.save();
 
-    // ---------- Email Versand ----------
-    const transporter = nodemailer.createTransport({
-      service: "yahoo", // oder gmail
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-      }
-    });
-
     const verificationLink =
       `https://football-manager-2.onrender.com/api/auth/verify/${verificationToken}`;
 
     try {
-      await transporter.sendMail({
-        from: process.env.EMAIL_USER,
+      await sgMail.send({
         to: email,
-        subject: "Bestätige deinen Football Manager Account",
+        from: process.env.EMAIL_USER,
+        subject: "Bestätige deinen Football Manager Account ⚽",
         html: `
           <h2>Willkommen beim Football Manager ⚽</h2>
-          <p>Klicke auf den Link um deinen Account zu bestätigen:</p>
+          <p>Klicke auf den Link, um deinen Account zu bestätigen:</p>
           <a href="${verificationLink}">${verificationLink}</a>
         `
       });
@@ -57,13 +50,11 @@ router.post("/register", async (req, res) => {
       console.log("✅ Email erfolgreich gesendet an:", email);
 
     } catch (mailError) {
-      console.error("❌ Email Fehler:", mailError.message);
-      // Wichtig: Registrierung läuft trotzdem weiter!
+      console.error("❌ SendGrid Fehler:", mailError.response?.body || mailError.message);
     }
 
-    // Immer Antwort zurückgeben
     res.status(201).json({
-      message: "Registrierung erfolgreich. Bitte Email bestätigen."
+      message: "Bestätigungsmail wurde gesendet!"
     });
 
   } catch (err) {
