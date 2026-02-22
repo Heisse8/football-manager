@@ -6,10 +6,13 @@ const cors = require("cors");
 
 const app = express();
 
+// 🔥 WICHTIG: Ganz offen zum Testen
 app.use(cors());
+app.options("*", cors());
+
 app.use(express.json());
 
-// ✅ RICHTIGER PFAD
+// Routes
 app.use("/api/auth", require("./routes/auth"));
 
 mongoose.connect(process.env.MONGO_URI)
