@@ -2,39 +2,55 @@ import { useEffect, useState } from "react";
 import bgImage from "../assets/manager-office.jpg";
 
 export default function Dashboard() {
-  const [teamName, setTeamName] = useState("");
-  const [league, setLeague] = useState("");
-  const [table, setTable] = useState([]);
+
+  const [team, setTeam] = useState(null);
+  const [leagueTeams, setLeagueTeams] = useState([]);
+
+  const budget = 12500000;
 
   useEffect(() => {
     const fetchData = async () => {
-      const token = localStorage.getItem("token");
+      try {
+        const token = localStorage.getItem("token");
 
-      // Eigenes Team laden
-      const teamRes = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/team`,
-        {
-          headers: { Authorization: `Bearer ${token}` }
-        }
-      );
+        // 1️⃣ Eigenes Team laden
+        const teamRes = await fetch(
+          `${import.meta.env.VITE_API_URL}/api/team`,
+          {
+            headers: { Authorization: `Bearer ${token}` }
+          }
+        );
 
-      const myTeam = await teamRes.json();
+        if (!teamRes.ok) return;
 
-      setTeamName(myTeam.name);
-      setLeague(myTeam.league);
+        const myTeam = await teamRes.json();
+        setTeam(myTeam);
 
-      // Liga laden
-      const leagueRes = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/league/${myTeam.league}`
-      );
+        // 2️⃣ Liga laden
+        const leagueRes = await fetch(
+          `${import.meta.env.VITE_API_URL}/api/league/${myTeam.league}`
+        );
 
-      const leagueTeams = await leagueRes.json();
+        if (!leagueRes.ok) return;
 
-      setTable(leagueTeams);
+        const leagueData = await leagueRes.json();
+        setLeagueTeams(leagueData);
+
+      } catch (err) {
+        console.error("Dashboard Fehler:", err);
+      }
     };
 
     fetchData();
   }, []);
+
+  if (!team) {
+    return (
+      <div className="p-10 text-white">
+        Lade Dashboard...
+      </div>
+    );
+  }
 
   return (
     <div className="relative min-h-screen text-white overflow-hidden">
@@ -46,33 +62,84 @@ export default function Dashboard() {
 
       <div className="absolute inset-0 bg-black/80"></div>
 
-      <div className="relative z-10 p-8">
+      <div className="relative z-10">
 
-        <h1 className="text-3xl font-bold mb-6">
-          {teamName} – {league}
-        </h1>
+        {/* HEADER */}
+        <header className="bg-black/50 backdrop-blur-md p-6 flex justify-between items-center border-b border-white/10">
+          <h1 className="text-3xl font-bold">{team.name}</h1>
+          <div className="text-xl text-yellow-400 font-semibold">
+            💰 {budget.toLocaleString()} €
+          </div>
+        </header>
 
-        <div className="bg-black/50 rounded-xl p-6 max-w-2xl">
+        <main className="grid grid-cols-4 gap-6 p-8 max-w-[1800px] mx-auto">
 
-          {table.map((club, index) => {
-            const isMyTeam = club.name === teamName;
+          {/* 🏆 TABELLE LINKS */}
+          <div className="col-span-1 bg-black/50 backdrop-blur-md rounded-xl p-5">
+            <h2 className="font-bold mb-4">Tabelle – {team.league}</h2>
 
-            return (
-              <div
-                key={club._id}
-                className={`flex justify-between px-4 py-2 rounded mb-1 ${
-                  isMyTeam
-                    ? "bg-green-600/30 border-l-4 border-green-400 font-semibold"
-                    : "hover:bg-white/10"
-                }`}
-              >
-                <span>{index + 1}. {club.name}</span>
-                <span>{club.points} P</span>
+            <div className="space-y-1 text-sm">
+              {leagueTeams.length === 0 && (
+                <div className="opacity-60">Noch keine Teams in dieser Liga</div>
+              )}
+
+              {leagueTeams.map((club, index) => {
+                const isMyTeam = club._id === team._id;
+
+                return (
+                  <div
+                    key={club._id}
+                    className={`flex justify-between px-3 py-2 rounded transition ${
+                      isMyTeam
+                        ? "bg-green-600/30 border-l-4 border-green-400 font-semibold"
+                        : "hover:bg-white/10"
+                    }`}
+                  >
+                    <span>{index + 1}. {club.name}</span>
+                    <span>{club.points} P</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* 📰 NEWS MITTE */}
+          <div className="col-span-2 bg-black/50 backdrop-blur-md rounded-xl p-6">
+            <h2 className="text-xl font-bold mb-4">Manager News</h2>
+
+            <div className="space-y-4">
+              <div className="bg-black/40 p-4 rounded-lg">
+                🔥 Willkommen in {team.league}
               </div>
-            );
-          })}
 
-        </div>
+              <div className="bg-black/40 p-4 rounded-lg">
+                Dein Verein ist bereit für die Saison.
+              </div>
+
+              <div className="bg-black/40 p-4 rounded-lg">
+                Erste Spiele werden bald simuliert.
+              </div>
+            </div>
+          </div>
+
+          {/* 📅 NÄCHSTE BEGEGNUNG RECHTS */}
+          <div className="col-span-1 bg-black/50 backdrop-blur-md rounded-xl p-5">
+            <h2 className="font-bold mb-4">Nächste Begegnung</h2>
+
+            <div className="text-center bg-black/30 p-6 rounded-lg">
+              <div>12.03.2026</div>
+              <div className="text-2xl font-bold my-3">
+                {team.name}
+              </div>
+              <div>vs</div>
+              <div className="text-2xl font-bold my-3">
+                Gegner
+              </div>
+              <div className="text-yellow-400">Heimspiel</div>
+            </div>
+          </div>
+
+        </main>
       </div>
     </div>
   );
