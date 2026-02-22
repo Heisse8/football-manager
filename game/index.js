@@ -7,9 +7,6 @@ const path = require("path");
 
 const app = express();
 
-// =======================================
-// CORS (nur für localhost nötig)
-// =======================================
 app.use(cors({
   origin: ["http://localhost:5173"],
   credentials: true
@@ -17,9 +14,7 @@ app.use(cors({
 
 app.use(express.json());
 
-// =======================================
 // API ROUTES
-// =======================================
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/team", require("./routes/team"));
 app.use("/api/league", require("./routes/league"));
@@ -27,26 +22,18 @@ app.use("/api/schedule", require("./routes/schedule"));
 app.use("/api/season", require("./routes/season"));
 app.use("/api/match", require("./routes/match"));
 
-// =======================================
-// FRONTEND STATIC SERVE (Production)
-// =======================================
+// STATIC FRONTEND
 app.use(express.static(path.join(__dirname, "dist")));
 
-// 🔥 Express 5 kompatibler Catch-All
-app.get("/*", (req, res) => {
+// ✅ EXPRESS 5 SAFE FALLBACK
+app.use((req, res) => {
   res.sendFile(path.join(__dirname, "dist", "index.html"));
 });
 
-// =======================================
-// DATABASE CONNECT
-// =======================================
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("✅ MongoDB verbunden"))
   .catch(err => console.error("❌ MongoDB Fehler:", err));
 
-// =======================================
-// SERVER START
-// =======================================
 const PORT = process.env.PORT || 10000;
 
 app.listen(PORT, () => {
