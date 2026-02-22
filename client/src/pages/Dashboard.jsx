@@ -2,27 +2,10 @@ import { useEffect, useState } from "react";
 import bgImage from "../assets/manager-office.jpg";
 
 export default function Dashboard() {
-
   const [teamName, setTeamName] = useState("");
   const [table, setTable] = useState([]);
 
   const budget = 12500000;
-
-  const lastMatch = {
-    opponent: "Dynamo City",
-    result: "2:1",
-    scorer: "Müller",
-  };
-
-  const latestTransfer = {
-    player: "Carlos Mendes",
-    fee: "8 Mio €",
-  };
-
-  const injury = {
-    player: "Leon Bauer",
-    weeks: 3,
-  };
 
   useEffect(() => {
     const fetchTeam = async () => {
@@ -33,77 +16,49 @@ export default function Dashboard() {
           "https://football-manager-z7rr.onrender.com/api/team",
           {
             headers: {
-              Authorization: `Bearer ${token}`
-            }
+              Authorization: `Bearer ${token}`,
+            },
           }
         );
 
         const data = await res.json();
 
         if (data.name) {
-          setTeamName(data.name);
+          setTeamName(data.name.trim());
         }
 
-        if (data.leagueTable) {
-          setTable(data.leagueTable);
-        } else {
-          setTable([
-            "FC Bayern",
-            "Borussia Dortmund",
-            "RB Leipzig",
-            "Bayer Leverkusen",
-            "Eintracht Frankfurt",
-            "VfB Stuttgart",
-            data.name || "Dein Team",
-            "Union Berlin",
-            "SC Freiburg",
-            "TSG Hoffenheim",
-            "Werder Bremen",
-            "FC Augsburg",
-            "Mainz 05",
-            "Borussia M'Gladbach",
-            "VfL Wolfsburg",
-            "1. FC Köln",
-            "Bochum",
-            "Darmstadt"
-          ]);
-        }
-
+        // Demo Tabelle
+        setTable([
+          "FC Bayern",
+          "Borussia Dortmund",
+          "RB Leipzig",
+          "Bayer Leverkusen",
+          "Eintracht Frankfurt",
+          "VfB Stuttgart",
+          data.name || "Dein Team",
+          "Union Berlin",
+          "SC Freiburg",
+          "TSG Hoffenheim",
+          "Werder Bremen",
+          "FC Augsburg",
+          "Mainz 05",
+          "Borussia M'Gladbach",
+          "VfL Wolfsburg",
+          "1. FC Köln",
+          "Bochum",
+          "Darmstadt",
+        ]);
       } catch (err) {
-        console.error("Fehler beim Laden des Teams:", err);
+        console.error("Fehler beim Laden:", err);
       }
     };
 
     fetchTeam();
   }, []);
 
-  const newsPool = [
-    {
-      headline: `${latestTransfer.player} für ${latestTransfer.fee}!`,
-      sub: `${teamName} schlägt brutal zu!`,
-      text: `${teamName} verpflichtet ${latestTransfer.player}.`,
-      image: "https://picsum.photos/1200/600?random=1",
-    },
-    {
-      headline: `${lastMatch.result}-SIEG!`,
-      sub: `Drama gegen ${lastMatch.opponent}!`,
-      text: `Treffer von ${lastMatch.scorer} bringt den Sieg.`,
-      image: "https://picsum.photos/1200/600?random=2",
-    },
-    {
-      headline: `SCHOCK! ${injury.player} fällt aus!`,
-      sub: `${injury.weeks} Wochen Pause`,
-      text: `Verletzung im Training bestätigt.`,
-      image: "https://picsum.photos/1200/600?random=3",
-    }
-  ];
-
-  const [mainNews] = useState(newsPool[0]);
-  const [sideNews] = useState(newsPool.slice(1));
-
   return (
     <div className="relative min-h-screen text-white overflow-hidden">
-
+      {/* Background */}
       <div
         className="absolute inset-0 bg-cover bg-center bg-fixed scale-105"
         style={{ backgroundImage: `url(${bgImage})` }}
@@ -112,7 +67,7 @@ export default function Dashboard() {
       <div className="absolute inset-0 bg-gradient-to-br from-black/80 via-black/70 to-black/90"></div>
 
       <div className="relative z-10">
-
+        {/* Header */}
         <header className="bg-black/50 backdrop-blur-md p-6 flex justify-between items-center border-b border-white/10">
           <h1 className="text-3xl font-bold">{teamName}</h1>
           <div className="text-xl text-yellow-400 font-semibold">
@@ -121,25 +76,26 @@ export default function Dashboard() {
         </header>
 
         <main className="grid grid-cols-4 gap-6 p-8 max-w-[1800px] mx-auto">
-
-          {/* TABELLE */}
+          {/* Tabelle */}
           <div className="col-span-1 bg-black/50 backdrop-blur-md rounded-xl p-5">
             <h2 className="font-bold mb-4">Tabelle</h2>
+
             <div className="space-y-1 text-sm">
               {table.map((club, index) => {
-                const isMyTeam = club === teamName;
+                const isMyTeam =
+                  club?.toLowerCase().trim() ===
+                  teamName?.toLowerCase().trim();
 
                 return (
                   <div
                     key={index}
                     className={`flex justify-between items-center px-3 py-2 rounded transition ${
                       isMyTeam
-                        ? "bg-yellow-500 text-black font-bold border-l-4 border-yellow-300 shadow-lg"
+                        ? "bg-green-600/30 border-l-4 border-green-400 font-semibold"
                         : "hover:bg-white/10"
                     }`}
                   >
-                    <span className="flex items-center gap-2">
-                      {isMyTeam && <span>⭐</span>}
+                    <span>
                       {index + 1}. {club}
                     </span>
 
@@ -150,51 +106,16 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* NEWS */}
-          <div className="col-span-2 bg-black/50 backdrop-blur-md rounded-xl overflow-hidden">
-
-            {mainNews && (
-              <>
-                <div className="bg-red-600 px-6 py-3 font-extrabold uppercase animate-pulse">
-                  BREAKING – MANAGER NEWS
-                </div>
-
-                <div className="relative">
-                  <img src={mainNews.image} className="w-full h-96 object-cover" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent"></div>
-                  <div className="absolute bottom-6 left-6 right-6">
-                    <h2 className="text-4xl font-extrabold">
-                      {mainNews.headline}
-                    </h2>
-                    <p className="text-xl text-yellow-300 mt-2">
-                      {mainNews.sub}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="bg-white text-black p-6">
-                  {mainNews.text}
-                </div>
-              </>
-            )}
-
-            <div className="grid grid-cols-2 gap-4 p-6 bg-black/30">
-              {sideNews.map((news, i) => (
-                <div key={i} className="bg-black/50 rounded-lg overflow-hidden hover:scale-105 transition">
-                  <img src={news.image} className="h-32 w-full object-cover" />
-                  <div className="p-3 text-sm">
-                    <div className="font-bold">{news.headline}</div>
-                    <div className="opacity-70 text-xs mt-1">
-                      {news.sub}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
+          {/* Mittelbereich (Platzhalter) */}
+          <div className="col-span-2 bg-black/50 backdrop-blur-md rounded-xl p-6">
+            <h2 className="text-xl font-bold mb-4">Manager News</h2>
+            <p className="opacity-80">
+              Willkommen zurück, Manager. Dein Verein entwickelt sich
+              hervorragend!
+            </p>
           </div>
 
-          {/* NÄCHSTES SPIEL */}
+          {/* Nächstes Spiel */}
           <div className="col-span-1 bg-black/50 backdrop-blur-md rounded-xl p-5">
             <h2 className="font-bold mb-4">Nächste Begegnung</h2>
             <div className="text-center bg-black/30 p-6 rounded-lg">
@@ -205,7 +126,6 @@ export default function Dashboard() {
               <div className="text-yellow-400">Heimspiel</div>
             </div>
           </div>
-
         </main>
       </div>
     </div>
