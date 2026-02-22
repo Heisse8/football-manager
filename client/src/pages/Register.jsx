@@ -9,7 +9,7 @@ export default function Register() {
     e.preventDefault();
 
     const res = await fetch(
-      "https://football-manager-z7rr.onrender.com/api/auth/register",
+      `${import.meta.env.VITE_API_URL}/api/auth/register`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },

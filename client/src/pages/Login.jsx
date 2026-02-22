@@ -10,7 +10,7 @@ export default function Login() {
     e.preventDefault();
 
     const res = await fetch(
-      "https://football-manager-z7rr.onrender.com/api/auth/login",
+      `${import.meta.env.VITE_API_URL}/api/auth/login`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -25,7 +25,7 @@ export default function Login() {
 
       // Prüfen ob Team existiert
       const teamRes = await fetch(
-        "https://football-manager-z7rr.onrender.com/api/team",
+        `${import.meta.env.VITE_API_URL}/api/team`,
         {
           headers: {
             Authorization: "Bearer " + data.token
@@ -38,7 +38,6 @@ export default function Login() {
       } else {
         navigate("/");
       }
-
     } else {
       alert(data.message);
     }

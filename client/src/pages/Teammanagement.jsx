@@ -89,7 +89,7 @@ useEffect(() => {
  const clubId = localStorage.getItem("clubId");
  if (!clubId) return;
 
- fetch(`https://football-manager-z7rr.onrender.com/api/clubs/${clubId}`)
+ fetch(`${import.meta.env.VITE_API_URL}/api/clubs/${clubId}`)
    .then(res => res.json())
    .then(data => {
      const formatted = data.players.map((p, index) => ({
