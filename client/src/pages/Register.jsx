@@ -15,7 +15,7 @@ export default function Register() {
   const handleRegister = async (e) => {
     e.preventDefault();
 
-    const res = await fetch("http://localhost:5050/api/auth/register", {
+    const res = await fetch("https://football-manager-z7rr.onrender.com/api/auth/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, email, password })

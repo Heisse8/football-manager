@@ -4,7 +4,7 @@ export default function Tabelle() {
   const [table, setTable] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/league/table")
+    fetch("https://football-manager-z7rr.onrender.com/api/league/table")
       .then(res => res.json())
       .then(data => setTable(data))
       .catch(() => setTable([]));

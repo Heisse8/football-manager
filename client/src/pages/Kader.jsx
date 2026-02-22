@@ -22,7 +22,7 @@ export default function Kader() {
   const currentFormation = "4-4-2";
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/team")
+    fetch("https://football-manager-z7rr.onrender.com/api/team")
       .then(res => res.json())
       .then(data => {
         const loadedTeam = data[0];

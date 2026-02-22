@@ -4,7 +4,7 @@ export default function MatchdayWidget() {
   const [matches, setMatches] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/matches/current")
+    fetch("https://football-manager-z7rr.onrender.com/api/matches/current")
       .then(res => res.json())
       .then(data => setMatches(data))
       .catch(() => setMatches([]));

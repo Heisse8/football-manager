@@ -4,7 +4,7 @@ export default function TopscorerWidget() {
   const [players, setPlayers] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/league/topscorers")
+    fetch("https://football-manager-z7rr.onrender.com/api/league/topscorers")
       .then(res => res.json())
       .then(data => setPlayers(data.slice(0, 6)))
       .catch(() => setPlayers([]));

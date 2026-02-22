@@ -40,7 +40,7 @@ export default function CreateClub() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const response = await fetch("http://localhost:5050/api/clubs/create", {
+    const response = await fetch("https://football-manager-z7rr.onrender.com/api/clubs/create", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData)

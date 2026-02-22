@@ -4,7 +4,7 @@ export default function Heimtabelle() {
   const [table, setTable] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/league/home-table")
+    fetch("https://football-manager-z7rr.onrender.com/api/league/home-table")
       .then(res => res.json())
       .then(data => setTable(data))
       .catch(() => setTable([]));
