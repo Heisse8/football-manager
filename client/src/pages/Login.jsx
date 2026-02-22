@@ -42,7 +42,7 @@ export default function Login() {
       // ✅ Token speichern
       localStorage.setItem("token", data.token);
 
-      // ✅ Weiterleitung ins Dashboard ("/")
+      // ✅ Weiterleitung ins Dashboard
       navigate("/");
 
     } catch (err) {
@@ -92,6 +92,17 @@ export default function Login() {
               {message}
             </div>
           )}
+
+          {/* 🔗 Register Link */}
+          <p className="text-center text-sm mt-4 text-gray-300">
+            Noch keinen Account?{" "}
+            <span
+              onClick={() => navigate("/register")}
+              className="text-green-400 cursor-pointer hover:underline"
+            >
+              Jetzt registrieren
+            </span>
+          </p>
 
         </div>
       </div>
