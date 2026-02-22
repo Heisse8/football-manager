@@ -1,78 +1,100 @@
-import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
   const navigate = useNavigate();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
+  // 🔐 Wenn bereits eingeloggt → direkt ins Dashboard
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      navigate("/");
+    }
+  }, [navigate]);
 
-    const res = await fetch(
-      `${import.meta.env.VITE_API_URL}/api/auth/login`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password })
-      }
-    );
+  const handleLogin = async () => {
+    setLoading(true);
+    setMessage("");
 
-    const data = await res.json();
-
-    if (data.token) {
-      localStorage.setItem("token", data.token);
-
-      // Prüfen ob Team existiert
-      const teamRes = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/team`,
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/auth/login`,
         {
-          headers: {
-            Authorization: "Bearer " + data.token
-          }
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password })
         }
       );
 
-      if (teamRes.status === 404) {
-        navigate("/create-team");
-      } else {
-        navigate("/");
+      const data = await res.json();
+
+      if (!res.ok) {
+        setMessage(data.message);
+        setLoading(false);
+        return;
       }
-    } else {
-      alert(data.message);
+
+      // ✅ Token speichern
+      localStorage.setItem("token", data.token);
+
+      // ✅ Weiterleitung ins Dashboard ("/")
+      navigate("/");
+
+    } catch (err) {
+      setMessage("Serverfehler");
     }
+
+    setLoading(false);
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center text-white">
-      <form onSubmit={handleLogin} className="bg-black/60 p-8 rounded-xl w-96">
-        <h2 className="text-2xl mb-6">Login</h2>
+    <div
+      className="min-h-screen flex items-center justify-center bg-cover bg-center"
+      style={{ backgroundImage: "url('/stadium.jpg')" }}
+    >
+      <div className="bg-black/70 backdrop-blur-md p-8 rounded-2xl shadow-2xl w-full max-w-md text-white">
 
-        <input
-          type="email"
-          placeholder="Email"
-          className="w-full mb-4 p-2 bg-gray-800 rounded"
-          onChange={(e) => setEmail(e.target.value)}
-        />
+        <h2 className="text-3xl font-bold text-center mb-6">
+          Login ⚽
+        </h2>
 
-        <input
-          type="password"
-          placeholder="Passwort"
-          className="w-full mb-4 p-2 bg-gray-800 rounded"
-          onChange={(e) => setPassword(e.target.value)}
-        />
+        <div className="space-y-4">
 
-        <button className="w-full bg-blue-600 p-2 rounded">
-          Einloggen
-        </button>
+          <input
+            type="email"
+            placeholder="Email"
+            className="w-full p-3 rounded-lg bg-gray-800 focus:ring-2 focus:ring-green-500 outline-none"
+            onChange={(e) => setEmail(e.target.value)}
+          />
 
-        <p className="mt-4 text-sm text-center">
-          Noch keinen Account?{" "}
-          <Link to="/register" className="underline">
-            Jetzt registrieren
-          </Link>
-        </p>
-      </form>
+          <input
+            type="password"
+            placeholder="Passwort"
+            className="w-full p-3 rounded-lg bg-gray-800 focus:ring-2 focus:ring-green-500 outline-none"
+            onChange={(e) => setPassword(e.target.value)}
+          />
+
+          <button
+            onClick={handleLogin}
+            disabled={loading}
+            className="w-full bg-green-600 hover:bg-green-500 transition p-3 rounded-lg font-semibold"
+          >
+            {loading ? "Login läuft..." : "Login"}
+          </button>
+
+          {message && (
+            <div className="text-center text-sm mt-3 text-red-400">
+              {message}
+            </div>
+          )}
+
+        </div>
+      </div>
     </div>
   );
 }
