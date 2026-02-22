@@ -8,6 +8,7 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Teammanagement from "./pages/Teammanagement";
 import CreateTeam from "./pages/CreateTeam";
+import VerifySuccess from "./pages/VerifySuccess";
 
 export default function App() {
   return (
@@ -108,6 +109,8 @@ export default function App() {
             </PrivateRoute>
           }
         />
+
+        <Route path="/verify-success" element={<VerifySuccess />} />
 
         {/* Create Team – nur EINMAL definiert */}
         <Route
