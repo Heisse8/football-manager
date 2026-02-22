@@ -23,30 +23,19 @@ export default function Register() {
         }
       );
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        setMessage(data.message || "Fehler bei der Registrierung.");
-        return;
-      }
-
-      setMessage("Registrierung erfolgreich ✅ Bitte bestätige deine Email.");
-
-      setTimeout(() => {
-        navigate("/login");
-      }, 3000);
+      const text = await res.text(); // zeigt IMMER die Antwort
+      setMessage("Server Antwort: " + text);
 
     } catch (error) {
       console.error(error);
-      setMessage("Serverfehler. Bitte später erneut versuchen.");
+      setMessage("Serverfehler – Verbindung fehlgeschlagen.");
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white">
 
-      {/* 🔥 TEST HEADER – MUSS SICHTBAR SEIN */}
-      <h1 style={{ color: "red", fontSize: "32px", position: "absolute", top: 20 }}>
+      <h1 style={{ color: "red", fontSize: "28px", position: "absolute", top: 20 }}>
         TEST REGISTER VERSION
       </h1>
 
