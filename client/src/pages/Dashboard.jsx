@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import bgImage from "../assets/manager-office.jpg";
 
 export default function Dashboard() {
-
   const [team, setTeam] = useState(null);
   const [leagueTeams, setLeagueTeams] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -24,8 +23,8 @@ export default function Dashboard() {
           `${import.meta.env.VITE_API_URL}/api/team`,
           {
             headers: {
-              Authorization: `Bearer ${token}`
-            }
+              Authorization: `Bearer ${token}`,
+            },
           }
         );
 
@@ -35,25 +34,15 @@ export default function Dashboard() {
         }
 
         const teamData = await teamRes.json();
-
-        if (!teamData || !teamData._id) {
-          setLoading(false);
-          return;
-        }
-
         setTeam(teamData);
 
-        // 🔹 Liga laden
-        if (teamData.league) {
-          const leagueRes = await fetch(
-            `${import.meta.env.VITE_API_URL}/api/league/${teamData.league}`
-          );
-
-          if (leagueRes.ok) {
-            const leagueData = await leagueRes.json();
-            setLeagueTeams(leagueData);
-          }
-        }
+        // 🔹 Liga im Hintergrund laden
+        fetch(
+          `${import.meta.env.VITE_API_URL}/api/league/${teamData.league}`
+        )
+          .then((res) => res.json())
+          .then((data) => setLeagueTeams(data))
+          .catch(() => setLeagueTeams([]));
 
       } catch (err) {
         console.error("Dashboard Fehler:", err);
@@ -67,7 +56,7 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="p-10 text-white">
+      <div className="p-10 text-white animate-pulse">
         Lade Dashboard...
       </div>
     );
@@ -80,6 +69,25 @@ export default function Dashboard() {
       </div>
     );
   }
+
+  // 🔥 SORTIERLOGIK
+  const sortedLeague = [...leagueTeams].sort((a, b) => {
+    // 1️⃣ Punkte
+    if (b.points !== a.points) {
+      return b.points - a.points;
+    }
+
+    // 2️⃣ Tordifferenz
+    const diffA = (a.goalsFor || 0) - (a.goalsAgainst || 0);
+    const diffB = (b.goalsFor || 0) - (b.goalsAgainst || 0);
+
+    if (diffB !== diffA) {
+      return diffB - diffA;
+    }
+
+    // 3️⃣ Alphabetisch
+    return a.name.localeCompare(b.name);
+  });
 
   return (
     <div className="relative min-h-screen text-white overflow-hidden">
@@ -112,13 +120,13 @@ export default function Dashboard() {
 
             <div className="space-y-1 text-sm">
 
-              {leagueTeams.length === 0 && (
+              {sortedLeague.length === 0 && (
                 <div className="opacity-60">
                   Noch keine Teams in dieser Liga
                 </div>
               )}
 
-              {leagueTeams.map((club, index) => {
+              {sortedLeague.map((club, index) => {
                 const isMyTeam = club._id === team._id;
 
                 return (
@@ -140,7 +148,6 @@ export default function Dashboard() {
                   </div>
                 );
               })}
-
             </div>
           </div>
 
@@ -161,7 +168,7 @@ export default function Dashboard() {
               </div>
 
               <div className="bg-black/40 p-4 rounded-lg">
-                Transfers und Spielsimulation folgen bald.
+                Transfers & Spieltage folgen bald.
               </div>
 
             </div>
