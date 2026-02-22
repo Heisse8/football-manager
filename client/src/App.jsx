@@ -17,27 +17,86 @@ export default function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
 
-        {/* Geschützter Bereich */}
+        {/* Geschützte Seiten */}
         <Route
-          path="/*"
+          path="/"
           element={
             <PrivateRoute>
               <>
                 <Navbar />
+                <Dashboard />
+              </>
+            </PrivateRoute>
+          }
+        />
 
-                <Routes>
-                  {/* Startseite */}
-                  <Route path="/" element={<Dashboard />} />
+        <Route
+          path="/team"
+          element={
+            <PrivateRoute>
+              <>
+                <Navbar />
+                <Teammanagement />
+              </>
+            </PrivateRoute>
+          }
+        />
 
-                  {/* Manager Seiten */}
-                  <Route path="/team" element={<Teammanagement />} />
-                  <Route path="/training" element={<div className="p-10 text-white">Training</div>} />
-                  <Route path="/transfermarkt" element={<div className="p-10 text-white">Transfermarkt</div>} />
-                  <Route path="/scouting" element={<div className="p-10 text-white">Scouting</div>} />
-                  <Route path="/stadion" element={<div className="p-10 text-white">Stadion</div>} />
-                  <Route path="/finanzen" element={<div className="p-10 text-white">Finanzen</div>} />
-                </Routes>
+        <Route
+          path="/training"
+          element={
+            <PrivateRoute>
+              <>
+                <Navbar />
+                <div className="p-10 text-white">Training</div>
+              </>
+            </PrivateRoute>
+          }
+        />
 
+        <Route
+          path="/transfermarkt"
+          element={
+            <PrivateRoute>
+              <>
+                <Navbar />
+                <div className="p-10 text-white">Transfermarkt</div>
+              </>
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/scouting"
+          element={
+            <PrivateRoute>
+              <>
+                <Navbar />
+                <div className="p-10 text-white">Scouting</div>
+              </>
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/stadion"
+          element={
+            <PrivateRoute>
+              <>
+                <Navbar />
+                <div className="p-10 text-white">Stadion</div>
+              </>
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/finanzen"
+          element={
+            <PrivateRoute>
+              <>
+                <Navbar />
+                <div className="p-10 text-white">Finanzen</div>
               </>
             </PrivateRoute>
           }
