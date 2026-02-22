@@ -8,19 +8,17 @@ const path = require("path");
 const app = express();
 
 // =======================================
-// 🔥 CORS (nur für Localhost nötig)
+// CORS (nur für localhost nötig)
 // =======================================
 app.use(cors({
-  origin: [
-    "http://localhost:5173"
-  ],
+  origin: ["http://localhost:5173"],
   credentials: true
 }));
 
 app.use(express.json());
 
 // =======================================
-// 🔥 API ROUTES
+// API ROUTES
 // =======================================
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/team", require("./routes/team"));
@@ -30,23 +28,24 @@ app.use("/api/season", require("./routes/season"));
 app.use("/api/match", require("./routes/match"));
 
 // =======================================
-// 🔥 FRONTEND STATIC SERVE (Production)
+// FRONTEND STATIC SERVE (Production)
 // =======================================
 app.use(express.static(path.join(__dirname, "dist")));
 
-app.get("*", (req, res) => {
+// 🔥 Express 5 kompatibler Catch-All
+app.get("/*", (req, res) => {
   res.sendFile(path.join(__dirname, "dist", "index.html"));
 });
 
 // =======================================
-// 🔥 DATABASE CONNECT
+// DATABASE CONNECT
 // =======================================
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("✅ MongoDB verbunden"))
   .catch(err => console.error("❌ MongoDB Fehler:", err));
 
 // =======================================
-// 🔥 SERVER START
+// SERVER START
 // =======================================
 const PORT = process.env.PORT || 10000;
 
