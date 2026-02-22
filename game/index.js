@@ -6,9 +6,8 @@ const cors = require("cors");
 
 const app = express();
 
-// 🔥 WICHTIG: Ganz offen zum Testen
+// ✅ CORS komplett offen (zum Testen)
 app.use(cors());
-app.options("*", cors());
 
 app.use(express.json());
 
