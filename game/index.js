@@ -17,6 +17,7 @@ app.use("/api/league", require("./routes/league"));
 app.use("/api/league", require("./routes/league"));
 app.use("/api/schedule", require("./routes/schedule"));
 app.use("/api/season", require("./routes/season"));
+app.use("/api/match", require("./routes/match"));
 
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("✅ MongoDB verbunden"))

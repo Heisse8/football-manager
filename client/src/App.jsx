@@ -9,6 +9,7 @@ import Dashboard from "./pages/Dashboard";
 import Teammanagement from "./pages/Teammanagement";
 import CreateTeam from "./pages/CreateTeam";
 import VerifySuccess from "./pages/VerifySuccess";
+import Kalender from "./pages/Kalender";
 
 export default function App() {
   return (
@@ -31,6 +32,18 @@ export default function App() {
             </PrivateRoute>
           }
         />
+
+        <Route
+  path="/kalender"
+  element={
+    <PrivateRoute>
+      <>
+        <Navbar />
+        <Kalender />
+      </>
+    </PrivateRoute>
+  }
+/>
 
         {/* Team */}
         <Route
