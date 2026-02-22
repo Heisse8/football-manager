@@ -14,6 +14,8 @@ const teamRoutes = require("./routes/team");
 const { startScheduler } = require("./engines/scheduler");
 const { generateSquad } = require("./utils/playerGenerator");
 
+const authRoutes = require("./routes/auth");
+
 const app = express();
 
 /* =========================
@@ -46,6 +48,7 @@ mongoose.connect(process.env.MONGO_URI)
 app.use("/api/league", leagueRoutes);
 app.use("/api/matches", matchRoutes);
 app.use("/api/team", teamRoutes);
+app.use("/api/auth", authRoutes);
 
 /* =========================
    ROOT
