@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import PrivateRoute from "./components/PrivateRoute";
-import Navbar from "./components/Navbar";
+import Layout from "./Layout";
 
 import Register from "./pages/Register";
 import Login from "./pages/Login";
@@ -19,113 +19,47 @@ export default function App() {
         {/* Öffentliche Seiten */}
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
-
-        {/* Dashboard */}
-        <Route
-          path="/"
-          element={
-            <PrivateRoute>
-              <>
-                <Navbar />
-                <Dashboard />
-              </>
-            </PrivateRoute>
-          }
-        />
-
-        <Route
-  path="/kalender"
-  element={
-    <PrivateRoute>
-      <>
-        <Navbar />
-        <Kalender />
-      </>
-    </PrivateRoute>
-  }
-/>
-
-        {/* Team */}
-        <Route
-          path="/team"
-          element={
-            <PrivateRoute>
-              <>
-                <Navbar />
-                <Teammanagement />
-              </>
-            </PrivateRoute>
-          }
-        />
-
-        {/* Training */}
-        <Route
-          path="/training"
-          element={
-            <PrivateRoute>
-              <>
-                <Navbar />
-                <div className="p-10 text-white">Training</div>
-              </>
-            </PrivateRoute>
-          }
-        />
-
-        {/* Transfermarkt */}
-        <Route
-          path="/transfermarkt"
-          element={
-            <PrivateRoute>
-              <>
-                <Navbar />
-                <div className="p-10 text-white">Transfermarkt</div>
-              </>
-            </PrivateRoute>
-          }
-        />
-
-        {/* Scouting */}
-        <Route
-          path="/scouting"
-          element={
-            <PrivateRoute>
-              <>
-                <Navbar />
-                <div className="p-10 text-white">Scouting</div>
-              </>
-            </PrivateRoute>
-          }
-        />
-
-        {/* Stadion */}
-        <Route
-          path="/stadion"
-          element={
-            <PrivateRoute>
-              <>
-                <Navbar />
-                <div className="p-10 text-white">Stadion</div>
-              </>
-            </PrivateRoute>
-          }
-        />
-
-        {/* Finanzen */}
-        <Route
-          path="/finanzen"
-          element={
-            <PrivateRoute>
-              <>
-                <Navbar />
-                <div className="p-10 text-white">Finanzen</div>
-              </>
-            </PrivateRoute>
-          }
-        />
-
         <Route path="/verify-success" element={<VerifySuccess />} />
 
-        {/* Create Team – nur EINMAL definiert */}
+        {/* Geschützte Seiten MIT Navbar */}
+        <Route
+          element={
+            <PrivateRoute>
+              <Layout />
+            </PrivateRoute>
+          }
+        >
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/kalender" element={<Kalender />} />
+          <Route path="/team" element={<Teammanagement />} />
+
+          <Route
+            path="/training"
+            element={<div className="p-10">Training</div>}
+          />
+
+          <Route
+            path="/transfermarkt"
+            element={<div className="p-10">Transfermarkt</div>}
+          />
+
+          <Route
+            path="/scouting"
+            element={<div className="p-10">Scouting</div>}
+          />
+
+          <Route
+            path="/stadion"
+            element={<div className="p-10">Stadion</div>}
+          />
+
+          <Route
+            path="/finanzen"
+            element={<div className="p-10">Finanzen</div>}
+          />
+        </Route>
+
+        {/* Create Team separat (ohne Navbar) */}
         <Route
           path="/create-team"
           element={

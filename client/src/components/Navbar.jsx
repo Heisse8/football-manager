@@ -1,60 +1,78 @@
-import { Link, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 export default function Navbar() {
   const navigate = useNavigate();
+  const [menuOpen, setMenuOpen] = useState(false);
 
-  const handleLogout = () => {
+  const logout = () => {
     localStorage.removeItem("token");
     navigate("/login");
   };
 
-  return (
-    <nav className="bg-black/80 backdrop-blur-md text-white px-8 py-4 flex justify-between items-center shadow-lg">
+  const linkClass = ({ isActive }) =>
+    `px-3 py-2 rounded transition ${
+      isActive
+        ? "bg-yellow-500 text-black font-semibold"
+        : "hover:bg-gray-700"
+    }`;
 
-      {/* LOGO / TITEL LINKS */}
-      <div className="text-xl font-bold tracking-wide">
-        ⚽ Football Manager
+  return (
+    <nav className="bg-black border-b border-gray-800 px-6 py-4 flex justify-between items-center">
+
+      {/* Logo / Titel */}
+      <div className="text-xl font-bold text-yellow-400">
+        Football Manager
       </div>
 
-      {/* NAVIGATION RECHTS */}
-      <div className="flex items-center space-x-6 text-sm font-medium">
+      {/* Desktop Menü */}
+      <div className="hidden md:flex items-center gap-4 text-sm">
 
-        <Link to="/" className="hover:text-green-400 transition">
-          Dashboard
-        </Link>
+        <NavLink to="/" className={linkClass}>Dashboard</NavLink>
+        <NavLink to="/team" className={linkClass}>Team</NavLink>
+        <NavLink to="/kalender" className={linkClass}>Kalender</NavLink>
+        <NavLink to="/training" className={linkClass}>Training</NavLink>
+        <NavLink to="/transfermarkt" className={linkClass}>Transfermarkt</NavLink>
+        <NavLink to="/finanzen" className={linkClass}>Finanzen</NavLink>
 
-        <Link to="/team" className="hover:text-green-400 transition">
-          Teammanagement
-        </Link>
-
-        <Link to="/kalender" className="hover:text-green-400 transition">
-          Kalender
-        </Link>
-
-        <Link to="/tabelle" className="hover:text-green-400 transition">
-          Tabelle
-        </Link>
-
-        <Link to="/training" className="hover:text-green-400 transition">
-          Training
-        </Link>
-
-        <Link to="/transfermarkt" className="hover:text-green-400 transition">
-          Transfermarkt
-        </Link>
-
-        <Link to="/finanzen" className="hover:text-green-400 transition">
-          Finanzen
-        </Link>
-
+        {/* Logout */}
         <button
-          onClick={handleLogout}
-          className="bg-red-600 hover:bg-red-500 px-4 py-2 rounded-lg transition font-semibold"
+          onClick={logout}
+          className="ml-4 bg-red-600 px-3 py-2 rounded hover:bg-red-500"
         >
           Logout
         </button>
-
       </div>
+
+      {/* Mobile Button */}
+      <div className="md:hidden">
+        <button
+          onClick={() => setMenuOpen(!menuOpen)}
+          className="text-white text-2xl"
+        >
+          ☰
+        </button>
+      </div>
+
+      {/* Mobile Menü */}
+      {menuOpen && (
+        <div className="absolute top-16 left-0 w-full bg-black border-t border-gray-800 flex flex-col p-4 gap-3 md:hidden z-50">
+
+          <NavLink to="/" className={linkClass} onClick={() => setMenuOpen(false)}>Dashboard</NavLink>
+          <NavLink to="/team" className={linkClass} onClick={() => setMenuOpen(false)}>Team</NavLink>
+          <NavLink to="/kalender" className={linkClass} onClick={() => setMenuOpen(false)}>Kalender</NavLink>
+          <NavLink to="/training" className={linkClass} onClick={() => setMenuOpen(false)}>Training</NavLink>
+          <NavLink to="/transfermarkt" className={linkClass} onClick={() => setMenuOpen(false)}>Transfermarkt</NavLink>
+          <NavLink to="/finanzen" className={linkClass} onClick={() => setMenuOpen(false)}>Finanzen</NavLink>
+
+          <button
+            onClick={logout}
+            className="bg-red-600 px-3 py-2 rounded hover:bg-red-500 mt-2"
+          >
+            Logout
+          </button>
+        </div>
+      )}
     </nav>
   );
 }
