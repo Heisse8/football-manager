@@ -7,21 +7,19 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    const clubId = localStorage.getItem("clubId");
 
-    if (token && clubId) {
-      setUser({ token, clubId });
+    if (token) {
+      setUser({ token });
     }
   }, []);
 
   const login = (data) => {
     localStorage.setItem("token", data.token);
-    localStorage.setItem("clubId", data.clubId);
-    setUser({ token: data.token, clubId: data.clubId });
+    setUser({ token: data.token });
   };
 
   const logout = () => {
-    localStorage.clear();
+    localStorage.removeItem("token");
     setUser(null);
   };
 
