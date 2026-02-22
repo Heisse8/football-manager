@@ -15,34 +15,23 @@ export default function Kalender() {
         const token = localStorage.getItem("token");
         if (!token) return;
 
-        // Team laden
         const teamRes = await fetch(
           `${import.meta.env.VITE_API_URL}/api/team`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
-        if (!teamRes.ok) {
-          console.error("Team API Fehler");
-          return;
-        }
-
+        if (!teamRes.ok) return;
         const teamData = await teamRes.json();
         setMyTeamId(teamData._id);
 
-        // Matches laden
         const matchRes = await fetch(
           `${import.meta.env.VITE_API_URL}/api/match/my-month?year=${year}&month=${month}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
-        if (!matchRes.ok) {
-          console.error("Match API Fehler");
-          return;
-        }
-
+        if (!matchRes.ok) return;
         const matchData = await matchRes.json();
         setMatches(Array.isArray(matchData) ? matchData : []);
-
       } catch (err) {
         console.error("Kalender Fehler:", err);
       }
@@ -52,6 +41,14 @@ export default function Kalender() {
   }, [year, month]);
 
   const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+  // 🔥 Wochentag des 1. Tages (Montag = 0)
+  const firstDay = new Date(year, month, 1).getDay();
+  const startOffset = firstDay === 0 ? 6 : firstDay - 1;
+
+  const totalCells = startOffset + daysInMonth;
+  const rows = Math.ceil(totalCells / 7);
+  const totalCalendarCells = rows * 7;
 
   const prevMonth = () => {
     setCurrentDate(new Date(year, month - 1, 1));
@@ -70,53 +67,70 @@ export default function Kalender() {
   };
 
   return (
-    <div className="p-8 bg-gray-100 min-h-screen">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white p-8">
 
-      <div className="flex justify-between items-center mb-6">
+      {/* Monatsnavigation */}
+      <div className="flex justify-between items-center mb-8">
         <button
           onClick={prevMonth}
-          className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400"
+          className="bg-gray-800 px-4 py-2 rounded hover:bg-gray-700"
         >
           ◀
         </button>
 
-        <h1 className="text-3xl font-bold text-black">
+        <h1 className="text-3xl font-bold">
           {currentDate.toLocaleString("de-DE", { month: "long" })} {year}
         </h1>
 
         <button
           onClick={nextMonth}
-          className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400"
+          className="bg-gray-800 px-4 py-2 rounded hover:bg-gray-700"
         >
           ▶
         </button>
       </div>
 
-      <div className="grid grid-cols-7 gap-2 mb-2 text-center font-bold text-black">
+      {/* Wochentage */}
+      <div className="grid grid-cols-7 gap-3 mb-3 text-center font-semibold text-gray-400">
         {["Mo","Di","Mi","Do","Fr","Sa","So"].map(day => (
           <div key={day}>{day}</div>
         ))}
       </div>
 
-      <div className="grid grid-cols-7 gap-2">
-        {Array.from({ length: daysInMonth }, (_, i) => i + 1).map(day => {
+      {/* Kalender Grid */}
+      <div className="grid grid-cols-7 gap-3">
 
-          const dayMatches = getMatchesForDay(day);
+        {Array.from({ length: totalCalendarCells }, (_, index) => {
+
+          const dayNumber = index - startOffset + 1;
+
+          if (index < startOffset || dayNumber > daysInMonth) {
+            return (
+              <div
+                key={index}
+                className="bg-gray-900 border border-gray-800 rounded-lg min-h-[130px]"
+              />
+            );
+          }
+
+          const dayMatches = getMatchesForDay(dayNumber);
 
           const isToday =
-            today.getDate() === day &&
+            today.getDate() === dayNumber &&
             today.getMonth() === month &&
             today.getFullYear() === year;
 
           return (
             <div
-              key={day}
-              className={`bg-white border rounded p-2 min-h-[120px] relative ${
-                isToday ? "border-yellow-500 border-2" : "border-gray-300"
+              key={index}
+              className={`bg-gray-800 rounded-lg p-3 min-h-[130px] border ${
+                isToday
+                  ? "border-yellow-400"
+                  : "border-gray-700"
               }`}
             >
-              <div className="font-bold text-black mb-2">
-                {day}
+              <div className="font-bold mb-2 text-sm text-gray-300">
+                {dayNumber}
               </div>
 
               {dayMatches.map(match => {
@@ -133,22 +147,28 @@ export default function Kalender() {
                 return (
                   <div
                     key={match._id}
-                    className="text-xs p-1 mb-1 border rounded bg-gray-50 text-black relative"
+                    className="text-xs p-2 mb-2 rounded bg-gray-900 border border-gray-700 relative"
                   >
+                    {/* Heim/Auswärts Icon */}
                     <div className="absolute top-1 right-1 text-xs">
                       {isHome ? "🏠" : "✈"}
                     </div>
 
-                    <div className="font-semibold">
+                    {/* Wettbewerb */}
+                    <div className="font-semibold text-gray-300">
                       {match.competition === "LEAGUE"
                         ? "Liga"
                         : "Pokal"}
                     </div>
 
-                    <div>vs {opponent}</div>
+                    {/* Gegner */}
+                    <div className="text-gray-400">
+                      vs {opponent}
+                    </div>
 
+                    {/* Ergebnis */}
                     {match.played && (
-                      <div className="mt-1 font-bold">
+                      <div className="mt-1 font-bold text-white">
                         {match.homeGoals} : {match.awayGoals}
                       </div>
                     )}
