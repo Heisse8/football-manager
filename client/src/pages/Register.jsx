@@ -1,40 +1,48 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 export default function Register() {
+  const navigate = useNavigate();
+
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [message, setMessage] = useState("");
 
   const handleRegister = async (e) => {
     e.preventDefault();
+    setMessage("");
 
-    const res = await fetch(
-      `${import.meta.env.VITE_API_URL}/api/auth/register`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, email, password })
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/auth/register`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, email, password })
+        }
+      );
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setMessage(data.message || "Fehler bei der Registrierung.");
+        return;
       }
-    );
 
-    let data;
+      setMessage(
+        "Registrierung erfolgreich ✅ Bitte bestätige deine Email, um fortzufahren."
+      );
 
-try {
-  data = await res.json();
-} catch (err) {
-  const text = await res.text();
-  console.error("Server raw response:", text);
-  alert("Serverfehler – bitte später erneut versuchen.");
-  return;
-}
+      // Optional: nach 3 Sekunden zur Login-Seite weiterleiten
+      setTimeout(() => {
+        navigate("/login");
+      }, 3000);
 
-if (!res.ok) {
-  alert(data.message || "Fehler bei Registrierung");
-  return;
-}
-
-alert(data.message);
+    } catch (err) {
+      console.error(err);
+      setMessage("Serverfehler. Bitte später erneut versuchen.");
+    }
   };
 
   return (
@@ -47,6 +55,7 @@ alert(data.message);
 
         <input
           placeholder="Username"
+          required
           className="w-full p-2 bg-gray-800 rounded"
           onChange={(e) => setUsername(e.target.value)}
         />
@@ -54,6 +63,7 @@ alert(data.message);
         <input
           type="email"
           placeholder="Email"
+          required
           className="w-full p-2 bg-gray-800 rounded"
           onChange={(e) => setEmail(e.target.value)}
         />
@@ -61,6 +71,7 @@ alert(data.message);
         <input
           type="password"
           placeholder="Passwort"
+          required
           className="w-full p-2 bg-gray-800 rounded"
           onChange={(e) => setPassword(e.target.value)}
         />
@@ -68,6 +79,12 @@ alert(data.message);
         <button className="w-full bg-green-600 p-2 rounded hover:bg-green-500">
           Registrieren
         </button>
+
+        {message && (
+          <div className="text-sm text-center mt-3 text-yellow-400">
+            {message}
+          </div>
+        )}
 
         <p className="text-sm text-center mt-4">
           Bereits einen Account?{" "}
