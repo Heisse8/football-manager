@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
-import { NavLink } from "react-router-dom";
 import bgImage from "../assets/manager-office.jpg";
 
 export default function Dashboard() {
-  const teamName = "FC Manager";
+
+  const [teamName, setTeamName] = useState("");
+  const [table, setTable] = useState([]);
+
   const budget = 12500000;
 
   const lastMatch = {
@@ -22,16 +24,49 @@ export default function Dashboard() {
     weeks: 3,
   };
 
-  const table = [
-    "FC Bayern", "Borussia Dortmund", "RB Leipzig",
-    "Bayer Leverkusen", "Eintracht Frankfurt",
-    "VfB Stuttgart", teamName,
-    "Union Berlin", "SC Freiburg",
-    "TSG Hoffenheim", "Werder Bremen",
-    "FC Augsburg", "Mainz 05",
-    "Borussia M'Gladbach", "VfL Wolfsburg",
-    "1. FC Köln", "Bochum", "Darmstadt"
-  ];
+  useEffect(() => {
+    const fetchTeam = async () => {
+      try {
+        const res = await fetch("https://football-manager-z7rr.onrender.com/api/team");
+        const data = await res.json();
+
+        if (data.name) {
+          setTeamName(data.name);
+        }
+
+        if (data.leagueTable) {
+          setTable(data.leagueTable);
+        } else {
+          // Fallback Tabelle
+          setTable([
+            "FC Bayern",
+            "Borussia Dortmund",
+            "RB Leipzig",
+            "Bayer Leverkusen",
+            "Eintracht Frankfurt",
+            "VfB Stuttgart",
+            data.name || "Dein Team",
+            "Union Berlin",
+            "SC Freiburg",
+            "TSG Hoffenheim",
+            "Werder Bremen",
+            "FC Augsburg",
+            "Mainz 05",
+            "Borussia M'Gladbach",
+            "VfL Wolfsburg",
+            "1. FC Köln",
+            "Bochum",
+            "Darmstadt"
+          ]);
+        }
+
+      } catch (err) {
+        console.error("Fehler beim Laden des Teams:", err);
+      }
+    };
+
+    fetchTeam();
+  }, []);
 
   const newsPool = [
     {
@@ -51,52 +86,11 @@ export default function Dashboard() {
       sub: `${injury.weeks} Wochen Pause`,
       text: `Verletzung im Training bestätigt.`,
       image: "https://picsum.photos/1200/600?random=3",
-    },
-    {
-      headline: "Sponsor erhöht Budget!",
-      sub: "Neue Millionen fließen",
-      text: "Ein neuer Hauptsponsor sorgt für frische Einnahmen.",
-      image: "https://picsum.photos/1200/600?random=4",
-    },
-    {
-      headline: "Gerüchte um Top‑Talent",
-      sub: "Scouts arbeiten intensiv",
-      text: "Ein junges Talent steht auf der Wunschliste.",
-      image: "https://picsum.photos/1200/600?random=5",
-    },
+    }
   ];
 
-  const [mainNews, setMainNews] = useState(null);
-  const [sideNews, setSideNews] = useState([]);
-
-  useEffect(() => {
-    const now = new Date();
-    const hour = now.getHours();
-
-    let slot = null;
-    if (hour >= 6 && hour < 12) slot = "morning";
-    else if (hour >= 12 && hour < 18) slot = "noon";
-    else if (hour >= 18) slot = "evening";
-    else slot = "night";
-
-    const savedSlot = localStorage.getItem("newsSlot");
-
-    if (savedSlot !== slot) {
-      const shuffled = [...newsPool].sort(() => 0.5 - Math.random());
-      const main = shuffled[0];
-      const small = shuffled.slice(1, 4);
-
-      setMainNews(main);
-      setSideNews(small);
-
-      localStorage.setItem("newsSlot", slot);
-      localStorage.setItem("mainNews", JSON.stringify(main));
-      localStorage.setItem("sideNews", JSON.stringify(small));
-    } else {
-      setMainNews(JSON.parse(localStorage.getItem("mainNews")));
-      setSideNews(JSON.parse(localStorage.getItem("sideNews")));
-    }
-  }, []);
+  const [mainNews] = useState(newsPool[0]);
+  const [sideNews] = useState(newsPool.slice(1));
 
   return (
     <div className="relative min-h-screen text-white overflow-hidden">
@@ -145,7 +139,7 @@ export default function Dashboard() {
             {mainNews && (
               <>
                 <div className="bg-red-600 px-6 py-3 font-extrabold uppercase animate-pulse">
-                  BREAKING – BILD
+                  BREAKING – MANAGER NEWS
                 </div>
 
                 <div className="relative">
@@ -167,8 +161,7 @@ export default function Dashboard() {
               </>
             )}
 
-            {/* 3 KLEINE NEWS */}
-            <div className="grid grid-cols-3 gap-4 p-6 bg-black/30">
+            <div className="grid grid-cols-2 gap-4 p-6 bg-black/30">
               {sideNews.map((news, i) => (
                 <div key={i} className="bg-black/50 rounded-lg overflow-hidden hover:scale-105 transition">
                   <img src={news.image} className="h-32 w-full object-cover" />
