@@ -7,9 +7,6 @@ const path = require("path");
 
 const app = express();
 
-// ===============================
-// CORS (nur lokal nötig)
-// ===============================
 app.use(cors({
   origin: ["http://localhost:5173"],
   credentials: true
@@ -17,9 +14,7 @@ app.use(cors({
 
 app.use(express.json());
 
-// ===============================
 // API ROUTES
-// ===============================
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/team", require("./routes/team"));
 app.use("/api/league", require("./routes/league"));
@@ -27,30 +22,20 @@ app.use("/api/schedule", require("./routes/schedule"));
 app.use("/api/season", require("./routes/season"));
 app.use("/api/match", require("./routes/match"));
 
-// ===============================
-// FRONTEND STATIC SERVE
-// ===============================
+// 🔥 WICHTIG: client/dist (nicht game/dist!)
+const clientPath = path.join(__dirname, "../client/dist");
 
-// React Build Ordner
-app.use(express.static(path.join(__dirname, "../client/dist")));
+app.use(express.static(clientPath));
 
-// Express 5 kompatibler Catch-All
 app.use((req, res) => {
-  res.sendFile(
-    path.join(__dirname, "../client/dist/index.html")
-  );
+  res.sendFile(path.join(clientPath, "index.html"));
 });
 
-// ===============================
-// DATABASE CONNECT
-// ===============================
+// DB
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("✅ MongoDB verbunden"))
   .catch(err => console.error("❌ MongoDB Fehler:", err));
 
-// ===============================
-// SERVER START
-// ===============================
 const PORT = process.env.PORT || 10000;
 
 app.listen(PORT, () => {
