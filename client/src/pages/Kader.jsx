@@ -1,112 +1,108 @@
 import { useEffect, useState } from "react";
 
-const formations = {
-  "4-4-2": [
-    { role: "GK", x: 525, y: 600 },
-    { role: "LB", x: 150, y: 480 },
-    { role: "CB", x: 375, y: 480 },
-    { role: "CB", x: 675, y: 480 },
-    { role: "RB", x: 900, y: 480 },
-    { role: "LM", x: 150, y: 340 },
-    { role: "CM", x: 425, y: 340 },
-    { role: "CM", x: 625, y: 340 },
-    { role: "RM", x: 900, y: 340 },
-    { role: "ST", x: 425, y: 180 },
-    { role: "ST", x: 625, y: 180 }
-  ]
-};
+export default function Kalender() {
+  const [matches, setMatches] = useState([]);
+  const [currentDate, setCurrentDate] = useState(new Date());
 
-export default function Kader() {
-  const [team, setTeam] = useState(null);
-  const [lineup, setLineup] = useState({});
-  const currentFormation = "4-4-2";
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth();
 
+  // 🔄 Matches laden bei Monatswechsel
   useEffect(() => {
-    fetch("https://football-manager-z7rr.onrender.com/api/team")
-      .then(res => res.json())
-      .then(data => {
-        const loadedTeam = data[0];
-        setTeam(loadedTeam);
+    const fetchMatches = async () => {
+      const token = localStorage.getItem("token");
 
-        const initialLineup = {};
-        loadedTeam.players.slice(0, 11).forEach((player, i) => {
-          initialLineup[i] = player._id;
-        });
-        setLineup(initialLineup);
-      });
-  }, []);
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/match/my-month?year=${year}&month=${month}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
 
-  if (!team) return <div className="text-white">Lade Team...</div>;
+      const data = await res.json();
+      setMatches(data);
+    };
 
-  const formation = formations[currentFormation];
+    fetchMatches();
+  }, [year, month]);
+
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+  const getMatchesForDay = (day) => {
+    return matches.filter(match => {
+      const matchDate = new Date(match.date);
+      return matchDate.getDate() === day;
+    });
+  };
+
+  const prevMonth = () => {
+    setCurrentDate(new Date(year, month - 1, 1));
+  };
+
+  const nextMonth = () => {
+    setCurrentDate(new Date(year, month + 1, 1));
+  };
 
   return (
-    <div className="flex justify-center">
-      <div className="w-full max-w-[1100px] aspect-[105/68] relative">
+    <div className="p-8 text-white">
 
-        <svg
-          viewBox="0 0 1050 680"
-          className="absolute inset-0 w-full h-full rounded-xl shadow-2xl"
+      {/* 🔥 Monats-Navigation */}
+      <div className="flex justify-between items-center mb-6">
+        <button
+          onClick={prevMonth}
+          className="bg-gray-700 px-4 py-2 rounded hover:bg-gray-600"
         >
-          {/* Rasen */}
-          <rect width="1050" height="680" fill="#1f7a34" />
+          ◀
+        </button>
 
-          {/* Außenlinie */}
-          <rect
-            x="10"
-            y="10"
-            width="1030"
-            height="660"
-            fill="none"
-            stroke="white"
-            strokeWidth="6"
-            rx="20"
-          />
+        <h1 className="text-3xl font-bold">
+          {currentDate.toLocaleString("de-DE", { month: "long" })} {year}
+        </h1>
 
-          {/* Mittellinie */}
-          <line x1="10" y1="340" x2="1040" y2="340" stroke="white" strokeWidth="4" />
+        <button
+          onClick={nextMonth}
+          className="bg-gray-700 px-4 py-2 rounded hover:bg-gray-600"
+        >
+          ▶
+        </button>
+      </div>
 
-          {/* Mittelkreis */}
-          <circle cx="525" cy="340" r="90" fill="none" stroke="white" strokeWidth="4" />
-          <circle cx="525" cy="340" r="6" fill="white" />
-
-          {/* Strafräume */}
-          <rect x="325" y="10" width="400" height="150" fill="none" stroke="white" strokeWidth="4" />
-          <rect x="325" y="520" width="400" height="150" fill="none" stroke="white" strokeWidth="4" />
-
-          {/* 5er */}
-          <rect x="425" y="10" width="200" height="70" fill="none" stroke="white" strokeWidth="4" />
-          <rect x="425" y="600" width="200" height="70" fill="none" stroke="white" strokeWidth="4" />
-
-          {/* Elfmeterpunkte */}
-          <circle cx="525" cy="150" r="5" fill="white" />
-          <circle cx="525" cy="530" r="5" fill="white" />
-
-        </svg>
-
-        {/* ================= SPIELER ================= */}
-        {formation.map((slot, index) => {
-          const player = team.players.find(p => p._id === lineup[index]);
+      {/* 📅 Kalender Grid */}
+      <div className="grid grid-cols-7 gap-4">
+        {Array.from({ length: daysInMonth }, (_, i) => i + 1).map(day => {
+          const dayMatches = getMatchesForDay(day);
 
           return (
             <div
-              key={index}
-              className="absolute flex flex-col items-center"
-              style={{
-                left: `${(slot.x / 1050) * 100}%`,
-                top: `${(slot.y / 680) * 100}%`,
-                transform: "translate(-50%, -50%)"
-              }}
+              key={day}
+              className="bg-black/50 p-3 rounded-lg min-h-[120px]"
             >
-              <div className="w-20 h-20 bg-gray-200 flex items-center justify-center rounded-xl shadow-lg border border-gray-300">
-                <span className="text-2xl font-bold text-red-600">
-                  {index + 1}
-                </span>
-              </div>
+              <div className="font-bold mb-2">{day}</div>
 
-              <div className="mt-2 bg-black text-white text-xs px-3 py-1 rounded-full">
-                {player?.name}
-              </div>
+              {dayMatches.map(match => {
+                const isHome = match.homeTeam._id === match.myTeamId;
+
+                const opponent =
+                  match.homeTeam._id === match.myTeamId
+                    ? match.awayTeam.name
+                    : match.homeTeam.name;
+
+                return (
+                  <div
+                    key={match._id}
+                    className={`text-xs p-1 rounded mb-1 ${
+                      match.competition === "LEAGUE"
+                        ? "bg-blue-600"
+                        : "bg-red-600"
+                    }`}
+                  >
+                    {match.competition === "LEAGUE" ? "Liga" : "Pokal"}  
+                    {" vs "} {opponent}
+                  </div>
+                );
+              })}
             </div>
           );
         })}
