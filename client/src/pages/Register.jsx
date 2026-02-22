@@ -30,9 +30,7 @@ export default function Register() {
         return;
       }
 
-      setMessage(
-        "Registrierung erfolgreich ✅ Bitte bestätige deine Email."
-      );
+      setMessage("Registrierung erfolgreich ✅ Bitte bestätige deine Email.");
 
       setTimeout(() => {
         navigate("/login");
@@ -46,6 +44,12 @@ export default function Register() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white">
+
+      {/* 🔥 TEST HEADER – MUSS SICHTBAR SEIN */}
+      <h1 style={{ color: "red", fontSize: "32px", position: "absolute", top: 20 }}>
+        TEST REGISTER VERSION
+      </h1>
+
       <form
         onSubmit={handleRegister}
         className="bg-black/60 p-8 rounded-xl w-96 space-y-4"
