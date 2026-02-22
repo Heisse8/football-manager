@@ -9,28 +9,43 @@ export default function Kalender() {
   const month = currentDate.getMonth();
   const today = new Date();
 
-  // 🔥 Team + Matches laden
   useEffect(() => {
     const fetchData = async () => {
-      const token = localStorage.getItem("token");
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) return;
 
-      // Eigenes Team laden
-      const teamRes = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/team`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+        // Team laden
+        const teamRes = await fetch(
+          `${import.meta.env.VITE_API_URL}/api/team`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
 
-      const teamData = await teamRes.json();
-      setMyTeamId(teamData._id);
+        if (!teamRes.ok) {
+          console.error("Team API Fehler");
+          return;
+        }
 
-      // Matches laden
-      const matchRes = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/match/my-month?year=${year}&month=${month}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+        const teamData = await teamRes.json();
+        setMyTeamId(teamData._id);
 
-      const matchData = await matchRes.json();
-      setMatches(matchData);
+        // Matches laden
+        const matchRes = await fetch(
+          `${import.meta.env.VITE_API_URL}/api/match/my-month?year=${year}&month=${month}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        if (!matchRes.ok) {
+          console.error("Match API Fehler");
+          return;
+        }
+
+        const matchData = await matchRes.json();
+        setMatches(Array.isArray(matchData) ? matchData : []);
+
+      } catch (err) {
+        console.error("Kalender Fehler:", err);
+      }
     };
 
     fetchData();
@@ -48,6 +63,7 @@ export default function Kalender() {
 
   const getMatchesForDay = (day) => {
     return matches.filter(match => {
+      if (!match.date) return false;
       const d = new Date(match.date);
       return d.getDate() === day;
     });
@@ -56,7 +72,6 @@ export default function Kalender() {
   return (
     <div className="p-8 bg-gray-100 min-h-screen">
 
-      {/* Monatsnavigation */}
       <div className="flex justify-between items-center mb-6">
         <button
           onClick={prevMonth}
@@ -77,14 +92,12 @@ export default function Kalender() {
         </button>
       </div>
 
-      {/* Wochentage */}
       <div className="grid grid-cols-7 gap-2 mb-2 text-center font-bold text-black">
         {["Mo","Di","Mi","Do","Fr","Sa","So"].map(day => (
           <div key={day}>{day}</div>
         ))}
       </div>
 
-      {/* Kalender */}
       <div className="grid grid-cols-7 gap-2">
         {Array.from({ length: daysInMonth }, (_, i) => i + 1).map(day => {
 
@@ -102,14 +115,14 @@ export default function Kalender() {
                 isToday ? "border-yellow-500 border-2" : "border-gray-300"
               }`}
             >
-              {/* Tageszahl */}
               <div className="font-bold text-black mb-2">
                 {day}
               </div>
 
               {dayMatches.map(match => {
 
-                if (!match.homeTeam || !match.awayTeam || !myTeamId) return null;
+                if (!match.homeTeam || !match.awayTeam || !myTeamId)
+                  return null;
 
                 const isHome = match.homeTeam._id === myTeamId;
 
@@ -122,20 +135,18 @@ export default function Kalender() {
                     key={match._id}
                     className="text-xs p-1 mb-1 border rounded bg-gray-50 text-black relative"
                   >
-                    {/* Heim / Auswärts Icon */}
                     <div className="absolute top-1 right-1 text-xs">
                       {isHome ? "🏠" : "✈"}
                     </div>
 
-                    {/* Wettbewerb */}
                     <div className="font-semibold">
-                      {match.competition === "LEAGUE" ? "Liga" : "Pokal"}
+                      {match.competition === "LEAGUE"
+                        ? "Liga"
+                        : "Pokal"}
                     </div>
 
-                    {/* Gegner */}
                     <div>vs {opponent}</div>
 
-                    {/* Ergebnis */}
                     {match.played && (
                       <div className="mt-1 font-bold">
                         {match.homeGoals} : {match.awayGoals}
