@@ -4,13 +4,16 @@ import { useState, useEffect } from "react";
 export default function Navbar() {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [teamName, setTeamName] = useState("");
+  const [teamName, setTeamName] = useState(null);
 
   useEffect(() => {
     const fetchTeam = async () => {
       try {
         const token = localStorage.getItem("token");
-        if (!token) return;
+        if (!token) {
+          setTeamName(null);
+          return;
+        }
 
         const res = await fetch(
           `${import.meta.env.VITE_API_URL}/api/team`,
@@ -19,12 +22,22 @@ export default function Navbar() {
           }
         );
 
-        if (!res.ok) return;
+        if (!res.ok) {
+          setTeamName(null);
+          return;
+        }
 
         const data = await res.json();
-        setTeamName(data.name);
+
+        if (data && data.name) {
+          setTeamName(data.name);
+        } else {
+          setTeamName(null);
+        }
+
       } catch (err) {
-        console.error("Navbar Team Fehler:", err);
+        console.error("Navbar Fehler:", err);
+        setTeamName(null);
       }
     };
 
@@ -44,11 +57,11 @@ export default function Navbar() {
     }`;
 
   return (
-    <nav className="bg-black border-b border-gray-800 px-6 py-4 flex justify-between items-center">
+    <nav className="bg-black border-b border-gray-800 px-6 py-4 flex justify-between items-center relative">
 
       {/* 🔥 Teamname links */}
       <div className="text-xl font-bold text-yellow-400">
-        {teamName || "Lade Team..."}
+        {teamName ? teamName : "Kein Team"}
       </div>
 
       {/* Desktop Menü */}
