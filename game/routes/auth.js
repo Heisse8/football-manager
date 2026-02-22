@@ -1,65 +1,91 @@
 const express = require("express");
 const router = express.Router();
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const User = require("../models/User");
 
 /* =========================
-   REGISTER
+ REGISTER
 ========================= */
 
 router.post("/register", async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
-    if (!username || !password) {
-      return res.status(400).json({
-        message: "Username und Passwort erforderlich"
-      });
+    if (!username || !email || !password) {
+      return res.status(400).json({ message: "Alle Felder erforderlich" });
     }
 
-    // Demo-User (später mit MongoDB ersetzen)
-    return res.status(201).json({
-      message: "User erfolgreich registriert",
-      token: "demo-token",
-      clubId: "demo-club-id",
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: "User existiert bereits" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const newUser = new User({
+      username,
+      email,
+      password: hashedPassword
+    });
+
+    await newUser.save();
+
+    const token = jwt.sign(
+      { userId: newUser._id },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    res.status(201).json({
+      message: "Registrierung erfolgreich",
+      token,
       user: {
-        username,
-        email
+        id: newUser._id,
+        username: newUser.username
       }
     });
 
   } catch (error) {
-    console.error("Register Fehler:", error);
-    return res.status(500).json({
-      message: "Server Fehler"
-    });
+    res.status(500).json({ message: "Server Fehler" });
   }
 });
 
-
 /* =========================
-   LOGIN
+ LOGIN
 ========================= */
 
 router.post("/login", async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const { email, password } = req.body;
 
-    if (!username || !password) {
-      return res.status(400).json({
-        message: "Username und Passwort erforderlich"
-      });
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: "User nicht gefunden" });
     }
 
-    return res.json({
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Falsches Passwort" });
+    }
+
+    const token = jwt.sign(
+      { userId: user._id },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    res.json({
       message: "Login erfolgreich",
-      token: "demo-token",
-      clubId: "demo-club-id"
+      token,
+      user: {
+        id: user._id,
+        username: user.username
+      }
     });
 
   } catch (error) {
-    console.error("Login Fehler:", error);
-    return res.status(500).json({
-      message: "Server Fehler"
-    });
+    res.status(500).json({ message: "Server Fehler" });
   }
 });
 
