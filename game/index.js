@@ -15,6 +15,7 @@ const { startScheduler } = require("./engines/scheduler");
 const { generateSquad } = require("./utils/playerGenerator");
 
 const authRoutes = require("./routes/auth");
+const devRoutes = require("./routes/dev");
 
 const app = express();
 
@@ -24,6 +25,7 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use("/api/dev", devRoutes);
 
 /* =========================
    DATABASE
