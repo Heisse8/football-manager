@@ -9,9 +9,8 @@ export default function Register() {
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
 
-  const handleRegister = async (e) => {
-    e.preventDefault();
-    setMessage("");
+  const handleRegister = async () => {
+    setMessage("Button wurde geklickt...");
 
     try {
       const res = await fetch(
@@ -23,7 +22,7 @@ export default function Register() {
         }
       );
 
-      const text = await res.text(); // zeigt IMMER die Antwort
+      const text = await res.text();
       setMessage("Server Antwort: " + text);
 
     } catch (error) {
@@ -39,15 +38,11 @@ export default function Register() {
         TEST REGISTER VERSION
       </h1>
 
-      <form
-        onSubmit={handleRegister}
-        className="bg-black/60 p-8 rounded-xl w-96 space-y-4"
-      >
+      <div className="bg-black/60 p-8 rounded-xl w-96 space-y-4">
         <h2 className="text-2xl font-bold text-center">Registrieren</h2>
 
         <input
           placeholder="Username"
-          required
           className="w-full p-2 bg-gray-800 rounded"
           onChange={(e) => setUsername(e.target.value)}
         />
@@ -55,7 +50,6 @@ export default function Register() {
         <input
           type="email"
           placeholder="Email"
-          required
           className="w-full p-2 bg-gray-800 rounded"
           onChange={(e) => setEmail(e.target.value)}
         />
@@ -63,13 +57,13 @@ export default function Register() {
         <input
           type="password"
           placeholder="Passwort"
-          required
           className="w-full p-2 bg-gray-800 rounded"
           onChange={(e) => setPassword(e.target.value)}
         />
 
         <button
-          type="submit"
+          type="button"
+          onClick={handleRegister}
           className="w-full bg-green-600 p-2 rounded hover:bg-green-500"
         >
           Registrieren
@@ -87,7 +81,7 @@ export default function Register() {
             Jetzt einloggen
           </Link>
         </p>
-      </form>
+      </div>
     </div>
   );
 }
