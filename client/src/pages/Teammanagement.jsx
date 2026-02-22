@@ -104,3 +104,9 @@ setSquad(formatted);
 }, []);
 
 /* ================= REST BLEIBT UNVERÄNDERT ================= */
+return (
+  <div className="min-h-screen bg-gray-900 text-white p-10">
+    Teammanagement lädt...
+  </div>
+);
+}
