@@ -34,13 +34,12 @@ export default function Register() {
         "Registrierung erfolgreich ✅ Bitte bestätige deine Email."
       );
 
-      // Automatische Weiterleitung nach 3 Sekunden
       setTimeout(() => {
         navigate("/login");
       }, 3000);
 
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error(error);
       setMessage("Serverfehler. Bitte später erneut versuchen.");
     }
   };
@@ -76,7 +75,10 @@ export default function Register() {
           onChange={(e) => setPassword(e.target.value)}
         />
 
-        <button className="w-full bg-green-600 p-2 rounded hover:bg-green-500">
+        <button
+          type="submit"
+          className="w-full bg-green-600 p-2 rounded hover:bg-green-500"
+        >
           Registrieren
         </button>
 
