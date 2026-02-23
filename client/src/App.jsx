@@ -11,6 +11,7 @@ import CreateTeam from "./pages/CreateTeam";
 import VerifySuccess from "./pages/VerifySuccess";
 import Kalender from "./pages/Kalender";
 import StadiumPage from "./pages/StadiumPage"; // ✅ WICHTIG
+import MatchCenter from "./pages/MatchCenter";
 
 export default function App() {
   return (
@@ -49,6 +50,8 @@ export default function App() {
             path="/scouting"
             element={<div className="p-10">Scouting</div>}
           />
+
+          <Route path="/matchcenter" element={<MatchCenter />} />
 
           <Route
             path="/finanzen"

@@ -26,7 +26,7 @@ app.use("/api/schedule", require("./routes/schedule"));
 app.use("/api/season", require("./routes/season"));
 app.use("/api/match", require("./routes/match"));
 app.use("/api/player", require("./routes/player"));
-app.use("/api/stadium", require("./routes/stadium")); // ✅ FIXED
+app.use("/api/stadium", require("./routes/stadium"));
 
 // ================= FRONTEND (React Build) =================
 const clientPath = path.join(__dirname, "../client/dist");
@@ -38,13 +38,18 @@ app.use((req, res) => {
   res.sendFile(path.join(clientPath, "index.html"));
 });
 
-// ================= DATABASE =================
+// ================= DATABASE + SERVER START =================
 mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("✅ MongoDB verbunden"))
+  .then(() => {
+    console.log("✅ MongoDB verbunden");
+
+    // 🔥 Cron erst starten wenn DB bereit ist
+    require("./cron/matchScheduler");
+
+    const PORT = process.env.PORT || 10000;
+
+    app.listen(PORT, () => {
+      console.log(`🚀 Server läuft auf Port ${PORT}`);
+    });
+  })
   .catch(err => console.error("❌ MongoDB Fehler:", err));
-
-const PORT = process.env.PORT || 10000;
-
-app.listen(PORT, () => {
-  console.log(`🚀 Server läuft auf Port ${PORT}`);
-});

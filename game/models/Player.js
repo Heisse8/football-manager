@@ -17,7 +17,7 @@ const playerSchema = new mongoose.Schema({
     required: true
   },
 
-  // 🔥 Alter (wichtig für Entwicklung & Marktwert)
+  // 🔥 Alter
   age: {
     type: Number,
     required: true,
@@ -25,13 +25,13 @@ const playerSchema = new mongoose.Schema({
     max: 40
   },
 
-  // Mehrfachpositionen (z.B. ["CM","CDM"])
+  // Positionen
   positions: {
     type: [String],
     required: true
   },
 
-  // ⭐ Aktuelle Stärke (0 – 5 in 0.5 Schritten)
+  // Stärke
   stars: {
     type: Number,
     required: true,
@@ -39,7 +39,6 @@ const playerSchema = new mongoose.Schema({
     max: 5
   },
 
-  // ⭐ Maximales Potenzial (z.B. 3.5 möglich)
   potential: {
     type: Number,
     min: 0,
@@ -56,7 +55,8 @@ const playerSchema = new mongoose.Schema({
   physical: { type: Number, min: 0, max: 99 },
   mentality: { type: Number, min: 0, max: 99 },
 
-  // Fitness & Moral (wichtig für Match Engine)
+  // ================= MATCH ZUSTAND =================
+
   fitness: {
     type: Number,
     min: 0,
@@ -71,12 +71,24 @@ const playerSchema = new mongoose.Schema({
     default: 70
   },
 
-  injured: {
-    type: Boolean,
-    default: false
+  // 🔥 NEUES VERLETZUNGSSYSTEM
+
+  injuredUntil: {
+    type: Date,
+    default: null
   },
 
-  injuryDays: {
+  suspendedUntil: {
+    type: Date,
+    default: null
+  },
+
+  yellowCards: {
+    type: Number,
+    default: 0
+  },
+
+  redCards: {
     type: Number,
     default: 0
   },
@@ -98,7 +110,7 @@ const playerSchema = new mongoose.Schema({
     default: null
   },
 
-  // ================= ZUGEHÖRIGES TEAM =================
+  // ================= TEAM =================
 
   team: {
     type: mongoose.Schema.Types.ObjectId,

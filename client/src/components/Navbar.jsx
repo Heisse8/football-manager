@@ -26,7 +26,6 @@ export default function Navbar() {
 
         const data = await res.json();
         setTeamName(data?.name || null);
-
       } catch (err) {
         console.error("Navbar Fehler:", err);
         setTeamName(null);
@@ -63,10 +62,11 @@ export default function Navbar() {
         <NavLink to="/" className={linkClass}>Dashboard</NavLink>
         <NavLink to="/team" className={linkClass}>Team</NavLink>
         <NavLink to="/kalender" className={linkClass}>Kalender</NavLink>
+        <NavLink to="/matchcenter" className={linkClass}>Spieltag</NavLink>
         <NavLink to="/training" className={linkClass}>Training</NavLink>
         <NavLink to="/transfermarkt" className={linkClass}>Transfermarkt</NavLink>
         <NavLink to="/finanzen" className={linkClass}>Finanzen</NavLink>
-        <NavLink to="/stadium" className={linkClass}>Stadion</NavLink> {/* 🔥 NEU */}
+        <NavLink to="/stadium" className={linkClass}>Stadion</NavLink>
 
         <button
           onClick={logout}
@@ -93,10 +93,11 @@ export default function Navbar() {
           <NavLink to="/" className={linkClass} onClick={() => setMenuOpen(false)}>Dashboard</NavLink>
           <NavLink to="/team" className={linkClass} onClick={() => setMenuOpen(false)}>Team</NavLink>
           <NavLink to="/kalender" className={linkClass} onClick={() => setMenuOpen(false)}>Kalender</NavLink>
+          <NavLink to="/matchcenter" className={linkClass} onClick={() => setMenuOpen(false)}>Spieltag</NavLink>
           <NavLink to="/training" className={linkClass} onClick={() => setMenuOpen(false)}>Training</NavLink>
           <NavLink to="/transfermarkt" className={linkClass} onClick={() => setMenuOpen(false)}>Transfermarkt</NavLink>
           <NavLink to="/finanzen" className={linkClass} onClick={() => setMenuOpen(false)}>Finanzen</NavLink>
-          <NavLink to="/stadium" className={linkClass} onClick={() => setMenuOpen(false)}>Stadion</NavLink> {/* 🔥 NEU */}
+          <NavLink to="/stadium" className={linkClass} onClick={() => setMenuOpen(false)}>Stadion</NavLink>
 
           <button
             onClick={logout}
