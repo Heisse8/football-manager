@@ -6,121 +6,72 @@ export default function CreateTeam() {
 
   const [name, setName] = useState("");
   const [shortName, setShortName] = useState("");
-  const [league, setLeague] = useState("Bundesliga");
-  const [country, setCountry] = useState("Deutschland");
-  const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleCreateTeam = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     setLoading(true);
-    setMessage("");
 
-    try {
-      const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token");
 
-      const res = await fetch("/api/team/create", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          name,
-          shortName,
-          league,
-          country
-        })
-      });
+    const res = await fetch("/api/team/create", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        name,
+        shortName
+      })
+    });
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        setMessage(data.message || "Fehler beim Erstellen des Teams");
-        setLoading(false);
-        return;
-      }
-
-      setMessage("Team erfolgreich erstellt ⚽");
-
-      setTimeout(() => {
-        navigate("/");
-      }, 2000);
-
-    } catch (err) {
-      setMessage("Serverfehler");
+    if (res.ok) {
+      navigate("/");
     }
 
     setLoading(false);
   };
 
   return (
-    <div
-      className="min-h-screen flex items-center justify-center bg-cover bg-center"
-      style={{ backgroundImage: "url('/stadium.jpg')" }}
-    >
-      <div className="bg-black/70 backdrop-blur-md p-8 rounded-2xl shadow-2xl w-full max-w-md text-white">
-        <h2 className="text-3xl font-bold text-center mb-6">
-          Team erstellen ⚽
-        </h2>
+    <div className="min-h-screen bg-gray-900 text-white flex justify-center items-center">
+      <form
+        onSubmit={handleSubmit}
+        className="bg-black/40 p-8 rounded-xl w-[500px] space-y-6"
+      >
+        <h2 className="text-2xl font-bold">Team erstellen</h2>
 
-        <div className="space-y-4">
+        {/* Name */}
+        <input
+          type="text"
+          maxLength={21}
+          required
+          placeholder="Teamname (max 21 Zeichen)"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className="w-full p-3 bg-gray-800 rounded"
+        />
 
-          <input
-            type="text"
-            placeholder="Teamname"
-            className="w-full p-3 rounded-lg bg-gray-800 focus:ring-2 focus:ring-green-500 outline-none"
-            onChange={(e) => setName(e.target.value)}
-          />
+        {/* Kürzel */}
+        <input
+          type="text"
+          maxLength={3}
+          required
+          placeholder="Kürzel (3 Buchstaben)"
+          value={shortName}
+          onChange={(e) =>
+            setShortName(e.target.value.toUpperCase())
+          }
+          className="w-full p-3 bg-gray-800 rounded uppercase"
+        />
 
-          <input
-            type="text"
-            placeholder="Kürzel (z.B. FCB)"
-            className="w-full p-3 rounded-lg bg-gray-800 focus:ring-2 focus:ring-green-500 outline-none"
-            onChange={(e) => setShortName(e.target.value)}
-          />
-
-          <select
-            value={league}
-            onChange={(e) => setLeague(e.target.value)}
-            className="w-full p-3 rounded-lg bg-gray-800"
-          >
-            <option>Bundesliga</option>
-            <option>2. Bundesliga</option>
-            <option>Premier League</option>
-            <option>La Liga</option>
-          </select>
-
-          <select
-            value={country}
-            onChange={(e) => setCountry(e.target.value)}
-            className="w-full p-3 rounded-lg bg-gray-800"
-          >
-            <option>Deutschland</option>
-            <option>England</option>
-            <option>Spanien</option>
-            <option>Italien</option>
-          </select>
-
-          <button
-            onClick={handleCreateTeam}
-            disabled={loading}
-            className="w-full bg-green-600 hover:bg-green-500 transition p-3 rounded-lg font-semibold flex justify-center items-center"
-          >
-            {loading ? (
-              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-            ) : (
-              "Team erstellen"
-            )}
-          </button>
-
-          {message && (
-            <div className="text-center text-sm mt-3 text-yellow-400">
-              {message}
-            </div>
-          )}
-
-        </div>
-      </div>
+        <button
+          disabled={loading}
+          className="w-full bg-green-600 py-3 rounded hover:bg-green-500"
+        >
+          {loading ? "Erstelle..." : "Team erstellen"}
+        </button>
+      </form>
     </div>
   );
 }

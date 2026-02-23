@@ -11,20 +11,24 @@ const matchSchema = new mongoose.Schema({
     ref: "Team",
     required: true
   },
-  competition: {
-    type: String, // LEAGUE oder CUP
+  league: {
+    type: String,
     required: true
   },
-  league: String,
-  country: String,
-  matchday: Number,
-  round: Number,
-  date: Date,
+  round: {
+    type: Number,
+    required: true
+  },
+  date: {
+    type: Date,
+    required: true
+  },
   played: {
     type: Boolean,
     default: false
-  }
-}, { timestamps: true });
+  },
+  homeGoals: Number,
+  awayGoals: Number
+});
 
-module.exports =
-  mongoose.models.Match || mongoose.model("Match", matchSchema);
+module.exports = mongoose.model("Match", matchSchema);
