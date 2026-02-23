@@ -17,7 +17,7 @@ export default function Dashboard() {
         const token = localStorage.getItem("token");
 
         if (!token) {
-          setLoading(false);
+          navigate("/login");
           return;
         }
 
@@ -28,20 +28,27 @@ export default function Dashboard() {
           },
         });
 
-        // ❗ Wenn kein Team existiert → direkt weiterleiten
         if (!teamRes.ok) {
           navigate("/create-team");
           return;
         }
 
         const teamData = await teamRes.json();
+
+        // ❗ Falls Backend null oder leer zurückgibt
+        if (!teamData || !teamData._id) {
+          navigate("/create-team");
+          return;
+        }
+
         setTeam(teamData);
 
         // 🔹 Liga laden
-        fetch(`/api/league/${teamData.league}`)
-          .then((res) => res.json())
-          .then((data) => setLeagueTeams(data))
-          .catch(() => setLeagueTeams([]));
+        const leagueRes = await fetch(`/api/league/${teamData.league}`);
+        if (leagueRes.ok) {
+          const leagueData = await leagueRes.json();
+          setLeagueTeams(leagueData);
+        }
 
       } catch (err) {
         console.error("Dashboard Fehler:", err);
@@ -63,7 +70,6 @@ export default function Dashboard() {
 
   if (!team) return null;
 
-  // 🔥 Sortierung
   const sortedLeague = [...leagueTeams].sort((a, b) => {
     if (b.points !== a.points) return b.points - a.points;
 
@@ -126,7 +132,7 @@ export default function Dashboard() {
                       {index + 1}. {club.name}
                     </span>
                     <span>
-                      {club.points} P
+                      {club.points || 0} P
                     </span>
                   </div>
                 );
