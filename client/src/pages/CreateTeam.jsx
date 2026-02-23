@@ -41,7 +41,6 @@ export default function CreateTeam() {
       >
         <h2 className="text-2xl font-bold">Team erstellen</h2>
 
-        {/* Name */}
         <input
           type="text"
           maxLength={21}
@@ -52,7 +51,6 @@ export default function CreateTeam() {
           className="w-full p-3 bg-gray-800 rounded"
         />
 
-        {/* Kürzel */}
         <input
           type="text"
           maxLength={3}
