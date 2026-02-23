@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import bgImage from "../assets/manager-office.jpg";
 
 export default function Dashboard() {
+  const navigate = useNavigate();
+
   const [team, setTeam] = useState(null);
   const [leagueTeams, setLeagueTeams] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -25,8 +28,9 @@ export default function Dashboard() {
           },
         });
 
+        // ❗ Wenn kein Team existiert → direkt weiterleiten
         if (!teamRes.ok) {
-          setLoading(false);
+          navigate("/create-team");
           return;
         }
 
@@ -47,7 +51,7 @@ export default function Dashboard() {
     };
 
     fetchData();
-  }, []);
+  }, [navigate]);
 
   if (loading) {
     return (
@@ -57,13 +61,7 @@ export default function Dashboard() {
     );
   }
 
-  if (!team) {
-    return (
-      <div className="p-10 text-white">
-        Kein Team gefunden. Bitte erstelle ein Team.
-      </div>
-    );
-  }
+  if (!team) return null;
 
   // 🔥 Sortierung
   const sortedLeague = [...leagueTeams].sort((a, b) => {
