@@ -1,11 +1,15 @@
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 
 export default function Navbar() {
   const navigate = useNavigate();
+  const location = useLocation();
+
   const [menuOpen, setMenuOpen] = useState(false);
   const [teamName, setTeamName] = useState(null);
+  const [hasNewMatch, setHasNewMatch] = useState(false);
 
+  // Team laden
   useEffect(() => {
     const fetchTeam = async () => {
       try {
@@ -28,6 +32,33 @@ export default function Navbar() {
     fetchTeam();
   }, []);
 
+  // Prüfen ob neues Spiel existiert
+  useEffect(() => {
+    const checkNewMatch = async () => {
+      try {
+        const token = localStorage.getItem("token");
+
+        const res = await fetch("/api/match/has-new", {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+
+        if (!res.ok) return;
+
+        const data = await res.json();
+        setHasNewMatch(data.hasNew);
+      } catch {}
+    };
+
+    checkNewMatch();
+  }, []);
+
+  // 🔥 Stoppt Pulsieren wenn Seite geöffnet wird
+  useEffect(() => {
+    if (location.pathname === "/matchcenter") {
+      setHasNewMatch(false);
+    }
+  }, [location.pathname]);
+
   const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("clubId");
@@ -44,22 +75,24 @@ export default function Navbar() {
   return (
     <nav className="bg-black border-b border-gray-800 px-6 py-4 flex justify-between items-center relative">
 
-      {/* Teamname */}
       <div className="text-xl font-bold text-yellow-400">
         {teamName || "Kein Team"}
       </div>
 
-      {/* DESKTOP */}
       <div className="hidden md:flex items-center gap-4 text-sm">
 
         <NavLink to="/" className={linkClass}>
           Dashboard
         </NavLink>
 
-        {/* 🔥 MATCHCENTER HERVORGEHOBEN */}
+        {/* 🔥 Spieltag pulsiert nur wenn hasNewMatch true */}
         <NavLink
           to="/matchcenter"
-          className="px-3 py-2 rounded bg-yellow-500 text-black font-semibold hover:bg-yellow-400 transition"
+          className={`px-3 py-2 rounded font-semibold transition ${
+            hasNewMatch
+              ? "bg-yellow-500 text-black animate-pulse"
+              : "bg-yellow-500 text-black"
+          }`}
         >
           Spieltag
         </NavLink>
@@ -79,7 +112,7 @@ export default function Navbar() {
         </button>
       </div>
 
-      {/* MOBILE BUTTON */}
+      {/* MOBILE */}
       <div className="md:hidden">
         <button
           onClick={() => setMenuOpen(!menuOpen)}
@@ -89,7 +122,6 @@ export default function Navbar() {
         </button>
       </div>
 
-      {/* MOBILE MENU */}
       {menuOpen && (
         <div className="absolute top-16 left-0 w-full bg-black border-t border-gray-800 flex flex-col p-4 gap-3 md:hidden z-50">
 
@@ -97,7 +129,11 @@ export default function Navbar() {
 
           <NavLink
             to="/matchcenter"
-            className="px-3 py-2 rounded bg-yellow-500 text-black font-semibold"
+            className={`px-3 py-2 rounded font-semibold ${
+              hasNewMatch
+                ? "bg-yellow-500 text-black animate-pulse"
+                : "bg-yellow-500 text-black"
+            }`}
             onClick={() => setMenuOpen(false)}
           >
             Spieltag
