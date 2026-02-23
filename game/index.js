@@ -26,14 +26,14 @@ app.use("/api/schedule", require("./routes/schedule"));
 app.use("/api/season", require("./routes/season"));
 app.use("/api/match", require("./routes/match"));
 app.use("/api/player", require("./routes/player"));
-app.use("/api/stadium", require("./routes/stadium"));
+app.use("/api/stadium", require("./routes/stadium")); // ✅ FIXED
 
 // ================= FRONTEND (React Build) =================
 const clientPath = path.join(__dirname, "../client/dist");
 
 app.use(express.static(clientPath));
 
-// ✅ Express 5 Catch-All (KEIN "*" mehr verwenden!)
+// Catch-All für React Router (Express 5 kompatibel)
 app.use((req, res) => {
   res.sendFile(path.join(clientPath, "index.html"));
 });
