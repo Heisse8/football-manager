@@ -103,6 +103,17 @@ export default function Login() {
             </div>
           )}
 
+          {/* 🔥 Registrieren-Link */}
+          <p className="text-sm text-center mt-4 text-gray-300">
+            Noch kein Account?{" "}
+            <span
+              onClick={() => navigate("/register")}
+              className="text-green-400 cursor-pointer hover:underline"
+            >
+              Registrieren
+            </span>
+          </p>
+
         </div>
       </div>
     </div>
