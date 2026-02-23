@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Team = require("../models/Team");
 const auth = require("../middleware/auth");
+const { generatePlayersForTeam } = require("../utils/playerGenerator");
 
 
 // ================= CREATE TEAM =================
@@ -18,29 +19,29 @@ router.post("/create", auth, async (req, res) => {
     shortName = shortName.trim().toUpperCase();
 
     if (name.length > 21) {
-      return res.status(400).json({ message: "Max 21 Zeichen." });
+      return res.status(400).json({ message: "Teamname max. 21 Zeichen." });
     }
 
     if (!/^[A-Z]{3}$/.test(shortName)) {
-      return res.status(400).json({ message: "Kürzel = 3 Großbuchstaben." });
+      return res.status(400).json({ message: "Kürzel muss genau 3 Großbuchstaben haben." });
     }
 
-    // Hat User schon ein Team?
+    // 🔒 User darf nur 1 Team haben
     const existingUserTeam = await Team.findOne({ owner: userId });
     if (existingUserTeam) {
       return res.status(400).json({ message: "Du hast bereits ein Team." });
     }
 
-    // Doppelte Namen verhindern
+    // 🔒 Doppelten Namen verhindern
     if (await Team.findOne({ name })) {
-      return res.status(400).json({ message: "Name vergeben." });
+      return res.status(400).json({ message: "Teamname bereits vergeben." });
     }
 
     if (await Team.findOne({ shortName })) {
-      return res.status(400).json({ message: "Kürzel vergeben." });
+      return res.status(400).json({ message: "Kürzel bereits vergeben." });
     }
 
-    // Liga-Zuteilung
+    // ================= LIGA ZUTEILUNG =================
     const teamCount = await Team.countDocuments();
     const index = teamCount + 1;
 
@@ -64,6 +65,7 @@ router.post("/create", auth, async (req, res) => {
       league = "GER_1";
     }
 
+    // ================= TEAM ERSTELLEN =================
     const newTeam = new Team({
       name,
       shortName,
@@ -74,10 +76,27 @@ router.post("/create", auth, async (req, res) => {
 
     await newTeam.save();
 
-    res.status(201).json(newTeam);
+    // ================= 18 SPIELER AUTOMATISCH =================
+    try {
+      await generatePlayersForTeam(newTeam);
+    } catch (playerError) {
+      console.error("Spieler-Generierung fehlgeschlagen:", playerError);
+
+      // Rollback: Team wieder löschen falls Spieler nicht erstellt werden konnten
+      await Team.findByIdAndDelete(newTeam._id);
+
+      return res.status(500).json({
+        message: "Fehler bei Spieler-Generierung. Bitte erneut versuchen."
+      });
+    }
+
+    res.status(201).json({
+      message: "Team erfolgreich erstellt.",
+      team: newTeam
+    });
 
   } catch (err) {
-    console.error(err);
+    console.error("Team Create Fehler:", err);
     res.status(500).json({ message: "Serverfehler" });
   }
 });
@@ -97,6 +116,7 @@ router.get("/", auth, async (req, res) => {
     res.json(team);
 
   } catch (err) {
+    console.error("Team Get Fehler:", err);
     res.status(500).json({ message: "Serverfehler" });
   }
 });

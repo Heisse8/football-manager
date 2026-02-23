@@ -15,7 +15,7 @@ export default function Kalender() {
         const token = localStorage.getItem("token");
         if (!token) return;
 
-        // 🔥 Team laden
+        // 🔥 Eigenes Team laden
         const teamRes = await fetch("/api/team", {
           headers: { Authorization: `Bearer ${token}` }
         });
@@ -24,7 +24,7 @@ export default function Kalender() {
         const teamData = await teamRes.json();
         setMyTeamId(teamData._id);
 
-        // 🔥 Matches laden
+        // 🔥 Matches des Monats laden
         const matchRes = await fetch(
           `/api/match/my-month?year=${year}&month=${month}`,
           { headers: { Authorization: `Bearer ${token}` } }
@@ -32,6 +32,7 @@ export default function Kalender() {
 
         if (!matchRes.ok) return;
         const matchData = await matchRes.json();
+
         setMatches(Array.isArray(matchData) ? matchData : []);
 
       } catch (err) {
@@ -44,7 +45,6 @@ export default function Kalender() {
 
   const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-  // Montag = 0
   const firstDay = new Date(year, month, 1).getDay();
   const startOffset = firstDay === 0 ? 6 : firstDay - 1;
 
@@ -60,11 +60,18 @@ export default function Kalender() {
     setCurrentDate(new Date(year, month + 1, 1));
   };
 
+  // 🔥 WICHTIG: Monat + Jahr prüfen
   const getMatchesForDay = (day) => {
     return matches.filter(match => {
       if (!match.date) return false;
+
       const d = new Date(match.date);
-      return d.getDate() === day;
+
+      return (
+        d.getDate() === day &&
+        d.getMonth() === month &&
+        d.getFullYear() === year
+      );
     });
   };
 
@@ -101,7 +108,6 @@ export default function Kalender() {
 
       {/* Kalender Grid */}
       <div className="grid grid-cols-7 gap-3">
-
         {Array.from({ length: totalCalendarCells }, (_, index) => {
 
           const dayNumber = index - startOffset + 1;
@@ -151,7 +157,6 @@ export default function Kalender() {
                     key={match._id}
                     className="text-xs p-2 mb-2 rounded bg-gray-900 border border-gray-700 relative"
                   >
-                    {/* Heim/Auswärts */}
                     <div className="absolute top-1 right-1 text-xs">
                       {isHome ? "🏠" : "✈"}
                     </div>

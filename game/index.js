@@ -25,6 +25,7 @@ app.use("/api/league", require("./routes/league"));
 app.use("/api/schedule", require("./routes/schedule"));
 app.use("/api/season", require("./routes/season"));
 app.use("/api/match", require("./routes/match"));
+app.use("/api/player", require("./routes/player"));
 
 // ================= FRONTEND (React Build) =================
 const clientPath = path.join(__dirname, "../client/dist");
