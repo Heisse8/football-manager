@@ -28,14 +28,11 @@ export default function Register() {
     setMessage("");
 
     try {
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/auth/register`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username, email, password })
-        }
-      );
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, email, password })
+      });
 
       const data = await res.json();
       setMessage(data.message);
@@ -54,18 +51,13 @@ export default function Register() {
   };
 
   return (
-    <div
-      className="min-h-screen flex items-center justify-center bg-cover bg-center"
+    <div className="min-h-screen flex items-center justify-center bg-cover bg-center"
       style={{ backgroundImage: "url('/stadium.jpg')" }}
     >
-      <div
-        className={`bg-black/70 backdrop-blur-md p-8 rounded-2xl shadow-2xl w-full max-w-md text-white transition-all duration-700 ${
-          fadeIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5"
-        }`}
-      >
-        <h2 className="text-3xl font-bold text-center mb-6">
-          Registrieren ⚽
-        </h2>
+      <div className={`bg-black/70 backdrop-blur-md p-8 rounded-2xl shadow-2xl w-full max-w-md text-white transition-all duration-700 ${
+        fadeIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5"
+      }`}>
+        <h2 className="text-3xl font-bold text-center mb-6">Registrieren ⚽</h2>
 
         <div className="space-y-4">
 
@@ -108,13 +100,9 @@ export default function Register() {
           <button
             onClick={handleRegister}
             disabled={loading}
-            className="w-full bg-green-600 hover:bg-green-500 transition p-3 rounded-lg font-semibold flex justify-center items-center"
+            className="w-full bg-green-600 hover:bg-green-500 transition p-3 rounded-lg font-semibold"
           >
-            {loading ? (
-              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-            ) : (
-              "Registrieren"
-            )}
+            {loading ? "Lädt..." : "Registrieren"}
           </button>
 
           {message && (

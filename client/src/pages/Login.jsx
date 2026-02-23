@@ -20,14 +20,12 @@ export default function Login() {
     setMessage("");
 
     try {
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/auth/login`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password })
-        }
-      );
+      // ✅ Relative URL verwenden
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password })
+      });
 
       const data = await res.json();
 
@@ -104,7 +102,6 @@ export default function Login() {
             </div>
           )}
 
-          {/* Registrierung Link */}
           <div className="text-center text-sm mt-4 text-gray-400">
             Noch keinen Account?{" "}
             <Link
