@@ -1,9 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const Team = require("../models/Team");
+const Stadium = require("../models/Stadium"); // 🔥 NEU
 const auth = require("../middleware/auth");
 const { generatePlayersForTeam } = require("../utils/playerGenerator");
-
 
 // ================= CREATE TEAM =================
 router.post("/create", auth, async (req, res) => {
@@ -71,22 +71,40 @@ router.post("/create", auth, async (req, res) => {
       shortName,
       country,
       league,
-      owner: userId
+      owner: userId,
+      balance: 5000000,       // optional Startbudget
+      currentMatchday: 1      // wichtig für Stadion-System
     });
 
     await newTeam.save();
 
-    // ================= 18 SPIELER AUTOMATISCH =================
     try {
-      await generatePlayersForTeam(newTeam);
-    } catch (playerError) {
-      console.error("Spieler-Generierung fehlgeschlagen:", playerError);
+      // ================= STADION AUTOMATISCH ERSTELLEN =================
+      await Stadium.create({
+        team: newTeam._id,
+        capacity: 2000,
+        ticketPrice: 15,
+        construction: {
+          inProgress: false,
+          targetCapacity: null,
+          startMatchday: null,
+          finishMatchday: null
+        }
+      });
 
-      // Rollback: Team wieder löschen falls Spieler nicht erstellt werden konnten
+      // ================= 18 SPIELER AUTOMATISCH =================
+      await generatePlayersForTeam(newTeam);
+
+    } catch (setupError) {
+
+      console.error("Setup Fehler:", setupError);
+
+      // 🔥 Rollback wenn irgendetwas schiefgeht
+      await Stadium.deleteOne({ team: newTeam._id });
       await Team.findByIdAndDelete(newTeam._id);
 
       return res.status(500).json({
-        message: "Fehler bei Spieler-Generierung. Bitte erneut versuchen."
+        message: "Fehler beim Setup des Teams. Bitte erneut versuchen."
       });
     }
 
@@ -100,7 +118,6 @@ router.post("/create", auth, async (req, res) => {
     res.status(500).json({ message: "Serverfehler" });
   }
 });
-
 
 // ================= GET MY TEAM =================
 router.get("/", auth, async (req, res) => {
@@ -120,6 +137,5 @@ router.get("/", auth, async (req, res) => {
     res.status(500).json({ message: "Serverfehler" });
   }
 });
-
 
 module.exports = router;
