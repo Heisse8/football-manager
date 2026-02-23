@@ -10,24 +10,17 @@ export default function Navbar() {
     const fetchTeam = async () => {
       try {
         const token = localStorage.getItem("token");
-        if (!token) {
-          setTeamName(null);
-          return;
-        }
+        if (!token) return setTeamName(null);
 
         const res = await fetch("/api/team", {
           headers: { Authorization: `Bearer ${token}` }
         });
 
-        if (!res.ok) {
-          setTeamName(null);
-          return;
-        }
+        if (!res.ok) return setTeamName(null);
 
         const data = await res.json();
         setTeamName(data?.name || null);
-      } catch (err) {
-        console.error("Navbar Fehler:", err);
+      } catch {
         setTeamName(null);
       }
     };
@@ -51,18 +44,28 @@ export default function Navbar() {
   return (
     <nav className="bg-black border-b border-gray-800 px-6 py-4 flex justify-between items-center relative">
 
-      {/* 🔥 Teamname links */}
+      {/* Teamname */}
       <div className="text-xl font-bold text-yellow-400">
-        {teamName ? teamName : "Kein Team"}
+        {teamName || "Kein Team"}
       </div>
 
-      {/* ================= DESKTOP MENÜ ================= */}
+      {/* DESKTOP */}
       <div className="hidden md:flex items-center gap-4 text-sm">
 
-        <NavLink to="/" className={linkClass}>Dashboard</NavLink>
+        <NavLink to="/" className={linkClass}>
+          Dashboard
+        </NavLink>
+
+        {/* 🔥 MATCHCENTER HERVORGEHOBEN */}
+        <NavLink
+          to="/matchcenter"
+          className="px-3 py-2 rounded bg-yellow-500 text-black font-semibold hover:bg-yellow-400 transition"
+        >
+          Spieltag
+        </NavLink>
+
         <NavLink to="/team" className={linkClass}>Team</NavLink>
         <NavLink to="/kalender" className={linkClass}>Kalender</NavLink>
-        <NavLink to="/matchcenter" className={linkClass}>Spieltag</NavLink>
         <NavLink to="/training" className={linkClass}>Training</NavLink>
         <NavLink to="/transfermarkt" className={linkClass}>Transfermarkt</NavLink>
         <NavLink to="/finanzen" className={linkClass}>Finanzen</NavLink>
@@ -76,7 +79,7 @@ export default function Navbar() {
         </button>
       </div>
 
-      {/* ================= MOBILE BUTTON ================= */}
+      {/* MOBILE BUTTON */}
       <div className="md:hidden">
         <button
           onClick={() => setMenuOpen(!menuOpen)}
@@ -86,14 +89,22 @@ export default function Navbar() {
         </button>
       </div>
 
-      {/* ================= MOBILE MENÜ ================= */}
+      {/* MOBILE MENU */}
       {menuOpen && (
         <div className="absolute top-16 left-0 w-full bg-black border-t border-gray-800 flex flex-col p-4 gap-3 md:hidden z-50">
 
           <NavLink to="/" className={linkClass} onClick={() => setMenuOpen(false)}>Dashboard</NavLink>
+
+          <NavLink
+            to="/matchcenter"
+            className="px-3 py-2 rounded bg-yellow-500 text-black font-semibold"
+            onClick={() => setMenuOpen(false)}
+          >
+            Spieltag
+          </NavLink>
+
           <NavLink to="/team" className={linkClass} onClick={() => setMenuOpen(false)}>Team</NavLink>
           <NavLink to="/kalender" className={linkClass} onClick={() => setMenuOpen(false)}>Kalender</NavLink>
-          <NavLink to="/matchcenter" className={linkClass} onClick={() => setMenuOpen(false)}>Spieltag</NavLink>
           <NavLink to="/training" className={linkClass} onClick={() => setMenuOpen(false)}>Training</NavLink>
           <NavLink to="/transfermarkt" className={linkClass} onClick={() => setMenuOpen(false)}>Transfermarkt</NavLink>
           <NavLink to="/finanzen" className={linkClass} onClick={() => setMenuOpen(false)}>Finanzen</NavLink>
