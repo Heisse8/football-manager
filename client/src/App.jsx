@@ -53,6 +53,8 @@ export default function App() {
             element={<div className="p-10">Stadion</div>}
           />
 
+          <Route path="/stadium" element={<StadiumPage />} />
+
           <Route
             path="/finanzen"
             element={<div className="p-10">Finanzen</div>}

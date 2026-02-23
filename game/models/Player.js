@@ -17,18 +17,34 @@ const playerSchema = new mongoose.Schema({
     required: true
   },
 
+  // 🔥 Alter (wichtig für Entwicklung & Marktwert)
+  age: {
+    type: Number,
+    required: true,
+    min: 16,
+    max: 40
+  },
+
   // Mehrfachpositionen (z.B. ["CM","CDM"])
   positions: {
     type: [String],
     required: true
   },
 
-  // ⭐ 0 – 5 in 0.5 Schritten
+  // ⭐ Aktuelle Stärke (0 – 5 in 0.5 Schritten)
   stars: {
     type: Number,
     required: true,
     min: 0,
     max: 5
+  },
+
+  // ⭐ Maximales Potenzial (z.B. 3.5 möglich)
+  potential: {
+    type: Number,
+    min: 0,
+    max: 5,
+    default: 2.5
   },
 
   // ================= MATCH ENGINE ATTRIBUTE =================
@@ -39,6 +55,31 @@ const playerSchema = new mongoose.Schema({
   defending: { type: Number, min: 0, max: 99 },
   physical: { type: Number, min: 0, max: 99 },
   mentality: { type: Number, min: 0, max: 99 },
+
+  // Fitness & Moral (wichtig für Match Engine)
+  fitness: {
+    type: Number,
+    min: 0,
+    max: 100,
+    default: 100
+  },
+
+  morale: {
+    type: Number,
+    min: 0,
+    max: 100,
+    default: 70
+  },
+
+  injured: {
+    type: Boolean,
+    default: false
+  },
+
+  injuryDays: {
+    type: Number,
+    default: 0
+  },
 
   // ================= AUFSTELLUNG =================
 
@@ -52,7 +93,6 @@ const playerSchema = new mongoose.Schema({
     default: false
   },
 
-  // Optional: Slot in Formation (z.B. "ST1", "CB2")
   lineupSlot: {
     type: String,
     default: null

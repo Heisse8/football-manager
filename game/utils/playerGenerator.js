@@ -40,7 +40,7 @@ const positionGroups = {
 };
 
 // ================= STAR DISTRIBUTION =================
-// Immer gleich für Fairness
+// Maximal 2.5 Sterne – fairer Liga-Start
 
 const starDistribution = [
   2,2,2,2,2,2,2,2,      // 8x 2 Sterne
@@ -48,6 +48,25 @@ const starDistribution = [
   1.5,1.5,1.5,1.5,1.5,  // 5x 1.5 Sterne
   1,1                   // 2x 1 Stern
 ];
+
+// ================= ALTER =================
+
+function generateAge(index) {
+
+  if (index < 2) {
+    return 18 + Math.floor(Math.random() * 3); // 18–20
+  }
+
+  if (index < 8) {
+    return 23 + Math.floor(Math.random() * 5); // 23–27
+  }
+
+  if (index < 15) {
+    return 28 + Math.floor(Math.random() * 4); // 28–31
+  }
+
+  return 32 + Math.floor(Math.random() * 3); // 32–34
+}
 
 // ================= NATIONALITY =================
 
@@ -69,12 +88,14 @@ function getNationality(league) {
 // ================= ATTRIBUTE LOGIC =================
 
 function randomAround(base) {
-  return Math.max(20, Math.min(99, Math.floor(base + (Math.random()*10 - 5))));
+  return Math.max(20, Math.min(85, Math.floor(base + (Math.random()*8 - 4))));
 }
 
 function generateAttributes(stars, position) {
 
-  const base = 30 + stars * 15; 
+  const base = 35 + stars * 10; 
+  // bewusst niedriger gehalten → keine 4-Sterne-Werte
+
   let attrs = {
     pace: randomAround(base),
     shooting: randomAround(base),
@@ -84,12 +105,12 @@ function generateAttributes(stars, position) {
     mentality: randomAround(base)
   };
 
-  // Positionsabhängige Modifikationen
   switch(position) {
+
     case "GK":
       attrs.defending += 10;
       attrs.physical += 5;
-      attrs.shooting -= 15;
+      attrs.shooting -= 20;
       break;
 
     case "CB":
@@ -100,7 +121,7 @@ function generateAttributes(stars, position) {
 
     case "RB":
     case "LB":
-      attrs.pace += 8;
+      attrs.pace += 6;
       attrs.defending += 5;
       break;
 
@@ -146,6 +167,7 @@ async function generatePlayersForTeam(team) {
     const positions = positionGroups[mainPosition];
 
     const stars = starDistribution[i];
+    const age = generateAge(i);
 
     const attributes = generateAttributes(stars, mainPosition);
 
@@ -153,11 +175,10 @@ async function generatePlayersForTeam(team) {
       firstName: firstNames[Math.floor(Math.random() * firstNames.length)],
       lastName,
       nationality: getNationality(team.league),
+      age,
       positions,
       stars,
-
       ...attributes,
-
       team: team._id
     });
 
