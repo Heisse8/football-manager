@@ -7,9 +7,12 @@ const path = require("path");
 
 const app = express();
 
-// CORS (Production + Local)
+// ================= CORS =================
 app.use(cors({
-  origin: ["http://localhost:5173", "https://football-manager-2.onrender.com"],
+  origin: [
+    "http://localhost:5173",
+    "https://football-manager-2.onrender.com"
+  ],
   credentials: true
 }));
 
@@ -23,13 +26,13 @@ app.use("/api/schedule", require("./routes/schedule"));
 app.use("/api/season", require("./routes/season"));
 app.use("/api/match", require("./routes/match"));
 
-// ================= FRONTEND =================
+// ================= FRONTEND (React Build) =================
 const clientPath = path.join(__dirname, "../client/dist");
 
 app.use(express.static(clientPath));
 
-// ✅ RICHTIGE Catch‑All Route
-app.get("*", (req, res) => {
+// ✅ Express 5 Catch-All (KEIN "*" mehr verwenden!)
+app.use((req, res) => {
   res.sendFile(path.join(clientPath, "index.html"));
 });
 
