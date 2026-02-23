@@ -25,29 +25,35 @@ router.get("/", auth, async (req, res) => {
     const stadium = await Stadium.findOne({ team: team._id });
     if (!stadium) return res.status(404).json({ message: "Stadion nicht gefunden." });
 
-    // Fortschritt berechnen
     let progress = 0;
-    let remainingMatchdays = 0;
+    let remainingTime = null;
 
     if (stadium.construction.inProgress) {
-      const total =
-        stadium.construction.finishMatchday -
-        stadium.construction.startMatchday;
+      const now = Date.now();
+      const start = new Date(stadium.construction.startDate).getTime();
+      const finish = new Date(stadium.construction.finishDate).getTime();
 
-      const current =
-        team.currentMatchday -
-        stadium.construction.startMatchday;
+      const total = finish - start;
+      const elapsed = now - start;
 
-      progress = Math.min(100, Math.max(0, (current / total) * 100));
+      progress = Math.min(100, Math.max(0, (elapsed / total) * 100));
 
-      remainingMatchdays =
-        stadium.construction.finishMatchday - team.currentMatchday;
+      const remainingMs = finish - now;
+
+      if (remainingMs > 0) {
+        const weeks = Math.floor(remainingMs / (1000 * 60 * 60 * 24 * 7));
+        const days = Math.floor((remainingMs / (1000 * 60 * 60 * 24)) % 7);
+        const hours = Math.floor((remainingMs / (1000 * 60 * 60)) % 24);
+        const minutes = Math.floor((remainingMs / (1000 * 60)) % 60);
+
+        remainingTime = { weeks, days, hours, minutes };
+      }
     }
 
     res.json({
       ...stadium.toObject(),
       progress,
-      remainingMatchdays
+      remainingTime
     });
 
   } catch (err) {
@@ -61,18 +67,18 @@ router.put("/set-name", auth, async (req, res) => {
   try {
     const { name } = req.body;
 
-    if (!name || name.length > 30) {
+    if (!name || name.length > 30)
       return res.status(400).json({ message: "Ungültiger Name." });
-    }
 
     const team = await Team.findOne({ owner: req.user.userId });
     const stadium = await Stadium.findOne({ team: team._id });
 
-    if (stadium.name) {
-      return res.status(400).json({ message: "Name bereits gesetzt." });
-    }
+    if (stadium.nameLocked)
+      return res.status(400).json({ message: "Name kann nicht mehr geändert werden." });
 
     stadium.name = name.trim();
+    stadium.nameLocked = true;
+
     await stadium.save();
 
     res.json(stadium);
@@ -88,9 +94,8 @@ router.put("/ticket-price", auth, async (req, res) => {
   try {
     const { price } = req.body;
 
-    if (price < 5 || price > 100) {
+    if (price < 5 || price > 100)
       return res.status(400).json({ message: "Ticketpreis 5€–100€ erlaubt." });
-    }
 
     const team = await Team.findOne({ owner: req.user.userId });
     const stadium = await Stadium.findOne({ team: team._id });
@@ -125,11 +130,19 @@ router.post("/expand", auth, async (req, res) => {
     team.balance -= config.cost;
     await team.save();
 
+    // 🔥 Dauer in Wochen (2 Spieltage pro Woche)
+    const weeks = Math.ceil(config.duration / 2);
+
+    const startDate = new Date();
+    const finishDate = new Date(
+      startDate.getTime() + weeks * 7 * 24 * 60 * 60 * 1000
+    );
+
     stadium.construction = {
       inProgress: true,
       targetCapacity: config.next,
-      startMatchday: team.currentMatchday,
-      finishMatchday: team.currentMatchday + config.duration
+      startDate,
+      finishDate
     };
 
     await stadium.save();
@@ -150,14 +163,15 @@ router.post("/check-construction", auth, async (req, res) => {
 
     if (
       stadium.construction.inProgress &&
-      team.currentMatchday >= stadium.construction.finishMatchday
+      new Date() >= new Date(stadium.construction.finishDate)
     ) {
       stadium.capacity = stadium.construction.targetCapacity;
+
       stadium.construction = {
         inProgress: false,
         targetCapacity: null,
-        startMatchday: null,
-        finishMatchday: null
+        startDate: null,
+        finishDate: null
       };
 
       await stadium.save();
