@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -20,11 +20,14 @@ export default function Login() {
     setMessage("");
 
     try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password })
-      });
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/auth/login`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password })
+        }
+      );
 
       const data = await res.json();
 
@@ -36,10 +39,8 @@ export default function Login() {
 
       // Token speichern
       localStorage.setItem("token", data.token);
-      localStorage.setItem("clubId", data.clubId);
 
       navigate("/");
-
     } catch (err) {
       setMessage("Serverfehler");
     }
@@ -103,16 +104,16 @@ export default function Login() {
             </div>
           )}
 
-          {/* 🔥 Registrieren-Link */}
-          <p className="text-sm text-center mt-4 text-gray-300">
-            Noch kein Account?{" "}
-            <span
-              onClick={() => navigate("/register")}
-              className="text-green-400 cursor-pointer hover:underline"
+          {/* Registrierung Link */}
+          <div className="text-center text-sm mt-4 text-gray-400">
+            Noch keinen Account?{" "}
+            <Link
+              to="/register"
+              className="text-green-400 hover:underline"
             >
-              Registrieren
-            </span>
-          </p>
+              Jetzt registrieren
+            </Link>
+          </div>
 
         </div>
       </div>
