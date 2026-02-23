@@ -10,18 +10,19 @@ import Teammanagement from "./pages/Teammanagement";
 import CreateTeam from "./pages/CreateTeam";
 import VerifySuccess from "./pages/VerifySuccess";
 import Kalender from "./pages/Kalender";
+import StadiumPage from "./pages/StadiumPage"; // ✅ WICHTIG
 
 export default function App() {
   return (
     <AuthProvider>
       <Routes>
 
-        {/* Öffentliche Seiten */}
+        {/* ================= ÖFFENTLICHE SEITEN ================= */}
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/verify-success" element={<VerifySuccess />} />
 
-        {/* Geschützte Seiten MIT Navbar */}
+        {/* ================= GESCHÜTZTE SEITEN MIT NAVBAR ================= */}
         <Route
           element={
             <PrivateRoute>
@@ -32,6 +33,7 @@ export default function App() {
           <Route path="/" element={<Dashboard />} />
           <Route path="/kalender" element={<Kalender />} />
           <Route path="/team" element={<Teammanagement />} />
+          <Route path="/stadium" element={<StadiumPage />} /> {/* ✅ Stadion */}
 
           <Route
             path="/training"
@@ -49,19 +51,12 @@ export default function App() {
           />
 
           <Route
-            path="/stadion"
-            element={<div className="p-10">Stadion</div>}
-          />
-
-          <Route path="/stadium" element={<StadiumPage />} />
-
-          <Route
             path="/finanzen"
             element={<div className="p-10">Finanzen</div>}
           />
         </Route>
 
-        {/* Create Team separat (ohne Navbar) */}
+        {/* ================= CREATE TEAM OHNE NAVBAR ================= */}
         <Route
           path="/create-team"
           element={
