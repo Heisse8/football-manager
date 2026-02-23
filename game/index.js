@@ -7,14 +7,15 @@ const path = require("path");
 
 const app = express();
 
+// CORS (Production + Local)
 app.use(cors({
-  origin: ["http://localhost:5173"],
+  origin: ["http://localhost:5173", "https://football-manager-2.onrender.com"],
   credentials: true
 }));
 
 app.use(express.json());
 
-// API ROUTES
+// ================= API ROUTES =================
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/team", require("./routes/team"));
 app.use("/api/league", require("./routes/league"));
@@ -22,16 +23,17 @@ app.use("/api/schedule", require("./routes/schedule"));
 app.use("/api/season", require("./routes/season"));
 app.use("/api/match", require("./routes/match"));
 
-// 🔥 WICHTIG: client/dist (nicht game/dist!)
+// ================= FRONTEND =================
 const clientPath = path.join(__dirname, "../client/dist");
 
 app.use(express.static(clientPath));
 
-app.get("/{*any}", (req, res) => {
+// ✅ RICHTIGE Catch‑All Route
+app.get("*", (req, res) => {
   res.sendFile(path.join(clientPath, "index.html"));
 });
 
-// DB
+// ================= DATABASE =================
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("✅ MongoDB verbunden"))
   .catch(err => console.error("❌ MongoDB Fehler:", err));

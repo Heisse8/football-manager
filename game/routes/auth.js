@@ -63,7 +63,6 @@ router.post("/register", async (req, res) => {
   }
 });
 
-
 // ================= VERIFY =================
 router.get("/verify/:token", async (req, res) => {
   try {
@@ -85,8 +84,9 @@ router.get("/verify/:token", async (req, res) => {
       { expiresIn: "7d" }
     );
 
+    // ✅ RICHTIGE DOMAIN
     res.redirect(
-      `https://football-manager-2-0rzg.onrender.com/verify-success?token=${jwtToken}`
+      `https://football-manager-2.onrender.com/verify-success?token=${jwtToken}`
     );
 
   } catch (err) {
@@ -94,7 +94,6 @@ router.get("/verify/:token", async (req, res) => {
     res.status(500).send("Serverfehler");
   }
 });
-
 
 // ================= LOGIN =================
 router.post("/login", async (req, res) => {
