@@ -1,58 +1,46 @@
 const express = require("express");
 const router = express.Router();
 const Team = require("../models/Team");
+const auth = require("../middleware/auth");
 
-// POST /api/team/create
-router.post("/create", async (req, res) => {
+
+// ================= CREATE TEAM =================
+router.post("/create", auth, async (req, res) => {
   try {
+    const userId = req.user.userId;
     let { name, shortName } = req.body;
 
     if (!name || !shortName) {
-      return res.status(400).json({
-        message: "Name und Kürzel sind erforderlich."
-      });
+      return res.status(400).json({ message: "Name und Kürzel erforderlich." });
     }
 
-    // Trim & Format
     name = name.trim();
     shortName = shortName.trim().toUpperCase();
 
-    // Validierung
     if (name.length > 21) {
-      return res.status(400).json({
-        message: "Teamname darf maximal 21 Zeichen haben."
-      });
-    }
-
-    if (shortName.length !== 3) {
-      return res.status(400).json({
-        message: "Kürzel muss genau 3 Buchstaben haben."
-      });
+      return res.status(400).json({ message: "Max 21 Zeichen." });
     }
 
     if (!/^[A-Z]{3}$/.test(shortName)) {
-      return res.status(400).json({
-        message: "Kürzel darf nur aus 3 Großbuchstaben bestehen."
-      });
+      return res.status(400).json({ message: "Kürzel = 3 Großbuchstaben." });
     }
 
-    // Prüfen auf doppelte Namen
-    const existingName = await Team.findOne({ name });
-    if (existingName) {
-      return res.status(400).json({
-        message: "Dieser Teamname ist bereits vergeben."
-      });
+    // Hat User schon ein Team?
+    const existingUserTeam = await Team.findOne({ owner: userId });
+    if (existingUserTeam) {
+      return res.status(400).json({ message: "Du hast bereits ein Team." });
     }
 
-    // Prüfen auf doppeltes Kürzel
-    const existingShort = await Team.findOne({ shortName });
-    if (existingShort) {
-      return res.status(400).json({
-        message: "Dieses Kürzel ist bereits vergeben."
-      });
+    // Doppelte Namen verhindern
+    if (await Team.findOne({ name })) {
+      return res.status(400).json({ message: "Name vergeben." });
     }
 
-    // Anzahl bestehender Teams
+    if (await Team.findOne({ shortName })) {
+      return res.status(400).json({ message: "Kürzel vergeben." });
+    }
+
+    // Liga-Zuteilung
     const teamCount = await Team.countDocuments();
     const index = teamCount + 1;
 
@@ -61,39 +49,57 @@ router.post("/create", async (req, res) => {
 
     if (index <= 18) {
       country = "Deutschland";
-      league = "Liga 1";
+      league = "GER_1";
     } else if (index <= 36) {
       country = "Deutschland";
-      league = "Liga 2";
+      league = "GER_2";
     } else if (index <= 54) {
       country = "England";
-      league = "Liga 1";
+      league = "ENG_1";
     } else if (index <= 72) {
       country = "England";
-      league = "Liga 2";
+      league = "ENG_2";
     } else {
       country = "Deutschland";
-      league = "Liga 1";
+      league = "GER_1";
     }
 
     const newTeam = new Team({
       name,
       shortName,
       country,
-      league
+      league,
+      owner: userId
     });
 
     await newTeam.save();
 
-    res.status(201).json({
-      message: "Team erfolgreich erstellt.",
-      team: newTeam
-    });
+    res.status(201).json(newTeam);
 
   } catch (err) {
-    console.error("Team Create Fehler:", err);
+    console.error(err);
     res.status(500).json({ message: "Serverfehler" });
   }
 });
+
+
+// ================= GET MY TEAM =================
+router.get("/", auth, async (req, res) => {
+  try {
+    const userId = req.user.userId;
+
+    const team = await Team.findOne({ owner: userId });
+
+    if (!team) {
+      return res.status(404).json({ message: "Kein Team gefunden" });
+    }
+
+    res.json(team);
+
+  } catch (err) {
+    res.status(500).json({ message: "Serverfehler" });
+  }
+});
+
 
 module.exports = router;

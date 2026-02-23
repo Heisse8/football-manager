@@ -1,52 +1,17 @@
 const mongoose = require("mongoose");
 
 const teamSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-    unique: true,
-    trim: true
-  },
+  name: { type: String, required: true, unique: true },
+  shortName: { type: String, required: true, unique: true },
+  country: { type: String, required: true },
+  league: { type: String, required: true },
 
-  shortName: {
-    type: String,
-    required: true,
-    unique: true,
-    trim: true
-  },
-
-  league: {
-    type: String,
-    required: true
-  },
-
-  country: {
-    type: String,
-    required: true
-  },
-
-  // 🔥 WICHTIG: owner ist jetzt required
   owner: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true,
-    unique: true
-  },
+    unique: true // Jeder User nur 1 Team
+  }
+});
 
-  players: {
-    type: Array,
-    default: []
-  },
-
-  points: { type: Number, default: 0 },
-  gamesPlayed: { type: Number, default: 0 },
-  wins: { type: Number, default: 0 },
-  draws: { type: Number, default: 0 },
-  losses: { type: Number, default: 0 },
-  goalsFor: { type: Number, default: 0 },
-  goalsAgainst: { type: Number, default: 0 }
-
-}, { timestamps: true });
-
-module.exports =
-  mongoose.models.Team || mongoose.model("Team", teamSchema);
+module.exports = mongoose.model("Team", teamSchema);
