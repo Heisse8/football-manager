@@ -1,31 +1,31 @@
 import { useEffect, useState } from "react";
+import bgImage from "../assets/stadium-construction.jpg";
+
+const expansionConfig = {
+  2000: { next: 4000, cost: 750000, duration: 8 },
+  4000: { next: 8000, cost: 1800000, duration: 14 },
+  8000: { next: 16000, cost: 4000000, duration: 22 },
+  16000: { next: 32000, cost: 9000000, duration: 34 },
+  32000: { next: 64000, cost: 22000000, duration: 60 },
+  64000: { next: 81365, cost: 45000000, duration: 100 }
+};
 
 export default function StadiumPage() {
+
   const [stadium, setStadium] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [ticketPrice, setTicketPrice] = useState(15);
 
   const token = localStorage.getItem("token");
 
   const fetchStadium = async () => {
-    try {
-      const res = await fetch("/api/stadium", {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+    const res = await fetch("/api/stadium", {
+      headers: { Authorization: `Bearer ${token}` }
+    });
 
-      const data = await res.json();
-
-      // Falls kein gültiges Stadion zurückkommt
-      if (!data || data.message) {
-        setStadium(null);
-      } else {
-        setStadium(data);
-      }
-
-    } catch (err) {
-      console.error("Stadium Fehler:", err);
-      setStadium(null);
-    }
-
+    const data = await res.json();
+    setStadium(data);
+    setTicketPrice(data.ticketPrice);
     setLoading(false);
   };
 
@@ -33,77 +33,141 @@ export default function StadiumPage() {
     fetchStadium();
   }, []);
 
-  if (loading) {
-    return (
-      <div className="p-10 text-white">
-        Lade Stadion...
-      </div>
-    );
-  }
-
-  if (!stadium) {
-    return (
-      <div className="p-10 text-white">
-        Kein Stadion gefunden.
-      </div>
-    );
+  if (loading || !stadium) {
+    return <div className="p-10 text-white">Lade Stadion...</div>;
   }
 
   const construction = stadium.construction || {};
+  const nextStage = expansionConfig[stadium.capacity];
 
-  const totalDuration =
-    construction.finishMatchday && construction.startMatchday
-      ? construction.finishMatchday - construction.startMatchday
-      : 0;
+  // 🔥 Einfache Nachfrage-Simulation
+  const baseDemand = 0.75; // 75% Grundauslastung
+  const priceFactor =
+    ticketPrice <= 20 ? 1 :
+    ticketPrice <= 35 ? 0.9 :
+    ticketPrice <= 50 ? 0.75 : 0.6;
 
-  const remainingMatchdays = stadium.remainingMatchdays || 0;
-  const progress = stadium.progress || 0;
+  const estimatedAttendance = Math.floor(
+    stadium.capacity * baseDemand * priceFactor
+  );
+
+  const estimatedRevenue = estimatedAttendance * ticketPrice;
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white p-8">
+    <div className="relative min-h-screen text-white">
 
-      <h1 className="text-3xl mb-6">
-        {stadium.name || "Dein Stadion"}
-      </h1>
+      {/* Background */}
+      <div
+        className="absolute inset-0 bg-cover bg-center"
+        style={{ backgroundImage: `url(${bgImage})` }}
+      />
+      <div className="absolute inset-0 bg-black/75" />
 
-      <div className="mb-4">
-        Kapazität: {stadium.capacity?.toLocaleString()}
-      </div>
+      <div className="relative z-10 p-10 max-w-6xl mx-auto">
 
-      {construction.inProgress && (
-        <div className="mb-6">
+        <h1 className="text-4xl font-bold mb-8">
+          {stadium.name || "Dein Stadion"}
+        </h1>
 
-          <div className="mb-2">
-            Ausbau auf {construction.targetCapacity?.toLocaleString()}
+        <div className="grid md:grid-cols-2 gap-8">
+
+          {/* LEFT COLUMN */}
+          <div className="bg-black/60 p-6 rounded-xl backdrop-blur-md">
+
+            <h2 className="text-xl mb-4 font-semibold">
+              Stadion Übersicht
+            </h2>
+
+            <div className="space-y-2">
+              <div>Kapazität: <b>{stadium.capacity.toLocaleString()}</b></div>
+              <div>Ticketpreis: <b>{ticketPrice} €</b></div>
+              <div>Geschätzte Auslastung: <b>{estimatedAttendance.toLocaleString()}</b></div>
+              <div>Geschätzte Einnahmen: <b>{estimatedRevenue.toLocaleString()} €</b></div>
+            </div>
+
+            {/* Ticketpreis Slider */}
+            <div className="mt-6">
+              <label className="block mb-2">Ticketpreis einstellen</label>
+              <input
+                type="range"
+                min="5"
+                max="60"
+                value={ticketPrice}
+                onChange={(e) => setTicketPrice(Number(e.target.value))}
+                className="w-full"
+              />
+              <button
+                onClick={async () => {
+                  await fetch("/api/stadium/ticket-price", {
+                    method: "PUT",
+                    headers: {
+                      "Content-Type": "application/json",
+                      Authorization: `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ price: ticketPrice })
+                  });
+                  fetchStadium();
+                }}
+                className="mt-3 bg-yellow-500 text-black px-4 py-2 rounded"
+              >
+                Speichern
+              </button>
+            </div>
+
           </div>
 
-          <div className="w-full bg-gray-700 h-4 rounded">
-            <div
-              className="bg-green-500 h-4 rounded transition-all duration-500"
-              style={{ width: `${progress}%` }}
-            ></div>
-          </div>
+          {/* RIGHT COLUMN */}
+          <div className="bg-black/60 p-6 rounded-xl backdrop-blur-md">
 
-          <div className="mt-2 text-sm">
-            Noch {remainingMatchdays} Spieltage
+            <h2 className="text-xl mb-4 font-semibold">
+              Stadion Ausbau
+            </h2>
+
+            {construction.inProgress ? (
+              <>
+                <div className="mb-3">
+                  Ausbau auf {construction.targetCapacity?.toLocaleString()}
+                </div>
+
+                <div className="w-full bg-gray-700 h-4 rounded">
+                  <div
+                    className="bg-green-500 h-4 rounded transition-all"
+                    style={{ width: `${stadium.progress}%` }}
+                  />
+                </div>
+
+                <div className="mt-2 text-sm">
+                  Noch {stadium.remainingMatchdays} Spieltage
+                </div>
+              </>
+            ) : nextStage ? (
+              <>
+                <div>Nächste Stufe: <b>{nextStage.next.toLocaleString()} Plätze</b></div>
+                <div>Kosten: <b>{nextStage.cost.toLocaleString()} €</b></div>
+                <div>Bauzeit: <b>{nextStage.duration} Spieltage</b></div>
+
+                <button
+                  onClick={async () => {
+                    await fetch("/api/stadium/expand", {
+                      method: "POST",
+                      headers: { Authorization: `Bearer ${token}` }
+                    });
+                    fetchStadium();
+                  }}
+                  className="mt-4 bg-blue-600 px-6 py-2 rounded hover:bg-blue-500"
+                >
+                  Ausbau starten
+                </button>
+              </>
+            ) : (
+              <div>Maximale Stadiongröße erreicht.</div>
+            )}
+
           </div>
 
         </div>
-      )}
 
-      <button
-        onClick={async () => {
-          await fetch("/api/stadium/expand", {
-            method: "POST",
-            headers: { Authorization: `Bearer ${token}` }
-          });
-          fetchStadium();
-        }}
-        className="bg-blue-600 px-6 py-2 rounded hover:bg-blue-500"
-      >
-        Stadion erweitern
-      </button>
-
+      </div>
     </div>
   );
 }
