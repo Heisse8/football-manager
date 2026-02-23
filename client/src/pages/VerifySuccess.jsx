@@ -10,11 +10,15 @@ export default function VerifySuccess() {
 
     if (token) {
       localStorage.setItem("token", token);
-    }
 
-    setTimeout(() => {
-      navigate("/");
-    }, 2000);
+      setTimeout(() => {
+        navigate("/");
+      }, 2000);
+
+    } else {
+      // Falls kein Token vorhanden → zurück zum Login
+      navigate("/login");
+    }
   }, []);
 
   return (

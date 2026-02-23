@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -28,11 +28,14 @@ export default function Register() {
     setMessage("");
 
     try {
-      const res = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, email, password })
-      });
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/auth/register`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, email, password })
+        }
+      );
 
       const data = await res.json();
       setMessage(data.message);
@@ -80,7 +83,6 @@ export default function Register() {
             onChange={(e) => setEmail(e.target.value)}
           />
 
-          {/* Passwort */}
           <div className="relative">
             <input
               type={showPassword ? "text" : "password"}
@@ -96,7 +98,6 @@ export default function Register() {
             </span>
           </div>
 
-          {/* Passwort bestätigen */}
           <input
             type={showPassword ? "text" : "password"}
             placeholder="Passwort bestätigen"
@@ -121,6 +122,13 @@ export default function Register() {
               {message}
             </div>
           )}
+
+          <div className="text-center text-sm mt-4 text-gray-400">
+            Bereits einen Account?{" "}
+            <Link to="/login" className="text-green-400 hover:underline">
+              Jetzt einloggen
+            </Link>
+          </div>
 
         </div>
       </div>
