@@ -86,7 +86,7 @@ router.get("/verify/:token", async (req, res) => {
     );
 
     res.redirect(
-      `https://football-manager-1-0rzg.onrender.com/verify-success?token=${jwtToken}`
+      `https://football-manager-2-0rzg.onrender.com/verify-success?token=${jwtToken}`
     );
 
   } catch (err) {
