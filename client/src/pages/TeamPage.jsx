@@ -2,370 +2,396 @@ import { useEffect, useState } from "react";
 import { DndContext, useDraggable, useDroppable } from "@dnd-kit/core";
 
 /* =====================================================
-   SLOT SYSTEM (FULL FREE FORMATION)
+ SLOT SYSTEM (FULL FREE FORMATION)
 ===================================================== */
 
 const fieldSlots = [
+ { id: "GK1", type: "GK", x: 50, y: 95 },
 
-  { id: "GK1", type: "GK", x: 50, y: 95 },
+ { id: "CB1", type: "CB", x: 30, y: 85 },
+ { id: "CB2", type: "CB", x: 50, y: 88 },
+ { id: "CB3", type: "CB", x: 70, y: 85 },
 
-  { id: "CB1", type: "CB", x: 30, y: 85 },
-  { id: "CB2", type: "CB", x: 50, y: 88 },
-  { id: "CB3", type: "CB", x: 70, y: 85 },
+ { id: "LB1", type: "LB", x: 12, y: 75 },
+ { id: "RB1", type: "RB", x: 88, y: 75 },
 
-  { id: "LB1", type: "LB", x: 12, y: 75 },
-  { id: "RB1", type: "RB", x: 88, y: 75 },
+ { id: "LWB1", type: "LWB", x: 6, y: 65 },
+ { id: "RWB1", type: "RWB", x: 94, y: 65 },
 
-  { id: "LWB1", type: "LWB", x: 6, y: 65 },
-  { id: "RWB1", type: "RWB", x: 94, y: 65 },
+ { id: "CDM1", type: "CDM", x: 30, y: 65 },
+ { id: "CDM2", type: "CDM", x: 50, y: 68 },
+ { id: "CDM3", type: "CDM", x: 70, y: 65 },
 
-  { id: "CDM1", type: "CDM", x: 30, y: 65 },
-  { id: "CDM2", type: "CDM", x: 50, y: 68 },
-  { id: "CDM3", type: "CDM", x: 70, y: 65 },
+ { id: "CM1", type: "CM", x: 30, y: 55 },
+ { id: "CM2", type: "CM", x: 50, y: 55 },
+ { id: "CM3", type: "CM", x: 70, y: 55 },
 
-  { id: "CM1", type: "CM", x: 30, y: 55 },
-  { id: "CM2", type: "CM", x: 50, y: 55 },
-  { id: "CM3", type: "CM", x: 70, y: 55 },
+ { id: "CAM1", type: "CAM", x: 30, y: 40 },
+ { id: "CAM2", type: "CAM", x: 50, y: 38 },
+ { id: "CAM3", type: "CAM", x: 70, y: 40 },
 
-  { id: "CAM1", type: "CAM", x: 30, y: 40 },
-  { id: "CAM2", type: "CAM", x: 50, y: 38 },
-  { id: "CAM3", type: "CAM", x: 70, y: 40 },
+ { id: "LW1", type: "LW", x: 10, y: 30 },
+ { id: "RW1", type: "RW", x: 90, y: 30 },
 
-  { id: "LW1", type: "LW", x: 10, y: 30 },
-  { id: "RW1", type: "RW", x: 90, y: 30 },
-
-  { id: "ST1", type: "ST", x: 30, y: 18 },
-  { id: "ST2", type: "ST", x: 50, y: 16 },
-  { id: "ST3", type: "ST", x: 70, y: 18 }
+ { id: "ST1", type: "ST", x: 30, y: 18 },
+ { id: "ST2", type: "ST", x: 50, y: 16 },
+ { id: "ST3", type: "ST", x: 70, y: 18 }
 ];
 
 /* =====================================================
-   TEAM PAGE
+ TEAM PAGE
 ===================================================== */
 
 export default function TeamPage() {
 
-  const [team, setTeam] = useState(null);
-  const [players, setPlayers] = useState([]);
-  const [lineup, setLineup] = useState({});
-  const [bench, setBench] = useState([]);
-  const [tactics, setTactics] = useState({});
-  const [draggingPlayer, setDraggingPlayer] = useState(null);
+const [team, setTeam] = useState(null);
+const [players, setPlayers] = useState([]);
+const [lineup, setLineup] = useState({});
+const [bench, setBench] = useState([]);
+const [tactics, setTactics] = useState({});
+const [draggingPlayer, setDraggingPlayer] = useState(null);
 
-  /* ================= LOAD ================= */
+/* ================= LOAD ================= */
 
-  useEffect(() => {
-    const load = async () => {
-      const token = localStorage.getItem("token");
+useEffect(() => {
+const load = async () => {
+const token = localStorage.getItem("token");
 
-      const teamRes = await fetch("/api/team", {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+const teamRes = await fetch("/api/team", {
+headers: { Authorization: `Bearer ${token}` }
+ });
+const teamData = await teamRes.json();
 
-      const teamData = await teamRes.json();
-      setTeam(teamData);
-      setLineup(teamData.lineup || {});
-      setBench(teamData.bench || []);
-      setTactics(teamData.tactics || {});
+setTeam(teamData);
+setLineup(teamData.lineup || {});
+setBench(teamData.bench || []);
+setTactics(teamData.tactics || {});
 
-      const playersRes = await fetch("/api/player/my-team", {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+const playersRes = await fetch("/api/player/my-team", {
+headers: { Authorization: `Bearer ${token}` }
+ });
 
-      setPlayers(await playersRes.json());
-    };
+setPlayers(await playersRes.json());
+};
 
-    load();
-  }, []);
+load();
+}, []);
 
-  /* ================= AUTO SAVE ================= */
+/* ================= AUTO SAVE ================= */
 
-  useEffect(() => {
-    if (!team) return;
+useEffect(() => {
+if (!team) return;
 
-    const token = localStorage.getItem("token");
+const token = localStorage.getItem("token");
 
-    fetch("/api/team/lineup", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`
-      },
-      body: JSON.stringify({ lineup, bench, tactics })
-    });
-  }, [lineup, bench, tactics]);
+fetch("/api/team/lineup", {
+method: "PUT",
+headers: {
+"Content-Type": "application/json",
+Authorization: `Bearer ${token}`
+},
+body: JSON.stringify({ lineup, bench, tactics })
+});
+}, [lineup, bench, tactics]);
 
-  /* ================= DRAG ================= */
+/* ================= DRAG ================= */
 
-  const handleDragEnd = (event) => {
-    const { active, over } = event;
-    if (!over) return;
+const handleDragEnd = (event) => {
+const { active, over } = event;
+if (!over) return;
 
-    const player = players.find(p => p._id === active.id);
-    if (!player) return;
+const player = players.find(p => p._id === active.id);
+if (!player) return;
 
-    const slot = fieldSlots.find(s => s.id === over.id);
+/* ===== DROP AUF SLOT ===== */
+const slot = fieldSlots.find(s => s.id === over.id);
 
-    if (slot) {
+if (slot) {
+if (!player.positions?.includes(slot.type)) return;
 
-      if (!player.positions?.includes(slot.type)) return;
+setLineup(prev => {
+const updated = { ...prev };
 
-      const occupied = Object.keys(lineup)
-        .find(id => lineup[id] === slot.id);
+if (!updated[player._id] && Object.keys(updated).length >= 11)
+return prev;
 
-      setLineup(prev => {
+const occupied = Object.keys(updated)
+.find(id => updated[id] === slot.id);
 
-        const updated = { ...prev };
+if (occupied && occupied !== player._id) {
+delete updated[occupied];
+}
 
-        if (!updated[player._id] &&
-            Object.keys(updated).length >= 11)
-          return prev;
+updated[player._id] = slot.id;
+return updated;
+});
 
-        if (occupied && occupied !== player._id) {
-          delete updated[occupied];
-        }
+setBench(prev => prev.filter(id => id !== player._id));
+}
 
-        updated[player._id] = slot.id;
+/* ===== DROP AUF BANK ===== */
+if (over.id === "bench") {
 
-        return updated;
-      });
+if (bench.length >= 7 && !bench.includes(player._id)) return;
 
-      setBench(prev => prev.filter(id => id !== player._id));
-    }
+setLineup(prev => {
+const updated = { ...prev };
+delete updated[player._id];
+return updated;
+});
 
-    if (over.id === "bench") {
+setBench(prev =>
+prev.includes(player._id) ? prev : [...prev, player._id]
+);
+}
+};
 
-      if (bench.length >= 7 && !bench.includes(player._id)) return;
+if (!team) return null;
 
-      setLineup(prev => {
-        const updated = { ...prev };
-        delete updated[player._id];
-        return updated;
-      });
+const starters = players.filter(p =>
+Object.keys(lineup).includes(p._id)
+);
 
-      setBench(prev =>
-        prev.includes(player._id) ? prev : [...prev, player._id]
-      );
-    }
-  };
+const benchPlayers = players.filter(p =>
+bench.includes(p._id)
+);
 
-  if (!team) return null;
+const rest = players.filter(p =>
+!Object.keys(lineup).includes(p._id) &&
+!bench.includes(p._id)
+);
 
-  const starters = players.filter(p =>
-    Object.keys(lineup).includes(p._id)
-  );
+return (
+<DndContext
+onDragStart={(e) => {
+const p = players.find(pl => pl._id === e.active.id);
+setDraggingPlayer(p);
+}}
+onDragEnd={(e) => {
+handleDragEnd(e);
+setDraggingPlayer(null);
+}}
+>
 
-  const benchPlayers = players.filter(p =>
-    bench.includes(p._id)
-  );
+<div className="max-w-[1500px] mx-auto p-6 text-white">
 
-  const rest = players.filter(p =>
-    !Object.keys(lineup).includes(p._id) &&
-    !bench.includes(p._id)
-  );
+{/* ================= TACTICS ================= */}
 
-  return (
-    <DndContext
-      onDragStart={(e) => {
-        const p = players.find(pl => pl._id === e.active.id);
-        setDraggingPlayer(p);
-      }}
-      onDragEnd={(e) => {
-        handleDragEnd(e);
-        setDraggingPlayer(null);
-      }}
-    >
+<div className="grid grid-cols-4 gap-4 mb-8 bg-black/40 p-4 rounded-xl">
+<Select label="Spielidee" value={tactics.style}
+onChange={v => setTactics({ ...tactics, style: v })}
+options={["ballbesitz","konter","gegenpressing","mauern"]} />
+<Select label="Tempo" value={tactics.tempo}
+onChange={v => setTactics({ ...tactics, tempo: v })}
+options={["langsam","normal","hoch"]} />
+<Select label="Mentalität" value={tactics.mentality}
+onChange={v => setTactics({ ...tactics, mentality: v })}
+options={["defensiv","ausgewogen","offensiv"]} />
+<Select label="Passspiel" value={tactics.passing}
+onChange={v => setTactics({ ...tactics, passing: v })}
+options={["kurz","variabel","lang"]} />
+<Select label="Abwehrlinie" value={tactics.defensiveLine}
+onChange={v => setTactics({ ...tactics, defensiveLine: v })}
+options={["tief","mittel","hoch"]} />
+<Select label="Pressing" value={tactics.pressing}
+onChange={v => setTactics({ ...tactics, pressing: v })}
+options={["niedrig","mittel","hoch"]} />
+<Select label="Breite" value={tactics.width}
+onChange={v => setTactics({ ...tactics, width: v })}
+options={["schmal","normal","breit"]} />
+<Select label="Ballverlust" value={tactics.transition}
+onChange={v => setTactics({ ...tactics, transition: v })}
+options={["gegenpressing","zurückziehen"]} />
+</div>
 
-      <div className="max-w-[1500px] mx-auto p-6 text-white">
+<div className="flex gap-12">
 
-        {/* ================= 8 TACTICS ================= */}
+<div className="flex flex-col items-center">
 
-        <div className="grid grid-cols-4 gap-4 mb-8 bg-black/40 p-4 rounded-xl">
-          <Select label="Spielidee" value={tactics.style}
-            onChange={v => setTactics({ ...tactics, style: v })}
-            options={["ballbesitz","konter","gegenpressing","mauern"]} />
-          <Select label="Tempo" value={tactics.tempo}
-            onChange={v => setTactics({ ...tactics, tempo: v })}
-            options={["langsam","normal","hoch"]} />
-          <Select label="Mentalität" value={tactics.mentality}
-            onChange={v => setTactics({ ...tactics, mentality: v })}
-            options={["defensiv","ausgewogen","offensiv"]} />
-          <Select label="Passspiel" value={tactics.passing}
-            onChange={v => setTactics({ ...tactics, passing: v })}
-            options={["kurz","variabel","lang"]} />
-          <Select label="Abwehrlinie" value={tactics.defensiveLine}
-            onChange={v => setTactics({ ...tactics, defensiveLine: v })}
-            options={["tief","mittel","hoch"]} />
-          <Select label="Pressing" value={tactics.pressing}
-            onChange={v => setTactics({ ...tactics, pressing: v })}
-            options={["niedrig","mittel","hoch"]} />
-          <Select label="Breite" value={tactics.width}
-            onChange={v => setTactics({ ...tactics, width: v })}
-            options={["schmal","normal","breit"]} />
-          <Select label="Ballverlust" value={tactics.transition}
-            onChange={v => setTactics({ ...tactics, transition: v })}
-            options={["gegenpressing","zurückziehen"]} />
-        </div>
+<Pitch
+lineup={lineup}
+players={players}
+draggingPlayer={draggingPlayer}
+/>
 
-        {/* ================= LAYOUT ================= */}
+<Bench bench={benchPlayers} />
+</div>
 
-        <div className="flex gap-12">
+<SquadList
+starters={starters}
+benchPlayers={benchPlayers}
+rest={rest}
+/>
 
-          <div className="flex flex-col items-center">
-
-            <Pitch
-              lineup={lineup}
-              players={players}
-              draggingPlayer={draggingPlayer}
-            />
-
-            <Bench bench={benchPlayers} />
-          </div>
-
-          <SquadList
-            starters={starters}
-            benchPlayers={benchPlayers}
-            rest={rest}
-          />
-        </div>
-      </div>
-    </DndContext>
-  );
+</div>
+</div>
+</DndContext>
+);
 }
 
 /* =====================================================
-   COMPONENTS
+ COMPONENTS
 ===================================================== */
 
 function Pitch({ lineup, players, draggingPlayer }) {
-  return (
-    <div className="relative w-[750px] h-[950px] bg-green-700 rounded-xl shadow-2xl">
 
-      <div className="absolute inset-0 border-4 border-white"></div>
-      <div className="absolute top-1/2 w-full h-[2px] bg-white"></div>
-      <div className="absolute top-1/2 left-1/2 w-44 h-44 border-2 border-white rounded-full -translate-x-1/2 -translate-y-1/2"></div>
-      <div className="absolute top-0 left-1/2 w-96 h-48 border-2 border-white -translate-x-1/2"></div>
-      <div className="absolute bottom-0 left-1/2 w-96 h-48 border-2 border-white -translate-x-1/2"></div>
-      <div className="absolute top-0 left-1/2 w-40 h-20 border-2 border-white -translate-x-1/2"></div>
-      <div className="absolute bottom-0 left-1/2 w-40 h-20 border-2 border-white -translate-x-1/2"></div>
+return (
+<div className="relative w-[750px] h-[950px] bg-green-700 rounded-xl shadow-2xl">
 
-      {fieldSlots.map(slot => {
+{/* Linien */}
+<div className="absolute inset-0 border-4 border-white"></div>
+<div className="absolute top-1/2 w-full h-[2px] bg-white"></div>
+<div className="absolute top-1/2 left-1/2 w-44 h-44 border-2 border-white rounded-full -translate-x-1/2 -translate-y-1/2"></div>
+<div className="absolute top-0 left-1/2 w-96 h-48 border-2 border-white -translate-x-1/2"></div>
+<div className="absolute bottom-0 left-1/2 w-96 h-48 border-2 border-white -translate-x-1/2"></div>
+<div className="absolute top-0 left-1/2 w-40 h-20 border-2 border-white -translate-x-1/2"></div>
+<div className="absolute bottom-0 left-1/2 w-40 h-20 border-2 border-white -translate-x-1/2"></div>
 
-        const playerId = Object.keys(lineup)
-          .find(id => lineup[id] === slot.id);
+{fieldSlots.map(slot => {
 
-        const player = players.find(p => p._id === playerId);
+const { setNodeRef } = useDroppable({ id: slot.id });
 
-        return (
-          <div key={slot.id}
-            style={{
-              position:"absolute",
-              left:`${slot.x}%`,
-              top:`${slot.y}%`,
-              transform:"translate(-50%,-50%)"
-            }}
-          >
-            {player && <FieldPlayer player={player} />}
+const playerId = Object.keys(lineup)
+.find(id => lineup[id] === slot.id);
 
-            {draggingPlayer &&
-             draggingPlayer.positions?.includes(slot.type) &&
-             !player && (
-               <div className="w-14 h-14 rounded-full border border-white/40 bg-white/10"></div>
-            )}
-          </div>
-        );
-      })}
-    </div>
-  );
+const player = players.find(p => p._id === playerId);
+
+return (
+<div
+key={slot.id}
+ref={setNodeRef}
+style={{
+position:"absolute",
+left:`${slot.x}%`,
+top:`${slot.y}%`,
+transform:"translate(-50%,-50%)"
+}}
+>
+
+{player && <FieldPlayer player={player} />}
+
+{draggingPlayer &&
+draggingPlayer.positions?.includes(slot.type) &&
+!player && (
+<div className="w-14 h-14 rounded-full border border-white/40 bg-white/10"></div>
+)}
+
+</div>
+);
+})}
+
+</div>
+);
 }
 
 function FieldPlayer({ player }) {
 
-  const { attributes, listeners, setNodeRef } =
-    useDraggable({ id: player._id });
+const { attributes, listeners, setNodeRef } =
+useDraggable({ id: player._id });
 
-  return (
-    <div
-      ref={setNodeRef}
-      {...listeners}
-      {...attributes}
-      className="flex flex-col items-center cursor-grab"
-    >
-      <div className="w-14 h-14 rounded-full bg-blue-700 border-2 border-white flex items-center justify-center text-xs font-bold">
-        {player.positions[0]}
-      </div>
+return (
+<div
+ref={setNodeRef}
+{...listeners}
+{...attributes}
+className="flex flex-col items-center cursor-grab"
+>
+<div className="w-14 h-14 rounded-full bg-blue-700 border-2 border-white flex items-center justify-center text-xs font-bold">
+{player.positions[0]}
+</div>
 
-      <div className="text-xs text-white mt-1">
-        {player.lastName}
-      </div>
-    </div>
-  );
+<div className="text-xs text-white mt-1">
+{player.lastName}
+</div>
+</div>
+);
 }
 
 function Bench({ bench }) {
-  return (
-    <div className="mt-6 w-[750px] bg-black/40 p-4 rounded-xl">
-      <h3 className="mb-3 font-semibold">Bank ({bench.length}/7)</h3>
-      {bench.map(p => (
-        <PlayerCard key={p._id} player={p} />
-      ))}
-    </div>
-  );
+
+const { setNodeRef } = useDroppable({ id: "bench" });
+
+return (
+<div ref={setNodeRef}
+className="mt-6 w-[750px] bg-black/40 p-4 rounded-xl">
+<h3 className="mb-3 font-semibold">
+Bank ({bench.length}/7)
+</h3>
+
+{bench.map(p => (
+<PlayerCard key={p._id} player={p} />
+))}
+</div>
+);
 }
 
 function SquadList({ starters, benchPlayers, rest }) {
-  return (
-    <div className="w-[420px] bg-black/40 p-6 rounded-xl">
-
-      <Category title="Startelf" players={starters} />
-      <Category title="Bank" players={benchPlayers} />
-      <Category title="Nicht im Kader" players={rest} />
-
-    </div>
-  );
+return (
+<div className="w-[420px] bg-black/40 p-6 rounded-xl">
+<Category title="Startelf" players={starters} />
+<Category title="Bank" players={benchPlayers} />
+<Category title="Nicht im Kader" players={rest} />
+</div>
+);
 }
 
 function Category({ title, players }) {
-  return (
-    <>
-      <h3 className="font-semibold mt-4 mb-2">{title}</h3>
-      {players.map(p => (
-        <PlayerCard key={p._id} player={p} />
-      ))}
-    </>
-  );
+return (
+<>
+<h3 className="font-semibold mt-4 mb-2">{title}</h3>
+{players.map(p => (
+<PlayerCard key={p._id} player={p} />
+))}
+</>
+);
 }
 
 function PlayerCard({ player }) {
-  return (
-    <div className="bg-gray-900 p-3 rounded mb-2 shadow">
-      <div className="font-semibold">
-        {player.firstName} {player.lastName}
-      </div>
-      <div className="text-xs text-gray-400">
-        {player.age} Jahre • {player.positions.join(", ")}
-      </div>
-      <div className="text-yellow-400 text-xs">
-        {"★".repeat(Math.round(player.stars))}
-      </div>
-    </div>
-  );
+
+const { attributes, listeners, setNodeRef, transform } =
+useDraggable({ id: player._id });
+
+const style = {
+transform: transform
+? `translate(${transform.x}px, ${transform.y}px)`
+: undefined
+};
+
+return (
+<div
+ref={setNodeRef}
+{...listeners}
+{...attributes}
+style={style}
+className="bg-gray-900 p-3 rounded mb-2 shadow cursor-grab"
+>
+<div className="font-semibold">
+{player.firstName} {player.lastName}
+</div>
+<div className="text-xs text-gray-400">
+{player.age} Jahre • {player.positions.join(", ")}
+</div>
+<div className="text-yellow-400 text-xs">
+{"★".repeat(Math.round(player.stars))}
+</div>
+</div>
+);
 }
 
 function Select({ label, value, onChange, options }) {
-  return (
-    <div>
-      <div className="text-xs mb-1">{label}</div>
-      <select
-        value={value || ""}
-        onChange={e => onChange(e.target.value)}
-        className="w-full bg-gray-800 p-2 rounded"
-      >
-        <option value="">-</option>
-        {options.map(o => (
-          <option key={o} value={o}>{o}</option>
-        ))}
-      </select>
-    </div>
-  );
+return (
+<div>
+<div className="text-xs mb-1">{label}</div>
+<select
+value={value || ""}
+onChange={e => onChange(e.target.value)}
+className="w-full bg-gray-800 p-2 rounded"
+>
+<option value="">-</option>
+{options.map(o => (
+<option key={o} value={o}>{o}</option>
+))}
+</select>
+</div>
+);
 }
