@@ -1,37 +1,32 @@
 import { DndContext, useDraggable, useDroppable } from "@dnd-kit/core";
 import { useEffect, useState } from "react";
 
-/* =====================================================
-   POSITIONEN AUF DEM FELD
-===================================================== */
+/* ================================
+   SLOT KOORDINATEN
+================================ */
 
 const fieldSlots = {
   GK: { x: 50, y: 92 },
-  RB: { x: 80, y: 75 },
-  RCB: { x: 65, y: 82 },
-  LCB: { x: 35, y: 82 },
   LB: { x: 20, y: 75 },
-
+  LCB: { x: 38, y: 80 },
+  RCB: { x: 62, y: 80 },
+  RB: { x: 80, y: 75 },
   DM: { x: 50, y: 65 },
-  RCM: { x: 65, y: 55 },
   LCM: { x: 35, y: 55 },
-
-  RW: { x: 80, y: 35 },
-  ST: { x: 50, y: 25 },
+  RCM: { x: 65, y: 55 },
   LW: { x: 20, y: 35 },
+  ST: { x: 50, y: 25 },
+  RW: { x: 80, y: 35 }
 };
-
-/* =====================================================
-   TEAM PAGE
-===================================================== */
 
 export default function TeamPage() {
 
+  const [team, setTeam] = useState(null);
   const [players, setPlayers] = useState([]);
   const [lineup, setLineup] = useState({});
   const [bench, setBench] = useState([]);
-  const [team, setTeam] = useState(null);
-  const [activePlayer, setActivePlayer] = useState(null);
+  const [tactics, setTactics] = useState({});
+  const [locked, setLocked] = useState(false);
 
   /* ================= LOAD ================= */
 
@@ -49,13 +44,15 @@ export default function TeamPage() {
       setTeam(teamData);
       setLineup(teamData.lineup || {});
       setBench(teamData.bench || []);
+      setTactics(teamData.tactics || {});
+      setLocked(teamData.lineupLocked);
 
-      const playerRes = await fetch("/api/player/my-team", {
+      const playersRes = await fetch("/api/player/my-team", {
         headers: { Authorization: `Bearer ${token}` }
       });
 
-      const playerData = await playerRes.json();
-      setPlayers(playerData);
+      const playersData = await playersRes.json();
+      setPlayers(playersData);
     };
 
     load();
@@ -64,7 +61,7 @@ export default function TeamPage() {
   /* ================= AUTO SAVE ================= */
 
   useEffect(() => {
-    if (!team) return;
+    if (!team || locked) return;
 
     const save = async () => {
       const token = localStorage.getItem("token");
@@ -75,136 +72,172 @@ export default function TeamPage() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`
         },
-        body: JSON.stringify({ lineup, bench })
+        body: JSON.stringify({
+          lineup,
+          bench,
+          tactics
+        })
       });
     };
 
     save();
-  }, [lineup, bench]);
+  }, [lineup, bench, tactics]);
 
-  /* ================= DRAG LOGIK ================= */
-
-  const handleDragStart = (event) => {
-    const player = players.find(p => p._id === event.active.id);
-    setActivePlayer(player);
-  };
+  /* ================= DRAG ================= */
 
   const handleDragEnd = (event) => {
+    if (locked) return;
+
     const { over, active } = event;
-    setActivePlayer(null);
     if (!over) return;
 
-    const player = players.find(p => p._id === active.id);
+    const playerId = active.id;
     const slot = over.id;
 
-    if (!player) return;
-
-    // Slot auf Feld
-    if (fieldSlots[slot]) {
-      setLineup(prev => ({
-        ...prev,
-        [player._id]: {
-          position: slot,
-          role: defaultRoleForPosition(slot),
-          x: fieldSlots[slot].x,
-          y: fieldSlots[slot].y
-        }
-      }));
-
-      setBench(prev => prev.filter(id => id !== player._id));
-    }
-
-    // Auf Bank
     if (slot === "bench") {
-      setBench(prev => [...new Set([...prev, player._id])]);
-
+      setBench(prev => [...new Set([...prev, playerId])]);
       setLineup(prev => {
         const copy = { ...prev };
-        delete copy[player._id];
+        delete copy[playerId];
         return copy;
       });
+      return;
     }
+
+    setLineup(prev => ({
+      ...prev,
+      [playerId]: {
+        position: slot,
+        x: fieldSlots[slot].x,
+        y: fieldSlots[slot].y
+      }
+    }));
+
+    setBench(prev => prev.filter(id => id !== playerId));
   };
 
-  if (!team) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-black text-white">
-        Lade Team...
-      </div>
-    );
-  }
+  if (!team) return null;
 
-  const start11Ids = Object.keys(lineup);
+  /* ================= FILTER ================= */
+
+  const startIds = Object.keys(lineup);
   const benchIds = bench;
 
-  const start11 = players.filter(p => start11Ids.includes(p._id));
+  const startPlayers = players.filter(p => startIds.includes(p._id));
   const benchPlayers = players.filter(p => benchIds.includes(p._id));
-  const notInSquad = players.filter(
-    p => !start11Ids.includes(p._id) && !benchIds.includes(p._id)
+  const squadPlayers = players.filter(
+    p => !startIds.includes(p._id) && !benchIds.includes(p._id)
   );
 
-  return (
-    <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+  /* ================= RENDER ================= */
 
+  return (
+    <DndContext onDragEnd={handleDragEnd}>
       <div
         className="relative min-h-screen bg-cover bg-center"
         style={{ backgroundImage: "url('/lockerroom.jpg')" }}
       >
-        <div className="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
+        <div className="absolute inset-0 bg-black/75 backdrop-blur-sm"></div>
 
-        <div className="relative z-10 p-10 text-white">
+        <div className="relative z-10 p-8 text-white">
 
-          {/* ================= SPIELFELD ================= */}
-          <div className="flex gap-12">
+          {locked && (
+            <div className="bg-red-600 p-3 rounded mb-4">
+              🔒 Lineup für diesen Spieltag gesperrt
+            </div>
+          )}
 
-            <div className="relative w-[700px] h-[900px] bg-green-700/90 rounded-xl shadow-2xl overflow-hidden">
+          {/* ================= MANAGER SETTINGS ================= */}
 
-              {/* Linien */}
-              <div className="absolute inset-0 border-4 border-white"></div>
-              <div className="absolute top-1/2 left-0 w-full h-[2px] bg-white"></div>
-              <div className="absolute top-1/2 left-1/2 w-40 h-40 border-2 border-white rounded-full transform -translate-x-1/2 -translate-y-1/2"></div>
+          <div className="bg-black/50 p-4 rounded-xl mb-6 grid grid-cols-4 gap-4">
+            <Select
+              label="Spieltempo"
+              value={tactics.tempo}
+              onChange={(v) => setTactics({ ...tactics, tempo: v })}
+              options={["langsam", "normal", "hoch", "sehr_hoch"]}
+            />
+            <Select
+              label="Mentalität"
+              value={tactics.mentality}
+              onChange={(v) => setTactics({ ...tactics, mentality: v })}
+              options={["defensiv", "ausgewogen", "offensiv", "sehr_offensiv"]}
+            />
+            <Select
+              label="Passspiel"
+              value={tactics.passing}
+              onChange={(v) => setTactics({ ...tactics, passing: v })}
+              options={["kurz", "variabel", "lang"]}
+            />
+            <Select
+              label="Abwehrlinie"
+              value={tactics.defensiveLine}
+              onChange={(v) => setTactics({ ...tactics, defensiveLine: v })}
+              options={["tief", "normal", "hoch"]}
+            />
+          </div>
 
-              {/* Slots */}
-              {Object.entries(fieldSlots).map(([pos, coords]) => (
-                <FieldSlot key={pos} id={pos} x={coords.x} y={coords.y} />
-              ))}
+          <div className="flex gap-10">
 
-              {/* Spieler auf Feld */}
-              {start11.map(player => {
-                const data = lineup[player._id];
-                return (
-                  <div
-                    key={player._id}
-                    className="absolute bg-white text-black px-2 py-1 rounded text-xs font-bold"
-                    style={{
-                      left: `${data.x}%`,
-                      top: `${data.y}%`,
-                      transform: "translate(-50%, -50%)"
-                    }}
-                  >
-                    {player.name}
-                    <div className="text-[10px] opacity-60">
-                      {data.role}
+            {/* ================= SPIELFELD ================= */}
+
+            <div>
+              <div className="relative w-[700px] h-[900px] bg-green-700/90 rounded-xl overflow-hidden shadow-2xl">
+
+                {/* Linien */}
+                <div className="absolute inset-0 border-4 border-white"></div>
+                <div className="absolute top-1/2 w-full h-[2px] bg-white"></div>
+                <div className="absolute top-1/2 left-1/2 w-40 h-40 border-2 border-white rounded-full transform -translate-x-1/2 -translate-y-1/2"></div>
+
+                {/* 16er */}
+                <div className="absolute bottom-0 left-1/2 w-80 h-40 border-2 border-white transform -translate-x-1/2"></div>
+                <div className="absolute top-0 left-1/2 w-80 h-40 border-2 border-white transform -translate-x-1/2"></div>
+
+                {/* Slots */}
+                {Object.entries(fieldSlots).map(([pos, coords]) => (
+                  <FieldSlot key={pos} id={pos} x={coords.x} y={coords.y} />
+                ))}
+
+                {/* Spieler */}
+                {startPlayers.map(player => {
+                  const data = lineup[player._id];
+                  return (
+                    <div
+                      key={player._id}
+                      className="absolute bg-white text-black px-2 py-1 rounded text-xs font-bold shadow"
+                      style={{
+                        left: `${data.x}%`,
+                        top: `${data.y}%`,
+                        transform: "translate(-50%, -50%)"
+                      }}
+                    >
+                      {player.name}
+                      <div className="text-[10px] opacity-70">
+                        {player.age} | {player.primaryPosition}
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
+
+              {/* ================= BANK ================= */}
+
+              <div
+                className="mt-6 bg-black/40 p-4 rounded-xl flex gap-3"
+              >
+                <DropBench id="bench" />
+                {benchPlayers.map(p => (
+                  <PlayerCard key={p._id} player={p} />
+                ))}
+              </div>
             </div>
 
-            {/* ================= KADER ================= */}
-            <div className="w-80 bg-black/40 backdrop-blur-md p-6 rounded-xl">
+            {/* ================= KADER LISTE ================= */}
 
-              <Section title="Startelf">
-                {start11.map(p => <PlayerCard key={p._id} player={p} />)}
-              </Section>
+            <div className="w-80 bg-black/40 p-6 rounded-xl overflow-y-auto h-[900px]">
 
-              <Section title="Bank" droppableId="bench">
-                {benchPlayers.map(p => <PlayerCard key={p._id} player={p} />)}
-              </Section>
-
-              <Section title="Nicht im Kader">
-                {notInSquad.map(p => <PlayerCard key={p._id} player={p} />)}
-              </Section>
+              <Section title="Startelf" players={startPlayers} />
+              <Section title="Bank" players={benchPlayers} />
+              <Section title="Nicht im Kader" players={squadPlayers} />
 
             </div>
           </div>
@@ -214,9 +247,7 @@ export default function TeamPage() {
   );
 }
 
-/* =====================================================
-   KOMPONENTEN
-===================================================== */
+/* ================= COMPONENTS ================= */
 
 function FieldSlot({ id, x, y }) {
   const { setNodeRef, isOver } = useDroppable({ id });
@@ -224,8 +255,8 @@ function FieldSlot({ id, x, y }) {
   return (
     <div
       ref={setNodeRef}
-      className={`absolute w-16 h-16 rounded-full border-2 flex items-center justify-center text-xs font-bold transition
-        ${isOver ? "bg-yellow-400" : "bg-white/60"}`}
+      className={`absolute w-14 h-14 rounded-full border-2 flex items-center justify-center text-xs font-bold
+      ${isOver ? "bg-yellow-400" : "bg-white/60"}`}
       style={{
         left: `${x}%`,
         top: `${y}%`,
@@ -237,6 +268,20 @@ function FieldSlot({ id, x, y }) {
   );
 }
 
+function DropBench({ id }) {
+  const { setNodeRef, isOver } = useDroppable({ id });
+
+  return (
+    <div
+      ref={setNodeRef}
+      className={`w-24 h-24 rounded-lg border-2 flex items-center justify-center text-xs
+      ${isOver ? "bg-yellow-400" : "bg-gray-700"}`}
+    >
+      Bank
+    </div>
+  );
+}
+
 function PlayerCard({ player }) {
   const { attributes, listeners, setNodeRef, transform } =
     useDraggable({ id: player._id });
@@ -244,7 +289,7 @@ function PlayerCard({ player }) {
   const style = {
     transform: transform
       ? `translate(${transform.x}px, ${transform.y}px)`
-      : undefined,
+      : undefined
   };
 
   return (
@@ -253,11 +298,11 @@ function PlayerCard({ player }) {
       {...listeners}
       {...attributes}
       style={style}
-      className="bg-gray-800 p-3 mb-3 rounded cursor-grab hover:bg-gray-700 transition"
+      className="bg-gray-800 p-3 mb-3 rounded cursor-grab hover:bg-gray-700 transition shadow"
     >
       <div className="font-semibold">{player.name}</div>
       <div className="text-xs opacity-70">
-        {player.primaryPosition} | {player.age} Jahre
+        {player.age} | {player.primaryPosition}
       </div>
       <div className="text-yellow-400">
         {"⭐".repeat(Math.round(player.starRating || 3))}
@@ -266,34 +311,31 @@ function PlayerCard({ player }) {
   );
 }
 
-function Section({ title, children, droppableId }) {
-
-  const droppable = droppableId ? useDroppable({ id: droppableId }) : null;
-
+function Section({ title, players }) {
   return (
-    <div
-      ref={droppable ? droppable.setNodeRef : null}
-      className="mb-6"
-    >
-      <h2 className="font-bold mb-3">{title}</h2>
-      {children}
+    <div className="mb-6">
+      <div className="font-bold mb-2">{title}</div>
+      {players.map(p => (
+        <PlayerCard key={p._id} player={p} />
+      ))}
     </div>
   );
 }
 
-function defaultRoleForPosition(pos) {
-  const map = {
-    ST: "zielspieler",
-    RW: "inverser_fluegel",
-    LW: "fluegelspieler",
-    DM: "tiefer_spielmacher",
-    RCM: "box_to_box",
-    LCM: "box_to_box",
-    RB: "wingback",
-    LB: "wingback",
-    RCB: "klassischer_iv",
-    LCB: "klassischer_iv",
-    GK: "mitspielender_keeper"
-  };
-  return map[pos] || null;
+function Select({ label, value, onChange, options }) {
+  return (
+    <div>
+      <div className="text-xs mb-1">{label}</div>
+      <select
+        value={value || ""}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full bg-gray-800 p-2 rounded"
+      >
+        <option value="">–</option>
+        {options.map(o => (
+          <option key={o} value={o}>{o}</option>
+        ))}
+      </select>
+    </div>
+  );
 }
