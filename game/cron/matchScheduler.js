@@ -10,24 +10,20 @@ const { generateMatchTicker } = require("../utils/eventTextGenerator");
 const { generateKickerStyleReport } = require("../utils/aiMatchReport");
 
 /* ======================================================
-   🔒 22:00 LINEUP LOCK (Di, Do, Sa)
+ 🔒 LINEUP LOCK
 ====================================================== */
 
 cron.schedule("0 22 * * 2,4,6", async () => {
   console.log("🔒 Lineup Lock gestartet");
 
-  const matches = await Match.find({
-    status: "scheduled",
-  });
+  const matches = await Match.find({ status: "scheduled" });
 
   for (const match of matches) {
 
     const homeTeam = await Team.findById(match.homeTeam);
     const awayTeam = await Team.findById(match.awayTeam);
-
     if (!homeTeam || !awayTeam) continue;
 
-    // Nur locken wenn noch nicht gesperrt
     if (!homeTeam.lineupLocked) {
       homeTeam.lockedLineup = homeTeam.lineup;
       homeTeam.lockedBench = homeTeam.bench;
@@ -50,10 +46,11 @@ cron.schedule("0 22 * * 2,4,6", async () => {
 });
 
 /* ======================================================
-   ⚽ 04:00 SPIELBERECHNUNG (Mi, Fr, So)
+ ⚽ SPIELBERECHNUNG
 ====================================================== */
 
 cron.schedule("0 4 * * 3,5,0", async () => {
+
   console.log("⚽ Spielberechnung gestartet");
 
   const matches = await Match.find({
@@ -66,23 +63,24 @@ cron.schedule("0 4 * * 3,5,0", async () => {
     const homeTeam = match.homeTeam;
     const awayTeam = match.awayTeam;
 
-    // 🔥 Locked Lineup verwenden
-    const homePlayerIds = Object.values(homeTeam.lockedLineup || {});
-    const awayPlayerIds = Object.values(awayTeam.lockedLineup || {});
+    if (!homeTeam.lockedLineup || !awayTeam.lockedLineup) continue;
 
-    const homePlayers = await Player.find({
-      _id: { $in: homePlayerIds },
-    });
+    const homePlayerIds = Object.values(homeTeam.lockedLineup)
+      .map(slot => slot.player);
 
-    const awayPlayers = await Player.find({
-      _id: { $in: awayPlayerIds },
-    });
+    const awayPlayerIds = Object.values(awayTeam.lockedLineup)
+      .map(slot => slot.player);
 
-    // ================= STADION =================
+    const homePlayers = await Player.find({ _id: { $in: homePlayerIds } });
+    const awayPlayers = await Player.find({ _id: { $in: awayPlayerIds } });
 
-    const stadium = await Stadium.findOne({
-      team: homeTeam._id,
-    });
+    if (homePlayers.length < 11 || awayPlayers.length < 11) {
+      console.log("⚠️ Ungültiges Lineup");
+      continue;
+    }
+
+    const stadium = await Stadium.findOne({ team: homeTeam._id });
+    if (!stadium) continue;
 
     const { attendance, revenue, fillRate } =
       calculateAttendance({
@@ -91,8 +89,6 @@ cron.schedule("0 4 * * 3,5,0", async () => {
         homePosition: homeTeam.tablePosition || 10,
         awayPosition: awayTeam.tablePosition || 10,
       });
-
-    // ================= MATCH ENGINE =================
 
     const result = simulateRealisticMatch({
       homePlayers,
@@ -103,33 +99,13 @@ cron.schedule("0 4 * * 3,5,0", async () => {
       fillRate,
     });
 
-    // ================= ERGEBNIS =================
+    /* ===== Ergebnis speichern ===== */
 
     match.homeGoals = result.result.homeGoals;
     match.awayGoals = result.result.awayGoals;
-
     match.possession = result.possession;
     match.chances = result.chances;
     match.xG = result.xG;
-
-    match.shots = {
-      home: Math.round(result.chances.home * 1.4),
-      away: Math.round(result.chances.away * 1.4),
-    };
-
-    match.shotsOnTarget = {
-      home: Math.round(result.xG.home * 3),
-      away: Math.round(result.xG.away * 3),
-    };
-
-    match.attendance = attendance;
-    match.revenue = revenue;
-
-    match.status = "played";
-    match.played = true;
-
-    // ================= EVENTS =================
-
     match.events = result.events;
     match.ticker = generateMatchTicker(result.events);
 
@@ -143,64 +119,73 @@ cron.schedule("0 4 * * 3,5,0", async () => {
       events: result.events,
     });
 
-    // ================= EINNAHMEN =================
+    match.attendance = attendance;
+    match.revenue = revenue;
+    match.played = true;
+    match.status = "played";
+
+    /* ===== Tabelle ===== */
+
+    updateTable(homeTeam, awayTeam, match);
+
+    /* ===== Einnahmen ===== */
 
     homeTeam.balance += revenue;
 
-    // ================= TABELLE UPDATE =================
-
-    homeTeam.goalsFor += match.homeGoals;
-    homeTeam.goalsAgainst += match.awayGoals;
-
-    awayTeam.goalsFor += match.awayGoals;
-    awayTeam.goalsAgainst += match.homeGoals;
-
-    homeTeam.goalDifference =
-      homeTeam.goalsFor - homeTeam.goalsAgainst;
-
-    awayTeam.goalDifference =
-      awayTeam.goalsFor - awayTeam.goalsAgainst;
-
-    if (match.homeGoals > match.awayGoals) {
-      homeTeam.points += 3;
-      homeTeam.wins += 1;
-      awayTeam.losses += 1;
-    } else if (match.homeGoals < match.awayGoals) {
-      awayTeam.points += 3;
-      awayTeam.wins += 1;
-      homeTeam.losses += 1;
-    } else {
-      homeTeam.points += 1;
-      awayTeam.points += 1;
-      homeTeam.draws += 1;
-      awayTeam.draws += 1;
-    }
-
-    // 🔓 Lineup wieder freigeben
     homeTeam.lineupLocked = false;
     awayTeam.lineupLocked = false;
 
-    // ================= SPEICHERN =================
+    await Promise.all([
+      homeTeam.save(),
+      awayTeam.save(),
+      match.save()
+    ]);
 
-    await homeTeam.save();
-    await awayTeam.save();
-    await match.save();
+    /* ===== Tabelle sortieren ===== */
 
-    // ================= TABELLE SORTIEREN =================
+    const teams = await Team.find({ league: homeTeam.league })
+      .sort({ points: -1, goalDifference: -1, goalsFor: -1 });
 
-    const teams = await Team.find({
-      league: homeTeam.league,
-    }).sort({
-      points: -1,
-      goalDifference: -1,
-      goalsFor: -1,
+    teams.forEach((team, index) => {
+      team.tablePosition = index + 1;
     });
 
-    for (let i = 0; i < teams.length; i++) {
-      teams[i].tablePosition = i + 1;
-      await teams[i].save();
-    }
+    await Promise.all(teams.map(team => team.save()));
   }
 
   console.log("✅ Spielberechnung abgeschlossen");
 });
+
+/* ======================================================
+ Tabellenlogik
+====================================================== */
+
+function updateTable(homeTeam, awayTeam, match) {
+
+  homeTeam.goalsFor += match.homeGoals;
+  homeTeam.goalsAgainst += match.awayGoals;
+
+  awayTeam.goalsFor += match.awayGoals;
+  awayTeam.goalsAgainst += match.homeGoals;
+
+  homeTeam.goalDifference =
+    homeTeam.goalsFor - homeTeam.goalsAgainst;
+
+  awayTeam.goalDifference =
+    awayTeam.goalsFor - awayTeam.goalsAgainst;
+
+  if (match.homeGoals > match.awayGoals) {
+    homeTeam.points += 3;
+    homeTeam.wins += 1;
+    awayTeam.losses += 1;
+  } else if (match.homeGoals < match.awayGoals) {
+    awayTeam.points += 3;
+    awayTeam.wins += 1;
+    homeTeam.losses += 1;
+  } else {
+    homeTeam.points += 1;
+    awayTeam.points += 1;
+    homeTeam.draws += 1;
+    awayTeam.draws += 1;
+  }
+}
