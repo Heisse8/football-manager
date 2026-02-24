@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Team = require("../models/Team");
-const Stadium = require("../models/Stadium"); // 🔥 NEU
+const Stadium = require("../models/Stadium");
 const auth = require("../middleware/auth");
 const { generatePlayersForTeam } = require("../utils/playerGenerator");
 
@@ -27,12 +27,10 @@ router.post("/create", auth, async (req, res) => {
     }
 
     // 🔒 User darf nur 1 Team haben
-    const existingUserTeam = await Team.findOne({ owner: userId });
-    if (existingUserTeam) {
+    if (await Team.findOne({ owner: userId })) {
       return res.status(400).json({ message: "Du hast bereits ein Team." });
     }
 
-    // 🔒 Doppelten Namen verhindern
     if (await Team.findOne({ name })) {
       return res.status(400).json({ message: "Teamname bereits vergeben." });
     }
@@ -72,14 +70,14 @@ router.post("/create", auth, async (req, res) => {
       country,
       league,
       owner: userId,
-      balance: 5000000,       // optional Startbudget
-      currentMatchday: 1      // wichtig für Stadion-System
+      balance: 5000000,
+      currentMatchday: 1,
     });
 
     await newTeam.save();
 
     try {
-      // ================= STADION AUTOMATISCH ERSTELLEN =================
+      // Stadion
       await Stadium.create({
         team: newTeam._id,
         capacity: 2000,
@@ -88,29 +86,27 @@ router.post("/create", auth, async (req, res) => {
           inProgress: false,
           targetCapacity: null,
           startMatchday: null,
-          finishMatchday: null
-        }
+          finishMatchday: null,
+        },
       });
 
-      // ================= 18 SPIELER AUTOMATISCH =================
+      // 18 Spieler generieren
       await generatePlayersForTeam(newTeam);
 
     } catch (setupError) {
-
       console.error("Setup Fehler:", setupError);
 
-      // 🔥 Rollback wenn irgendetwas schiefgeht
       await Stadium.deleteOne({ team: newTeam._id });
       await Team.findByIdAndDelete(newTeam._id);
 
       return res.status(500).json({
-        message: "Fehler beim Setup des Teams. Bitte erneut versuchen."
+        message: "Fehler beim Setup des Teams. Bitte erneut versuchen.",
       });
     }
 
     res.status(201).json({
       message: "Team erfolgreich erstellt.",
-      team: newTeam
+      team: newTeam,
     });
 
   } catch (err) {
@@ -134,6 +130,32 @@ router.get("/", auth, async (req, res) => {
 
   } catch (err) {
     console.error("Team Get Fehler:", err);
+    res.status(500).json({ message: "Serverfehler" });
+  }
+});
+
+// ================= UPDATE LINEUP =================
+router.put("/lineup", auth, async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const { lineup } = req.body;
+
+    if (!Array.isArray(lineup)) {
+      return res.status(400).json({ message: "Ungültiges Lineup-Format" });
+    }
+
+    const team = await Team.findOne({ owner: userId });
+    if (!team) {
+      return res.status(404).json({ message: "Team nicht gefunden" });
+    }
+
+    team.lineup = lineup;
+    await team.save();
+
+    res.json({ message: "Lineup gespeichert" });
+
+  } catch (err) {
+    console.error("Lineup Update Fehler:", err);
     res.status(500).json({ message: "Serverfehler" });
   }
 });

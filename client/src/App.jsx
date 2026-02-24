@@ -6,7 +6,7 @@ import Layout from "./Layout";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
-import Teammanagement from "./pages/Teammanagement";
+import TeamPage from "./pages/TeamPage";
 import CreateTeam from "./pages/CreateTeam";
 import VerifySuccess from "./pages/VerifySuccess";
 import Kalender from "./pages/Kalender";
@@ -33,7 +33,7 @@ export default function App() {
         >
           <Route path="/" element={<Dashboard />} />
           <Route path="/kalender" element={<Kalender />} />
-          <Route path="/team" element={<Teammanagement />} />
+          <Route path="/team" element={<TeamPage />} />
           <Route path="/stadium" element={<StadiumPage />} /> {/* ✅ Stadion */}
 
           <Route
