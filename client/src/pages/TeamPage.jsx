@@ -28,7 +28,6 @@ export default function TeamPage() {
   const [lineup, setLineup] = useState({});
   const [bench, setBench] = useState([]);
   const [tactics, setTactics] = useState({});
-  const [activePlayer, setActivePlayer] = useState(null);
   const [locked, setLocked] = useState(false);
 
   /* ================= LOAD ================= */
@@ -90,11 +89,10 @@ export default function TeamPage() {
 
     const dropZone = over.id;
 
-    // ===== Spielfeld =====
+    /* ===== Spielfeld ===== */
     if (fieldSlots[dropZone]) {
 
       if (!player.positions?.includes(dropZone)) return;
-      if (Object.keys(lineup).length >= 11 && !lineup[player._id]) return;
 
       const occupiedId = Object.keys(lineup)
         .find(id => lineup[id] === dropZone);
@@ -105,15 +103,18 @@ export default function TeamPage() {
         const updated = { ...prev };
 
         if (occupiedId) {
-          updated[occupiedId] = prev[player._id] || null;
+          delete updated[occupiedId];
         }
 
-        updated[player._id] = dropZone;
+        if (Object.keys(updated).length < 11 || updated[player._id]) {
+          updated[player._id] = dropZone;
+        }
+
         return updated;
       });
     }
 
-    // ===== Bank =====
+    /* ===== Bank ===== */
     if (dropZone === "bench") {
 
       if (bench.length >= 7 && !bench.includes(player._id)) return;
@@ -205,10 +206,18 @@ export default function TeamPage() {
 
             {/* ================= LAYOUT ================= */}
 
-            <div className="flex gap-10 justify-center">
+            <div className="flex gap-10 justify-center items-start">
 
-              <Pitch lineup={lineup} players={players} />
+              {/* SPIELFELD + BANK */}
+              <div className="flex flex-col items-center">
 
+                <Pitch lineup={lineup} players={players} />
+
+                <Bench bench={bench} players={players} />
+
+              </div>
+
+              {/* KADERLISTE */}
               <div className="w-[400px] bg-black/40 p-6 rounded-xl">
 
                 <Category title="Startelf" players={starters} />
@@ -219,8 +228,6 @@ export default function TeamPage() {
 
             </div>
 
-            <Bench bench={bench} players={players} />
-
           </div>
         </div>
       </div>
@@ -229,16 +236,74 @@ export default function TeamPage() {
   );
 }
 
+/* ================= PITCH ================= */
+
+function Pitch({ lineup, players }) {
+
+  return (
+    <div className="relative w-[700px] h-[900px] bg-green-700 rounded-xl shadow-2xl">
+
+      <div className="absolute inset-0 border-4 border-white"></div>
+      <div className="absolute top-1/2 w-full h-[2px] bg-white"></div>
+      <div className="absolute top-1/2 left-1/2 w-40 h-40 border-2 border-white rounded-full -translate-x-1/2 -translate-y-1/2"></div>
+      <div className="absolute top-0 left-1/2 w-80 h-40 border-2 border-white -translate-x-1/2"></div>
+      <div className="absolute bottom-0 left-1/2 w-80 h-40 border-2 border-white -translate-x-1/2"></div>
+      <div className="absolute top-0 left-1/2 w-36 h-20 border-2 border-white -translate-x-1/2"></div>
+      <div className="absolute bottom-0 left-1/2 w-36 h-20 border-2 border-white -translate-x-1/2"></div>
+
+      {Object.entries(fieldSlots).map(([pos, coords]) => {
+
+        const playerId = Object.keys(lineup)
+          .find(id => lineup[id] === pos);
+
+        const player = players.find(p => p._id === playerId);
+
+        return (
+          <FieldSlot key={pos} id={pos} x={coords.x} y={coords.y}>
+
+            {player && <DraggablePlayer player={player} />}
+
+            {!player && (
+              <div className="w-14 h-14 rounded-full border-2 border-white/30"></div>
+            )}
+
+          </FieldSlot>
+        );
+      })}
+    </div>
+  );
+}
+
+function FieldSlot({ id, x, y, children }) {
+
+  const { setNodeRef, isOver } = useDroppable({ id });
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={{
+        position: "absolute",
+        left: `${x}%`,
+        top: `${y}%`,
+        transform: "translate(-50%, -50%)"
+      }}
+      className={isOver ? "scale-110 transition" : ""}
+    >
+      {children}
+    </div>
+  );
+}
+
 /* ================= PLAYER CARD ================= */
 
 function PlayerCard({ player }) {
   return (
-    <div className="bg-gray-900 p-3 rounded mb-2 shadow cursor-grab">
+    <div className="bg-gray-900 p-3 rounded shadow cursor-grab text-white w-40 text-center">
       <div className="font-semibold">
         {player.firstName} {player.lastName}
       </div>
       <div className="text-xs text-gray-400">
-        {player.age} Jahre • {player.positions.join(", ")}
+        {player.age} • {player.positions.join(", ")}
       </div>
       <div className="text-yellow-400 text-xs">
         {"★".repeat(Math.round(player.stars))}
@@ -284,8 +349,9 @@ function Bench({ bench, players }) {
   const { setNodeRef } = useDroppable({ id: "bench" });
 
   return (
-    <div ref={setNodeRef}
-      className="mt-6 w-[700px] bg-black/40 p-4 rounded-xl mx-auto">
+    <div
+      ref={setNodeRef}
+      className="mt-6 w-[700px] bg-black/40 p-4 rounded-xl">
 
       <h3 className="mb-3 font-semibold">
         Bank ({bench.length}/7)
@@ -299,57 +365,6 @@ function Bench({ bench, players }) {
           );
         })}
       </div>
-    </div>
-  );
-}
-
-/* ================= PITCH ================= */
-
-function Pitch({ lineup, players }) {
-
-  return (
-    <div className="relative w-[700px] h-[900px] bg-green-700 rounded-xl shadow-2xl">
-
-      <div className="absolute inset-0 border-4 border-white"></div>
-      <div className="absolute top-1/2 w-full h-[2px] bg-white"></div>
-      <div className="absolute top-1/2 left-1/2 w-40 h-40 border-2 border-white rounded-full -translate-x-1/2 -translate-y-1/2"></div>
-      <div className="absolute top-0 left-1/2 w-80 h-40 border-2 border-white -translate-x-1/2"></div>
-      <div className="absolute bottom-0 left-1/2 w-80 h-40 border-2 border-white -translate-x-1/2"></div>
-      <div className="absolute top-0 left-1/2 w-36 h-20 border-2 border-white -translate-x-1/2"></div>
-      <div className="absolute bottom-0 left-1/2 w-36 h-20 border-2 border-white -translate-x-1/2"></div>
-
-      {Object.entries(fieldSlots).map(([pos, coords]) => {
-
-        const playerId = Object.keys(lineup)
-          .find(id => lineup[id] === pos);
-
-        const player = players.find(p => p._id === playerId);
-
-        return (
-          <FieldSlot key={pos} id={pos} x={coords.x} y={coords.y}>
-            {player && <DraggablePlayer player={player} />}
-          </FieldSlot>
-        );
-      })}
-    </div>
-  );
-}
-
-function FieldSlot({ id, x, y, children }) {
-
-  const { setNodeRef } = useDroppable({ id });
-
-  return (
-    <div
-      ref={setNodeRef}
-      style={{
-        position: "absolute",
-        left: `${x}%`,
-        top: `${y}%`,
-        transform: "translate(-50%, -50%)"
-      }}
-    >
-      {children}
     </div>
   );
 }
