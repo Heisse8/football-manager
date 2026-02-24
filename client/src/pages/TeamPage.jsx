@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-/* ================= SPIELFELD POSITIONEN ================= */
+/* ================= POSITIONEN ================= */
 
 const fieldSlots = {
   GK: { x: 50, y: 92 },
@@ -23,6 +23,7 @@ export default function TeamPage() {
   const [lineup, setLineup] = useState({});
   const [bench, setBench] = useState([]);
   const [tactics, setTactics] = useState({});
+  const [activePlayer, setActivePlayer] = useState(null);
   const [locked, setLocked] = useState(false);
 
   /* ================= LOAD ================= */
@@ -43,7 +44,7 @@ export default function TeamPage() {
       setLineup(teamData.lineup || {});
       setBench(teamData.bench || []);
       setTactics(teamData.tactics || {});
-      setLocked(teamData.lineupLocked || false);
+      setLocked(teamData.lineupLocked);
 
       const playersRes = await fetch("/api/player/my-team", {
         headers: { Authorization: `Bearer ${token}` }
@@ -79,10 +80,10 @@ export default function TeamPage() {
 
   if (!team) return null;
 
-  /* ================= KATEGORIEN ================= */
+  /* ================= FILTER ================= */
 
-  const startingIds = Object.keys(lineup || {});
-  const benchIds = bench || [];
+  const startingIds = Object.keys(lineup);
+  const benchIds = bench;
 
   const starters = players.filter(p => startingIds.includes(p._id));
   const benchPlayers = players.filter(p => benchIds.includes(p._id));
@@ -92,15 +93,17 @@ export default function TeamPage() {
 
   /* ================= FUNCTIONS ================= */
 
-  const addToLineup = (player, position) => {
-    if (locked) return;
+  const assignToPosition = (pos) => {
+    if (!activePlayer || locked) return;
+
+    if (!activePlayer.positions?.includes(pos)) return;
 
     setLineup(prev => ({
       ...prev,
-      [player._id]: { position }
+      [activePlayer._id]: { position: pos }
     }));
 
-    setBench(prev => prev.filter(id => id !== player._id));
+    setActivePlayer(null);
   };
 
   const addToBench = (player) => {
@@ -108,12 +111,6 @@ export default function TeamPage() {
     if (bench.length >= 7) return;
 
     setBench(prev => [...prev, player._id]);
-
-    setLineup(prev => {
-      const updated = { ...prev };
-      delete updated[player._id];
-      return updated;
-    });
   };
 
   const removeFromSquad = (player) => {
@@ -143,21 +140,45 @@ export default function TeamPage() {
 
           <div className="grid grid-cols-4 gap-4 mb-8 bg-black/40 p-4 rounded-xl">
 
-            <Select label="Spielidee" value={tactics.style}
-              onChange={v => setTactics({ ...tactics, style: v })}
-              options={["ballbesitz", "konter", "gegenpressing", "mauern"]} />
+            <Select label="Spielidee"
+              value={tactics.playStyle}
+              onChange={v => setTactics({ ...tactics, playStyle: v })}
+              options={["ballbesitz","konter","gegenpressing","mauern"]} />
 
-            <Select label="Tempo" value={tactics.tempo}
+            <Select label="Tempo"
+              value={tactics.tempo}
               onChange={v => setTactics({ ...tactics, tempo: v })}
-              options={["langsam", "normal", "hoch", "sehr_hoch"]} />
+              options={["langsam","kontrolliert","hoch","sehr_hoch"]} />
 
-            <Select label="Mentalität" value={tactics.mentality}
+            <Select label="Mentalität"
+              value={tactics.mentality}
               onChange={v => setTactics({ ...tactics, mentality: v })}
-              options={["defensiv", "ausgewogen", "offensiv", "sehr_offensiv"]} />
+              options={["defensiv","ausgewogen","offensiv","sehr_offensiv"]} />
 
-            <Select label="Passspiel" value={tactics.passing}
+            <Select label="Passspiel"
+              value={tactics.passing}
               onChange={v => setTactics({ ...tactics, passing: v })}
-              options={["kurz", "variabel", "lang"]} />
+              options={["kurz","variabel","lang"]} />
+
+            <Select label="Breite"
+              value={tactics.width}
+              onChange={v => setTactics({ ...tactics, width: v })}
+              options={["schmal","normal","breit"]} />
+
+            <Select label="Pressing"
+              value={tactics.pressing}
+              onChange={v => setTactics({ ...tactics, pressing: v })}
+              options={["niedrig","mittel","hoch"]} />
+
+            <Select label="Abwehrlinie"
+              value={tactics.defensiveLine}
+              onChange={v => setTactics({ ...tactics, defensiveLine: v })}
+              options={["tief","mittel","hoch"]} />
+
+            <Select label="Ballverlust"
+              value={tactics.transitionAfterLoss}
+              onChange={v => setTactics({ ...tactics, transitionAfterLoss: v })}
+              options={["gegenpressing","zurueckziehen"]} />
 
           </div>
 
@@ -168,7 +189,12 @@ export default function TeamPage() {
             {/* SPIELFELD */}
             <div className="flex flex-col items-center">
 
-              <Pitch lineup={lineup} players={players} />
+              <Pitch
+                lineup={lineup}
+                players={players}
+                activePlayer={activePlayer}
+                assignToPosition={assignToPosition}
+              />
 
               {/* BANK */}
               <div className="mt-6 w-[700px] bg-black/40 p-4 rounded-xl">
@@ -177,11 +203,14 @@ export default function TeamPage() {
                   {[...Array(7)].map((_, i) => {
                     const player = players.find(p => p._id === bench[i]);
                     return (
-                      <div key={i}
+                      <div
+                        key={i}
                         className="h-16 bg-gray-800 rounded flex items-center justify-center text-xs cursor-pointer"
                         onClick={() => player && removeFromSquad(player)}
                       >
-                        {player ? player.name : ""}
+                        {player
+                          ? `${player.firstName} ${player.lastName}`
+                          : ""}
                       </div>
                     );
                   })}
@@ -196,19 +225,22 @@ export default function TeamPage() {
               <Category
                 title="Startelf"
                 players={starters}
-                onClick={(p) => removeFromSquad(p)}
+                onClick={removeFromSquad}
               />
 
               <Category
                 title="Bank"
                 players={benchPlayers}
-                onClick={(p) => removeFromSquad(p)}
+                onClick={removeFromSquad}
               />
 
               <Category
                 title="Nicht im Kader"
                 players={rest}
-                onClick={(p) => addToBench(p)}
+                onClick={(p) => {
+                  setActivePlayer(p);
+                  addToBench(p);
+                }}
               />
 
             </div>
@@ -223,50 +255,49 @@ export default function TeamPage() {
 
 /* ================= PITCH ================= */
 
-function Pitch({ lineup, players }) {
+function Pitch({ lineup, players, activePlayer, assignToPosition }) {
 
   return (
-    <div className="relative w-[700px] h-[900px] bg-green-700 rounded-xl overflow-hidden shadow-2xl">
+    <div className="relative w-[700px] h-[900px] bg-green-700 rounded-xl shadow-2xl">
 
-      {/* Außenlinien */}
       <div className="absolute inset-0 border-4 border-white"></div>
       <div className="absolute top-1/2 w-full h-[2px] bg-white"></div>
 
-      {/* 16er */}
-      <div className="absolute top-0 left-1/2 w-80 h-40 border-2 border-white -translate-x-1/2"></div>
-      <div className="absolute bottom-0 left-1/2 w-80 h-40 border-2 border-white -translate-x-1/2"></div>
-
-      {/* 5m */}
-      <div className="absolute top-0 left-1/2 w-32 h-16 border-2 border-white -translate-x-1/2"></div>
-      <div className="absolute bottom-0 left-1/2 w-32 h-16 border-2 border-white -translate-x-1/2"></div>
-
       {Object.entries(fieldSlots).map(([pos, coords]) => {
 
-        const playerId = Object.keys(lineup || {}).find(
+        const playerId = Object.keys(lineup).find(
           id => lineup[id]?.position === pos
         );
 
         const player = players.find(p => p._id === playerId);
 
-        if (!player) return null;
+        const canPlay =
+          activePlayer &&
+          activePlayer.positions?.includes(pos);
 
         return (
           <div
             key={pos}
-            className="absolute text-center"
+            className="absolute text-center cursor-pointer"
             style={{
               left: `${coords.x}%`,
               top: `${coords.y}%`,
               transform: "translate(-50%, -50%)"
             }}
+            onClick={() => assignToPosition(pos)}
           >
-            <div className="bg-white text-black px-3 py-1 rounded text-xs font-bold shadow">
-              {player.name}
-            </div>
+            {canPlay && (
+              <div className="w-10 h-10 bg-yellow-400/70 rounded-full mb-1"></div>
+            )}
+
+            {player && (
+              <div className="bg-white text-black px-2 py-1 rounded text-xs font-bold">
+                {player.firstName} {player.lastName}
+              </div>
+            )}
           </div>
         );
       })}
-
     </div>
   );
 }
@@ -277,13 +308,24 @@ function Category({ title, players, onClick }) {
   return (
     <>
       <h3 className="font-semibold mt-4 mb-2">{title}</h3>
+
       {players.map(p => (
         <div
           key={p._id}
           onClick={() => onClick(p)}
-          className="bg-gray-800 p-2 mb-2 rounded cursor-pointer hover:bg-gray-700"
+          className="bg-gray-800 p-3 mb-2 rounded cursor-pointer hover:bg-gray-700"
         >
-          {p.name} ({p.age}) ⭐{p.starRating}
+          <div className="font-semibold">
+            {p.firstName} {p.lastName}
+          </div>
+
+          <div className="text-xs opacity-70">
+            {p.positions?.join(", ")} • {p.age} Jahre
+          </div>
+
+          <div className="text-yellow-400 text-xs">
+            {"⭐".repeat(Math.round(p.stars || 1))}
+          </div>
         </div>
       ))}
     </>
