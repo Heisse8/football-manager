@@ -29,6 +29,7 @@ export default function TeamPage() {
   const [bench, setBench] = useState([]);
   const [tactics, setTactics] = useState({});
   const [locked, setLocked] = useState(false);
+  const [draggingPlayer, setDraggingPlayer] = useState(null);
 
   /* ================= LOAD ================= */
 
@@ -102,8 +103,16 @@ export default function TeamPage() {
       setLineup(prev => {
         const updated = { ...prev };
 
-        if (occupiedId) {
-          delete updated[occupiedId];
+        // SWAP LOGIK
+        if (occupiedId && occupiedId !== player._id) {
+
+          const otherPlayer = players.find(p => p._id === occupiedId);
+
+          if (otherPlayer?.positions?.includes(prev[player._id])) {
+            updated[occupiedId] = prev[player._id];
+          } else {
+            delete updated[occupiedId];
+          }
         }
 
         if (Object.keys(updated).length < 11 || updated[player._id]) {
@@ -129,6 +138,8 @@ export default function TeamPage() {
         prev.includes(player._id) ? prev : [...prev, player._id]
       );
     }
+
+    setDraggingPlayer(null);
   };
 
   /* ================= FILTER ================= */
@@ -149,7 +160,13 @@ export default function TeamPage() {
   /* ================= UI ================= */
 
   return (
-    <DndContext onDragEnd={handleDragEnd}>
+    <DndContext
+      onDragStart={(event) => {
+        const p = players.find(pl => pl._id === event.active.id);
+        setDraggingPlayer(p);
+      }}
+      onDragEnd={handleDragEnd}
+    >
 
       <div className="min-h-screen bg-cover bg-center"
         style={{ backgroundImage: "url('/lockerroom.jpg')" }}>
@@ -208,16 +225,18 @@ export default function TeamPage() {
 
             <div className="flex gap-10 justify-center items-start">
 
-              {/* SPIELFELD + BANK */}
               <div className="flex flex-col items-center">
 
-                <Pitch lineup={lineup} players={players} />
+                <Pitch
+                  lineup={lineup}
+                  players={players}
+                  draggingPlayer={draggingPlayer}
+                />
 
                 <Bench bench={bench} players={players} />
 
               </div>
 
-              {/* KADERLISTE */}
               <div className="w-[400px] bg-black/40 p-6 rounded-xl">
 
                 <Category title="Startelf" players={starters} />
@@ -238,11 +257,12 @@ export default function TeamPage() {
 
 /* ================= PITCH ================= */
 
-function Pitch({ lineup, players }) {
+function Pitch({ lineup, players, draggingPlayer }) {
 
   return (
     <div className="relative w-[700px] h-[900px] bg-green-700 rounded-xl shadow-2xl">
 
+      {/* Linien */}
       <div className="absolute inset-0 border-4 border-white"></div>
       <div className="absolute top-1/2 w-full h-[2px] bg-white"></div>
       <div className="absolute top-1/2 left-1/2 w-40 h-40 border-2 border-white rounded-full -translate-x-1/2 -translate-y-1/2"></div>
@@ -263,9 +283,11 @@ function Pitch({ lineup, players }) {
 
             {player && <DraggablePlayer player={player} />}
 
-            {!player && (
-              <div className="w-14 h-14 rounded-full border-2 border-white/30"></div>
-            )}
+            {!player &&
+              draggingPlayer &&
+              draggingPlayer.positions?.includes(pos) && (
+                <div className="w-14 h-14 rounded-full border-2 border-yellow-400 animate-pulse"></div>
+              )}
 
           </FieldSlot>
         );
@@ -275,8 +297,7 @@ function Pitch({ lineup, players }) {
 }
 
 function FieldSlot({ id, x, y, children }) {
-
-  const { setNodeRef, isOver } = useDroppable({ id });
+  const { setNodeRef } = useDroppable({ id });
 
   return (
     <div
@@ -287,7 +308,6 @@ function FieldSlot({ id, x, y, children }) {
         top: `${y}%`,
         transform: "translate(-50%, -50%)"
       }}
-      className={isOver ? "scale-110 transition" : ""}
     >
       {children}
     </div>
