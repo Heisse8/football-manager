@@ -1,19 +1,30 @@
 const mongoose = require("mongoose");
 
-const lineupSlotSchema = new mongoose.Schema({
-  player: { type: mongoose.Schema.Types.ObjectId, ref: "Player" },
-  position: { type: String }, // z.B. "LCB", "RCM", "LW"
-  role: { type: String } // z.B. "box_to_box", "inverser_fluegel"
-}, { _id: false });
-
 const teamSchema = new mongoose.Schema({
 
   // ================= BASIS =================
 
-  name: { type: String, required: true, unique: true },
-  shortName: { type: String, required: true, unique: true },
-  country: { type: String, required: true },
-  league: { type: String, required: true },
+  name: {
+    type: String,
+    required: true,
+    unique: true
+  },
+
+  shortName: {
+    type: String,
+    required: true,
+    unique: true
+  },
+
+  country: {
+    type: String,
+    required: true
+  },
+
+  league: {
+    type: String,
+    required: true
+  },
 
   owner: {
     type: mongoose.Schema.Types.ObjectId,
@@ -26,63 +37,54 @@ const teamSchema = new mongoose.Schema({
 
   tactics: {
 
-    // Grundidee
     playStyle: {
       type: String,
       enum: ["ballbesitz", "konter", "gegenpressing", "mauern"],
       default: "ballbesitz"
     },
 
-    // Pressinghöhe
     pressing: {
       type: String,
       enum: ["sehr_hoch", "hoch", "mittel", "low_block"],
       default: "mittel"
     },
 
-    // Abwehrlinie
     defensiveLine: {
       type: String,
       enum: ["hoch", "mittel", "tief"],
       default: "mittel"
     },
 
-    // Passspiel
     passingStyle: {
       type: String,
       enum: ["kurz", "variabel", "lang"],
       default: "variabel"
     },
 
-    // Tempo
     tempo: {
       type: String,
       enum: ["langsam", "kontrolliert", "hoch", "sehr_hoch"],
       default: "kontrolliert"
     },
 
-    // Breite im Ballbesitz
     width: {
       type: String,
       enum: ["sehr_eng", "eng", "normal", "breit"],
       default: "normal"
     },
 
-    // Umschalten nach Ballgewinn
     transitionAfterWin: {
       type: String,
       enum: ["vertikal", "kontrolliert", "fluegel"],
       default: "kontrolliert"
     },
 
-    // Verhalten nach Ballverlust
     transitionAfterLoss: {
       type: String,
       enum: ["gegenpressing", "mittelfeldpressing", "rueckzug"],
       default: "mittelfeldpressing"
     },
 
-    // Globale Mentalität
     mentality: {
       type: String,
       enum: ["defensiv", "ausgewogen", "offensiv", "sehr_offensiv"],
@@ -92,7 +94,63 @@ const teamSchema = new mongoose.Schema({
 
   // ================= AUFSTELLUNG =================
 
-  lineup: [lineupSlotSchema],
+  /*
+    Aktuelles bearbeitbares Lineup
+    Beispiel:
+    {
+      GK: ObjectId,
+      LCB: ObjectId,
+      ST1: ObjectId
+    }
+  */
+  lineup: {
+    type: Object,
+    default: {}
+  },
+
+  /*
+    Ersatzbank
+  */
+  bench: {
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: "Player",
+    default: []
+  },
+
+  /*
+    Aktive Formation
+  */
+  formation: {
+    type: String,
+    default: "4-4-2"
+  },
+
+  // ================= 🔒 LINEUP LOCK SYSTEM =================
+
+  /*
+    Wird am Spieltag 22:00 aktiviert
+  */
+  lineupLocked: {
+    type: Boolean,
+    default: false
+  },
+
+  /*
+    Eingefrorene Startelf für MatchEngine
+  */
+  lockedLineup: {
+    type: Object,
+    default: {}
+  },
+
+  /*
+    Eingefrorene Ersatzbank
+  */
+  lockedBench: {
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: "Player",
+    default: []
+  },
 
   // ================= TABELLENWERTE =================
 
@@ -109,7 +167,10 @@ const teamSchema = new mongoose.Schema({
 
   // ================= FINANZEN =================
 
-  balance: { type: Number, default: 1000000 }
+  balance: {
+    type: Number,
+    default: 1000000
+  }
 
 }, { timestamps: true });
 

@@ -1,0 +1,142 @@
+function interpretStructure(lineup, players) {
+
+  const structure = {
+    buildUpUnits: 0,
+    midfieldPresence: 0,
+    chanceCreation: 0,
+    transitionThreat: 0,
+    restDefense: 0,
+    counterRisk: 0,
+    centralPresence: 0,
+    wingThreat: 0
+  };
+
+  // Spieler schnell zugreifbar machen
+  const playerMap = {};
+  players.forEach(p => {
+    playerMap[p._id.toString()] = p;
+  });
+
+  for (const position in lineup) {
+
+    const slot = lineup[position];
+    if (!slot) continue;
+
+    const playerId = typeof slot === "object"
+      ? slot.player || slot.playerId
+      : slot;
+
+    const role = typeof slot === "object"
+      ? slot.role
+      : null;
+
+    const player = playerMap[playerId?.toString()];
+    if (!player) continue;
+
+    // =========================
+    // ⭐ Rating & Sterne
+    // =========================
+
+    const baseRating = player.rating || 60;
+    const ratingFactor = baseRating / 70;
+
+    const stars = player.stars || Math.round(baseRating / 20);
+
+    let roleMultiplier = 1;
+
+    if (stars >= 5) roleMultiplier = 1.25;
+    else if (stars === 4) roleMultiplier = 1.15;
+    else if (stars === 3) roleMultiplier = 1.05;
+    else if (stars === 2) roleMultiplier = 0.95;
+    else roleMultiplier = 0.85;
+
+    // =========================
+    // 🧤 TORWART
+    // =========================
+
+    if (position === "GK") {
+      structure.buildUpUnits += 1 * ratingFactor;
+      structure.restDefense += 2 * ratingFactor * roleMultiplier;
+    }
+
+    // =========================
+    // 🛡 INNENVERTEIDIGER
+    // =========================
+
+    if (position.includes("CB")) {
+
+      if (role === "ballspielender_iv") {
+        structure.buildUpUnits += 2 * ratingFactor * roleMultiplier;
+        structure.restDefense += 1.5 * ratingFactor;
+      } else {
+        structure.restDefense += 2.5 * ratingFactor * roleMultiplier;
+      }
+
+      structure.counterRisk += 0.5;
+    }
+
+    // =========================
+    // ⚙️ MITTELFELD
+    // =========================
+
+    if (position.includes("CM")) {
+
+      if (role === "box_to_box") {
+        structure.midfieldPresence += 2 * ratingFactor * roleMultiplier;
+        structure.transitionThreat += 1.5 * ratingFactor;
+      }
+
+      if (role === "spielmacher") {
+        structure.buildUpUnits += 2 * ratingFactor * roleMultiplier;
+        structure.chanceCreation += 2 * ratingFactor * roleMultiplier;
+      }
+
+      structure.centralPresence += 1 * ratingFactor;
+    }
+
+    // =========================
+    // 🪽 FLÜGEL
+    // =========================
+
+    if (
+      position.includes("LW") ||
+      position.includes("RW")
+    ) {
+
+      structure.wingThreat += 2 * ratingFactor * roleMultiplier;
+
+      if (role === "inverser_fluegel") {
+        structure.chanceCreation += 1.5 * ratingFactor * roleMultiplier;
+      }
+
+      if (role === "fluegelspieler") {
+        structure.transitionThreat += 1.5 * ratingFactor * roleMultiplier;
+      }
+    }
+
+    // =========================
+    // 🎯 STÜRMER
+    // =========================
+
+    if (position.includes("ST")) {
+
+      if (role === "zielspieler") {
+        structure.chanceCreation += 2 * ratingFactor * roleMultiplier;
+        structure.centralPresence += 1.5 * ratingFactor;
+      }
+
+      if (role === "konterstürmer") {
+        structure.transitionThreat += 2 * ratingFactor * roleMultiplier;
+      }
+
+      if (role === "falsche_9") {
+        structure.buildUpUnits += 1.5 * ratingFactor * roleMultiplier;
+        structure.chanceCreation += 1.5 * ratingFactor * roleMultiplier;
+      }
+    }
+  }
+
+  return structure;
+}
+
+module.exports = { interpretStructure };

@@ -7,10 +7,18 @@ const {
 } = require("./standardEngine");
 const { simulate90Minutes } = require("./minuteMatchEngine");
 
+// =========================
+// VARIANZ
+// =========================
+
 function applyVariance(value) {
   const variance = value * 0.05;
   return value + (Math.random() * variance * 2 - variance);
 }
+
+// =========================
+// TORE AUS xG
+// =========================
 
 function goalsFromXG(xG) {
   if (xG < 0.5) return 0;
@@ -19,6 +27,10 @@ function goalsFromXG(xG) {
   if (xG < 3.2) return 3;
   return Math.round(xG / 1.2);
 }
+
+// =========================
+// HAUPT MATCH ENGINE
+// =========================
 
 function simulateRealisticMatch({
   homePlayers,
@@ -29,12 +41,16 @@ function simulateRealisticMatch({
   fillRate
 }) {
 
+  // 🔒 Locked Lineup verwenden falls vorhanden
+  const homeLineup = homeTeam.lockedLineup || homeTeam.lineup;
+  const awayLineup = awayTeam.lockedLineup || awayTeam.lineup;
+
   // =========================
   // 1️⃣ STRUKTUR
   // =========================
 
-  const homeStructure = interpretStructure(homeTeam.lineup, homePlayers);
-  const awayStructure = interpretStructure(awayTeam.lineup, awayPlayers);
+  const homeStructure = interpretStructure(homeLineup, homePlayers);
+  const awayStructure = interpretStructure(awayLineup, awayPlayers);
 
   // =========================
   // 2️⃣ PHASEN
@@ -58,13 +74,12 @@ function simulateRealisticMatch({
   if (homeTeam.tactics.tempo === "sehr_hoch") homeTempo = 1.2;
   if (homeTeam.tactics.tempo === "langsam") homeTempo = 0.9;
 
-  matchup.chances.home *= homeTempo;
-
   let awayTempo = 1;
   if (awayTeam.tactics.tempo === "hoch") awayTempo = 1.1;
   if (awayTeam.tactics.tempo === "sehr_hoch") awayTempo = 1.2;
   if (awayTeam.tactics.tempo === "langsam") awayTempo = 0.9;
 
+  matchup.chances.home *= homeTempo;
   matchup.chances.away *= awayTempo;
 
   // =========================
@@ -93,46 +108,30 @@ function simulateRealisticMatch({
     Math.max(0, awayCounterPotential) * 0.08;
 
   // =========================
-  // 🔥 MENTALITÄT RISIKO
+  // 🔥 MENTALITÄT
   // =========================
 
-  if (homeTeam.tactics.mentality === "offensiv") {
+  if (homeTeam.tactics.mentality === "offensiv")
     homeCounterXG *= 1.2;
-  }
-  if (homeTeam.tactics.mentality === "sehr_offensiv") {
+
+  if (homeTeam.tactics.mentality === "sehr_offensiv")
     homeCounterXG *= 1.4;
-  }
 
-  if (awayTeam.tactics.mentality === "offensiv") {
+  if (awayTeam.tactics.mentality === "offensiv")
     awayCounterXG *= 1.2;
-  }
-  if (awayTeam.tactics.mentality === "sehr_offensiv") {
+
+  if (awayTeam.tactics.mentality === "sehr_offensiv")
     awayCounterXG *= 1.4;
-  }
 
   // =========================
-  // 🔥 GEGENPRESSING REDUZIERT KONTER
+  // 🔥 GEGENPRESSING
   // =========================
 
-  if (homeTeam.tactics.transitionAfterLoss === "gegenpressing") {
+  if (homeTeam.tactics.transitionAfterLoss === "gegenpressing")
     awayCounterXG *= 0.7;
-  }
 
-  if (awayTeam.tactics.transitionAfterLoss === "gegenpressing") {
+  if (awayTeam.tactics.transitionAfterLoss === "gegenpressing")
     homeCounterXG *= 0.7;
-  }
-
-  // =========================
-  // 🔥 BREITE EINFLUSS (mehr Flanken)
-  // =========================
-
-  if (homeTeam.tactics.width === "breit") {
-    homeStructure.wingThreat *= 1.2;
-  }
-
-  if (awayTeam.tactics.width === "breit") {
-    awayStructure.wingThreat *= 1.2;
-  }
 
   // =========================
   // 6️⃣ STANDARDS
@@ -198,7 +197,7 @@ function simulateRealisticMatch({
   const awayGoals = goalsFromXG(awayXG);
 
   // =========================
-  // 🔟 90-MINUTEN EVENTS
+  // 🔟 90 MINUTEN EVENTS
   // =========================
 
   const events = simulate90Minutes({
@@ -219,6 +218,10 @@ function simulateRealisticMatch({
     totalGoalsHome: homeGoals,
     totalGoalsAway: awayGoals
   });
+
+  // =========================
+  // RETURN
+  // =========================
 
   return {
     result: { homeGoals, awayGoals },
