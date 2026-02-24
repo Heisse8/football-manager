@@ -59,7 +59,7 @@ const token = localStorage.getItem("token");
 
 const teamRes = await fetch("/api/team", {
 headers: { Authorization: `Bearer ${token}` }
- });
+});
 const teamData = await teamRes.json();
 
 setTeam(teamData);
@@ -69,11 +69,10 @@ setTactics(teamData.tactics || {});
 
 const playersRes = await fetch("/api/player/my-team", {
 headers: { Authorization: `Bearer ${token}` }
- });
+});
 
 setPlayers(await playersRes.json());
 };
-
 load();
 }, []);
 
@@ -107,26 +106,33 @@ if (!player) return;
 const slot = fieldSlots.find(s => s.id === over.id);
 
 if (slot) {
-if (!player.positions?.includes(slot.type)) return;
 
-setLineup(prev => {
-const updated = { ...prev };
+  // 🔥 FLEXIBLE POSITION CHECK (FIX)
+  const canPlay = player.positions?.some(pos =>
+    slot.type.includes(pos.toUpperCase()) ||
+    pos.toUpperCase().includes(slot.type)
+  );
 
-if (!updated[player._id] && Object.keys(updated).length >= 11)
-return prev;
+  if (!canPlay) return;
 
-const occupied = Object.keys(updated)
-.find(id => updated[id] === slot.id);
+  setLineup(prev => {
+    const updated = { ...prev };
 
-if (occupied && occupied !== player._id) {
-delete updated[occupied];
-}
+    if (!updated[player._id] && Object.keys(updated).length >= 11)
+      return prev;
 
-updated[player._id] = slot.id;
-return updated;
-});
+    const occupied = Object.keys(updated)
+      .find(id => updated[id] === slot.id);
 
-setBench(prev => prev.filter(id => id !== player._id));
+    if (occupied && occupied !== player._id) {
+      delete updated[occupied];
+    }
+
+    updated[player._id] = slot.id;
+    return updated;
+  });
+
+  setBench(prev => prev.filter(id => id !== player._id));
 }
 
 /* ===== DROP AUF BANK ===== */
@@ -207,22 +213,11 @@ options={["gegenpressing","zurückziehen"]} />
 <div className="flex gap-12">
 
 <div className="flex flex-col items-center">
-
-<Pitch
-lineup={lineup}
-players={players}
-draggingPlayer={draggingPlayer}
-/>
-
-<Bench bench={benchPlayers} />
+<Pitch lineup={lineup} players={players} draggingPlayer={draggingPlayer}/>
+<Bench bench={benchPlayers}/>
 </div>
 
-<SquadList
-starters={starters}
-benchPlayers={benchPlayers}
-rest={rest}
-/>
-
+<SquadList starters={starters} benchPlayers={benchPlayers} rest={rest}/>
 </div>
 </div>
 </DndContext>
@@ -238,7 +233,6 @@ function Pitch({ lineup, players, draggingPlayer }) {
 return (
 <div className="relative w-[750px] h-[950px] bg-green-700 rounded-xl shadow-2xl">
 
-{/* Linien */}
 <div className="absolute inset-0 border-4 border-white"></div>
 <div className="absolute top-1/2 w-full h-[2px] bg-white"></div>
 <div className="absolute top-1/2 left-1/2 w-44 h-44 border-2 border-white rounded-full -translate-x-1/2 -translate-y-1/2"></div>
@@ -257,8 +251,7 @@ const playerId = Object.keys(lineup)
 const player = players.find(p => p._id === playerId);
 
 return (
-<div
-key={slot.id}
+<div key={slot.id}
 ref={setNodeRef}
 style={{
 position:"absolute",
@@ -271,7 +264,10 @@ transform:"translate(-50%,-50%)"
 {player && <FieldPlayer player={player} />}
 
 {draggingPlayer &&
-draggingPlayer.positions?.includes(slot.type) &&
+draggingPlayer.positions?.some(pos =>
+slot.type.includes(pos.toUpperCase()) ||
+pos.toUpperCase().includes(slot.type)
+) &&
 !player && (
 <div className="w-14 h-14 rounded-full border border-white/40 bg-white/10"></div>
 )}
@@ -279,23 +275,18 @@ draggingPlayer.positions?.includes(slot.type) &&
 </div>
 );
 })}
-
 </div>
 );
 }
 
 function FieldPlayer({ player }) {
-
 const { attributes, listeners, setNodeRef } =
 useDraggable({ id: player._id });
 
 return (
-<div
-ref={setNodeRef}
-{...listeners}
-{...attributes}
-className="flex flex-col items-center cursor-grab"
->
+<div ref={setNodeRef} {...listeners} {...attributes}
+className="flex flex-col items-center cursor-grab">
+
 <div className="w-14 h-14 rounded-full bg-blue-700 border-2 border-white flex items-center justify-center text-xs font-bold">
 {player.positions[0]}
 </div>
@@ -308,7 +299,6 @@ className="flex flex-col items-center cursor-grab"
 }
 
 function Bench({ bench }) {
-
 const { setNodeRef } = useDroppable({ id: "bench" });
 
 return (
@@ -358,22 +348,24 @@ transform: transform
 };
 
 return (
-<div
-ref={setNodeRef}
+<div ref={setNodeRef}
 {...listeners}
 {...attributes}
 style={style}
-className="bg-gray-900 p-3 rounded mb-2 shadow cursor-grab"
->
+className="bg-gray-900 p-3 rounded mb-2 shadow cursor-grab">
+
 <div className="font-semibold">
 {player.firstName} {player.lastName}
 </div>
+
 <div className="text-xs text-gray-400">
 {player.age} Jahre • {player.positions.join(", ")}
 </div>
+
 <div className="text-yellow-400 text-xs">
 {"★".repeat(Math.round(player.stars))}
 </div>
+
 </div>
 );
 }
