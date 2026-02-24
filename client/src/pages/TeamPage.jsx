@@ -41,7 +41,6 @@ export default function TeamPage() {
   const handleDragEnd = (event) => {
     const { over, active } = event;
     setActivePlayer(null);
-
     if (!over) return;
 
     const player = players.find(p => p._id === active.id);
@@ -68,69 +67,79 @@ export default function TeamPage() {
   };
 
   return (
-    <DndContext
-      onDragStart={handleDragStart}
-      onDragEnd={handleDragEnd}
-    >
-      <div className="flex bg-gray-900 text-white min-h-screen">
+    <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+      
+      {/* 🔥 HINTERGRUND */}
+      <div
+        className="relative min-h-screen bg-cover bg-center"
+        style={{
+          backgroundImage: "url('/lockerroom.jpg')"
+        }}
+      >
+        {/* dunkler Blur Overlay */}
+        <div className="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
 
-        {/* SPIELFELD */}
-        <div className="relative w-[700px] h-[900px] bg-green-700 m-10 rounded-xl overflow-hidden">
+        {/* Inhalt */}
+        <div className="relative z-10 flex text-white min-h-screen">
 
-          {/* Linien */}
-          <div className="absolute inset-0 border-4 border-white"></div>
-          <div className="absolute top-1/2 left-0 w-full h-[2px] bg-white"></div>
-          <div className="absolute top-1/2 left-1/2 w-40 h-40 border-2 border-white rounded-full transform -translate-x-1/2 -translate-y-1/2"></div>
+          {/* SPIELFELD */}
+          <div className="relative w-[700px] h-[900px] bg-green-700/90 m-10 rounded-xl overflow-hidden shadow-2xl">
 
-          {/* Slots */}
-          {Object.entries(fieldSlots).map(([pos, coords]) => {
+            {/* Linien */}
+            <div className="absolute inset-0 border-4 border-white"></div>
+            <div className="absolute top-1/2 left-0 w-full h-[2px] bg-white"></div>
+            <div className="absolute top-1/2 left-1/2 w-40 h-40 border-2 border-white rounded-full transform -translate-x-1/2 -translate-y-1/2"></div>
 
-            const visible =
-              activePlayer &&
-              (activePlayer.primaryPosition === pos ||
-               activePlayer.secondaryPositions?.includes(pos));
+            {/* Slots */}
+            {Object.entries(fieldSlots).map(([pos, coords]) => {
 
-            return (
-              <FieldSlot
-                key={pos}
-                id={pos}
-                x={coords.x}
-                y={coords.y}
-                visible={visible}
-              />
-            );
-          })}
+              const visible =
+                activePlayer &&
+                (activePlayer.primaryPosition === pos ||
+                  activePlayer.secondaryPositions?.includes(pos));
 
-          {/* Spieler auf Feld */}
-          {Object.entries(lineup).map(([playerId, data]) => {
-            const player = players.find(p => p._id === playerId);
-            if (!player) return null;
+              return (
+                <FieldSlot
+                  key={pos}
+                  id={pos}
+                  x={coords.x}
+                  y={coords.y}
+                  visible={visible}
+                />
+              );
+            })}
 
-            return (
-              <div
-                key={playerId}
-                className="absolute bg-white text-black px-2 py-1 rounded text-xs font-bold"
-                style={{
-                  left: `${data.x}%`,
-                  top: `${data.y}%`,
-                  transform: "translate(-50%, -50%)"
-                }}
-              >
-                {player.name}
-              </div>
-            );
-          })}
+            {/* Spieler auf Feld */}
+            {Object.entries(lineup).map(([playerId, data]) => {
+              const player = players.find(p => p._id === playerId);
+              if (!player) return null;
+
+              return (
+                <div
+                  key={playerId}
+                  className="absolute bg-white text-black px-3 py-1 rounded text-xs font-bold shadow-lg"
+                  style={{
+                    left: `${data.x}%`,
+                    top: `${data.y}%`,
+                    transform: "translate(-50%, -50%)"
+                  }}
+                >
+                  {player.name}
+                </div>
+              );
+            })}
+
+          </div>
+
+          {/* KADER */}
+          <div className="w-80 p-6 bg-black/40 backdrop-blur-md">
+            <h2 className="text-lg mb-4 font-bold">Kader</h2>
+            {players.map(player => (
+              <DraggablePlayer key={player._id} player={player} />
+            ))}
+          </div>
 
         </div>
-
-        {/* KADER */}
-        <div className="w-80 p-6">
-          <h2 className="text-lg mb-4 font-bold">Kader</h2>
-          {players.map(player => (
-            <DraggablePlayer key={player._id} player={player} />
-          ))}
-        </div>
-
       </div>
     </DndContext>
   );
@@ -138,13 +147,12 @@ export default function TeamPage() {
 
 function FieldSlot({ id, x, y, visible }) {
   const { setNodeRef, isOver } = useDroppable({ id });
-
   if (!visible) return null;
 
   return (
     <div
       ref={setNodeRef}
-      className={`absolute w-16 h-16 rounded-full border-2 flex items-center justify-center text-xs font-bold
+      className={`absolute w-16 h-16 rounded-full border-2 flex items-center justify-center text-xs font-bold transition-all
       ${isOver ? "bg-yellow-400" : "bg-white/60"}`}
       style={{
         left: `${x}%`,
@@ -173,13 +181,13 @@ function DraggablePlayer({ player }) {
       {...listeners}
       {...attributes}
       style={style}
-      className="bg-gray-700 p-3 mb-3 rounded cursor-grab"
+      className="bg-gray-800 p-3 mb-3 rounded cursor-grab hover:bg-gray-700 transition shadow"
     >
       <div className="font-semibold">{player.name}</div>
       <div className="text-yellow-400">
         {"⭐".repeat(Math.round(player.starRating || 3))}
       </div>
-      <div className="text-xs">{player.primaryPosition}</div>
+      <div className="text-xs opacity-70">{player.primaryPosition}</div>
     </div>
   );
 }
