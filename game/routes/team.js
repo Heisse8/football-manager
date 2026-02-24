@@ -15,7 +15,7 @@ router.post("/create", auth, async (req, res) => {
 
     if (!name || !shortName) {
       return res.status(400).json({
-        message: "Name und Kürzel erforderlich.",
+        message: "Name und Kürzel erforderlich."
       });
     }
 
@@ -24,31 +24,31 @@ router.post("/create", auth, async (req, res) => {
 
     if (name.length > 21) {
       return res.status(400).json({
-        message: "Teamname max. 21 Zeichen.",
+        message: "Teamname max. 21 Zeichen."
       });
     }
 
     if (!/^[A-Z]{3}$/.test(shortName)) {
       return res.status(400).json({
-        message: "Kürzel muss genau 3 Großbuchstaben haben.",
+        message: "Kürzel muss genau 3 Großbuchstaben haben."
       });
     }
 
     if (await Team.findOne({ owner: userId })) {
       return res.status(400).json({
-        message: "Du hast bereits ein Team.",
+        message: "Du hast bereits ein Team."
       });
     }
 
     if (await Team.findOne({ name })) {
       return res.status(400).json({
-        message: "Teamname bereits vergeben.",
+        message: "Teamname bereits vergeben."
       });
     }
 
     if (await Team.findOne({ shortName })) {
       return res.status(400).json({
-        message: "Kürzel bereits vergeben.",
+        message: "Kürzel bereits vergeben."
       });
     }
 
@@ -78,12 +78,20 @@ router.post("/create", auth, async (req, res) => {
       owner: userId,
       balance: 5000000,
       currentMatchday: 1,
-      lineup: {},
-      bench: [],
-      formation: "4-4-2",
-      lineupLocked: false,
+
+      lineup: {},                // { LCB: { player, role } }
+      bench: [],                 // [playerId]
       lockedLineup: {},
       lockedBench: [],
+      lineupLocked: false,
+
+      tactics: {
+        playStyle: "ballbesitz",
+        mentality: "ausgewogen",
+        tempo: "kontrolliert",
+        pressing: "mittel",
+        defensiveLine: "mittel"
+      }
     });
 
     await newTeam.save();
@@ -97,8 +105,8 @@ router.post("/create", auth, async (req, res) => {
           inProgress: false,
           targetCapacity: null,
           startMatchday: null,
-          finishMatchday: null,
-        },
+          finishMatchday: null
+        }
       });
 
       await generatePlayersForTeam(newTeam);
@@ -110,13 +118,13 @@ router.post("/create", auth, async (req, res) => {
       await Team.findByIdAndDelete(newTeam._id);
 
       return res.status(500).json({
-        message: "Fehler beim Setup des Teams.",
+        message: "Fehler beim Setup des Teams."
       });
     }
 
     res.status(201).json({
       message: "Team erfolgreich erstellt.",
-      team: newTeam,
+      team: newTeam
     });
 
   } catch (err) {
@@ -131,12 +139,12 @@ router.post("/create", auth, async (req, res) => {
 router.get("/", auth, async (req, res) => {
   try {
     const team = await Team.findOne({
-      owner: req.user.userId,
+      owner: req.user.userId
     });
 
     if (!team) {
       return res.status(404).json({
-        message: "Kein Team gefunden",
+        message: "Kein Team gefunden"
       });
     }
 
@@ -149,49 +157,65 @@ router.get("/", auth, async (req, res) => {
 });
 
 /* =====================================================
-   UPDATE LINEUP + BENCH + FORMATION
+   UPDATE LINEUP + BENCH + TACTICS
 ===================================================== */
 router.put("/lineup", auth, async (req, res) => {
   try {
-    const { lineup, bench, formation } = req.body;
+    const { lineup, bench, tactics } = req.body;
 
     const team = await Team.findOne({
-      owner: req.user.userId,
+      owner: req.user.userId
     });
 
     if (!team) {
       return res.status(404).json({
-        message: "Team nicht gefunden",
+        message: "Team nicht gefunden"
       });
     }
 
-    // 🔒 WICHTIG: Lock prüfen
+    // 🔒 Lineup Lock prüfen
     if (team.lineupLocked) {
       return res.status(403).json({
-        message: "Lineup ist für diesen Spieltag gesperrt.",
+        message: "Lineup ist für diesen Spieltag gesperrt."
       });
     }
 
-    // Validierung
+    // ===== Validierung =====
+
     if (typeof lineup !== "object") {
       return res.status(400).json({
-        message: "Ungültiges Lineup-Format",
+        message: "Ungültiges Lineup-Format"
       });
     }
 
     if (!Array.isArray(bench)) {
       return res.status(400).json({
-        message: "Ungültiges Bench-Format",
+        message: "Ungültiges Bench-Format"
       });
     }
 
+    // Max 11 Startelf
+    if (Object.keys(lineup).length > 11) {
+      return res.status(400).json({
+        message: "Maximal 11 Spieler in der Startelf erlaubt."
+      });
+    }
+
+    // ===== Speichern =====
+
     team.lineup = lineup;
     team.bench = bench;
-    team.formation = formation || team.formation;
+
+    if (tactics && typeof tactics === "object") {
+      team.tactics = {
+        ...team.tactics,
+        ...tactics
+      };
+    }
 
     await team.save();
 
-    res.json({ message: "Lineup gespeichert" });
+    res.json({ message: "Lineup & Taktik gespeichert" });
 
   } catch (err) {
     console.error("Lineup Update Fehler:", err);
