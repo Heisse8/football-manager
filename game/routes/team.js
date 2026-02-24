@@ -1,7 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const Team = require("../models/Team");
+const Stadium = require("../models/Stadium");
 const auth = require("../middleware/auth");
+const { generatePlayersForTeam } = require("../utils/playerGenerator");
 
 /* =====================================================
  CREATE TEAM
@@ -68,7 +70,7 @@ router.post("/create", auth, async (req, res) => {
         tempo: "kontrolliert",
         mentality: "ausgewogen",
         pressing: "mittel",
-        defensiveLine: "mittel"
+        defensiveLine: "mittel",
       },
 
       lineupLocked: false,
@@ -83,10 +85,24 @@ router.post("/create", auth, async (req, res) => {
       goalsFor: 0,
       goalsAgainst: 0,
       goalDifference: 0,
-      tablePosition: 0
+      tablePosition: 0,
     });
 
     await newTeam.save();
+
+    // =============================
+    // 🔥 SPIELER GENERIEREN
+    // =============================
+    await generatePlayersForTeam(newTeam);
+
+    // =============================
+    // STADION ERSTELLEN
+    // =============================
+    await Stadium.create({
+      team: newTeam._id,
+      capacity: 2000,
+      ticketPrice: 15,
+    });
 
     res.status(201).json({
       message: "Team erfolgreich erstellt.",
@@ -129,7 +145,7 @@ router.get("/:id", auth, async (req, res) => {
 
     if (!team) {
       return res.status(404).json({
-        message: "Team nicht gefunden"
+        message: "Team nicht gefunden",
       });
     }
 
@@ -139,7 +155,7 @@ router.get("/:id", auth, async (req, res) => {
       league: team.league,
       lineup: team.lockedLineup,
       tactics: team.tactics,
-      tablePosition: team.tablePosition
+      tablePosition: team.tablePosition,
     });
 
   } catch (err) {
