@@ -4,7 +4,7 @@ const Player = require("../models/Player");
 const Team = require("../models/Team");
 const Stadium = require("../models/Stadium");
 
-const { simulateRealisticMatch } = require("../utils/realisticMatchEngine");
+const { simulateRealisticMatch } = require("../engines/realisticMatchEngine");
 const { calculateAttendance } = require("../utils/matchEconomy");
 const { generateMatchTicker } = require("../utils/eventTextGenerator");
 const { generateKickerStyleReport } = require("../utils/aiMatchReport");
