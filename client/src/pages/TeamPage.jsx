@@ -42,6 +42,7 @@ const fieldSlots = [
 ===================================================== */
 
 export default function TeamPage() {
+
   const [team, setTeam] = useState(null);
   const [players, setPlayers] = useState([]);
   const [lineup, setLineup] = useState({});
@@ -180,32 +181,6 @@ export default function TeamPage() {
     >
       <div className="max-w-[1500px] mx-auto p-6 text-white">
 
-        {/* ================= SPIELEINSTELLUNGEN ================= */}
-
-        <div className="grid grid-cols-4 gap-4 mb-8 bg-black/40 p-4 rounded-xl">
-          {[
-            ["Spielidee","style",["ballbesitz","konter","gegenpressing","mauern"]],
-            ["Tempo","tempo",["langsam","normal","hoch"]],
-            ["Mentalität","mentality",["defensiv","ausgewogen","offensiv"]],
-            ["Passspiel","passing",["kurz","variabel","lang"]],
-            ["Abwehrlinie","defensiveLine",["tief","mittel","hoch"]],
-            ["Pressing","pressing",["niedrig","mittel","hoch"]],
-            ["Breite","width",["schmal","normal","breit"]],
-            ["Ballverlust","transition",["gegenpressing","zurückziehen"]]
-          ].map(([label,key,options])=>(
-            <Select
-              key={key}
-              label={label}
-              value={team?.tactics?.[key]}
-              onChange={v=>setTeam(prev=>({
-                ...prev,
-                tactics:{...prev.tactics,[key]:v}
-              }))}
-              options={options}
-            />
-          ))}
-        </div>
-
         <div className="flex gap-12">
 
           <div className="flex flex-col items-center">
@@ -214,19 +189,26 @@ export default function TeamPage() {
               Startelf ({starters.length}/11)
             </div>
 
-            <Pitch lineup={lineup} players={players} />
+            <Pitch
+              lineup={lineup}
+              players={players}
+              draggingPlayer={draggingPlayer}
+            />
 
             <Bench bench={benchPlayers} />
 
           </div>
 
-          <SquadList starters={starters} benchPlayers={benchPlayers} rest={rest} />
+          <SquadList
+            starters={starters}
+            benchPlayers={benchPlayers}
+            rest={rest}
+          />
 
         </div>
       </div>
 
       {/* ===== DRAG OVERLAY ===== */}
-
       <DragOverlay dropAnimation={null}>
         {draggingPlayer && <Circle player={draggingPlayer} />}
       </DragOverlay>
@@ -245,8 +227,8 @@ function Circle({ player }) {
       <div className="w-14 h-14 rounded-full bg-blue-700 border-2 border-white flex items-center justify-center text-xs font-bold">
         {player.positions[0]}
       </div>
-      <div className="text-yellow-400 text-xs">
-        {"★".repeat(Math.round(player.stars))}
+      <div className="text-xs text-white mt-1">
+        {player.lastName}
       </div>
     </div>
   );
@@ -256,21 +238,13 @@ function Circle({ player }) {
  PITCH
 ===================================================== */
 
-function Pitch({ lineup, players }) {
+function Pitch({ lineup, players, draggingPlayer }) {
 
   return (
     <div className="relative w-[750px] h-[950px] bg-green-700 rounded-xl shadow-2xl">
 
       <div className="absolute inset-0 border-4 border-white"></div>
       <div className="absolute top-1/2 w-full h-[2px] bg-white"></div>
-
-      <div className="absolute top-1/2 left-1/2 w-44 h-44 border-2 border-white rounded-full -translate-x-1/2 -translate-y-1/2"></div>
-
-      <div className="absolute top-0 left-1/2 w-96 h-48 border-2 border-white -translate-x-1/2"></div>
-      <div className="absolute bottom-0 left-1/2 w-96 h-48 border-2 border-white -translate-x-1/2"></div>
-
-      <div className="absolute top-0 left-1/2 w-40 h-20 border-2 border-white -translate-x-1/2"></div>
-      <div className="absolute bottom-0 left-1/2 w-40 h-20 border-2 border-white -translate-x-1/2"></div>
 
       {fieldSlots.map(slot => {
 
@@ -286,17 +260,22 @@ function Pitch({ lineup, players }) {
             key={slot.id}
             ref={setNodeRef}
             style={{
-              position:"absolute",
-              left:`${slot.x}%`,
-              top:`${slot.y}%`,
-              transform:"translate(-50%,-50%)"
+              position: "absolute",
+              left: `${slot.x}%`,
+              top: `${slot.y}%`,
+              transform: "translate(-50%,-50%)"
             }}
           >
             {player && <FieldPlayer player={player} />}
+
+            {/* Slots nur sichtbar beim Drag */}
+            {draggingPlayer && !player && (
+              <div className="w-14 h-14 rounded-full border border-white/40 bg-white/10"></div>
+            )}
+
           </div>
         );
       })}
-
     </div>
   );
 }
@@ -344,7 +323,7 @@ function Bench({ bench }) {
           <FieldPlayer key={p._id} player={p} />
         ))}
 
-        {[...Array(placeholders)].map((_,i)=>(
+        {[...Array(placeholders)].map((_, i) => (
           <div
             key={i}
             className="w-14 h-14 rounded-full border border-white/40 bg-white/10"
@@ -413,28 +392,6 @@ function PlayerCard({ player }) {
       <div className="text-yellow-400 text-xs">
         {"★".repeat(Math.round(player.stars))}
       </div>
-    </div>
-  );
-}
-
-/* =====================================================
- SELECT
-===================================================== */
-
-function Select({ label, value, onChange, options }) {
-  return (
-    <div>
-      <div className="text-xs mb-1">{label}</div>
-      <select
-        value={value || ""}
-        onChange={e => onChange(e.target.value)}
-        className="w-full bg-gray-800 p-2 rounded"
-      >
-        <option value="">-</option>
-        {options.map(o => (
-          <option key={o} value={o}>{o}</option>
-        ))}
-      </select>
     </div>
   );
 }
