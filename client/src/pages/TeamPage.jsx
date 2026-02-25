@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import {
-  DndContext,
-  DragOverlay,
-  useDraggable,
-  useDroppable
+DndContext,
+useDraggable,
+useDroppable
 } from "@dnd-kit/core";
+
+import { CSS } from "@dnd-kit/utilities";
 
 /* =====================================================
  SLOT SYSTEM (ENGINE READY)
@@ -116,7 +117,8 @@ export default function TeamPage() {
     const { active, over } = event;
     if (!over) return;
 
-    const player = players.find(p => p._id === active.id);
+    const cleanId = active.id.replace("field-", "").replace("list-", "");
+const player = players.find(p => p._id === cleanId);
     if (!player) return;
 
     const slot = fieldSlots.find(s => s.id === over.id);
@@ -212,7 +214,8 @@ export default function TeamPage() {
   return (
     <DndContext
       onDragStart={(e) => {
-const p = players.find(pl => pl._id === e.active.id);
+const cleanId = e.active.id.replace("field-", "").replace("list-", "");
+const p = players.find(pl => pl._id === cleanId);
 setDraggingPlayer(p);
 }}
       onDragEnd={(e) => {
@@ -251,9 +254,7 @@ setDraggingPlayer(p);
         </div>
       </div>
 
-      <DragOverlay dropAnimation={null}>
-{draggingPlayer && <Circle player={draggingPlayer} />}
-</DragOverlay>
+
 
     </DndContext>
   );
@@ -351,8 +352,14 @@ function RoleSelect({ slot, entry, setLineup }) {
 ===================================================== */
 
 function FieldPlayer({ player }) {
-  const { attributes, listeners, setNodeRef } =
-    useDraggable({ id: player._id });
+  const { attributes, listeners, setNodeRef, transform } =
+    useDraggable({ id: `field-${player._id}` });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    touchAction: "none",
+    position: "relative"
+  };
 
   return (
     <div
@@ -360,7 +367,7 @@ function FieldPlayer({ player }) {
       {...listeners}
       {...attributes}
       className="cursor-grab"
-      style={{ touchAction: "none" }}
+      style={style}
     >
       <Circle player={player} />
     </div>
@@ -456,9 +463,13 @@ function Category({ title, players }) {
 ===================================================== */
 
 function PlayerCard({ player }) {
+  const { attributes, listeners, setNodeRef, transform } =
+    useDraggable({ id: `list-${player._id}` });
 
-  const { attributes, listeners, setNodeRef } =
-    useDraggable({ id: player._id });
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    position: "relative"
+  };
 
   return (
     <div
@@ -466,6 +477,7 @@ function PlayerCard({ player }) {
       {...listeners}
       {...attributes}
       className="bg-gray-900 p-3 rounded mb-2 shadow cursor-grab"
+      style={style}
     >
       <div className="font-semibold">
         {player.firstName} {player.lastName}
