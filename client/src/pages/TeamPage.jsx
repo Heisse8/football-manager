@@ -7,7 +7,7 @@ import {
 } from "@dnd-kit/core";
 
 /* =====================================================
- SLOT SYSTEM
+   SLOT SYSTEM (ENGINE READY)
 ===================================================== */
 
 const fieldSlots = [
@@ -17,8 +17,8 @@ const fieldSlots = [
   { id: "CB2", type: "CB", x: 50, y: 88 },
   { id: "CB3", type: "CB", x: 70, y: 85 },
 
-  { id: "LB1", type: "LB", x: 12, y: 75 },
-  { id: "RB1", type: "RB", x: 88, y: 75 },
+  { id: "LWB1", type: "LWB", x: 10, y: 70 },
+  { id: "RWB1", type: "RWB", x: 90, y: 70 },
 
   { id: "CDM1", type: "CDM", x: 30, y: 65 },
   { id: "CDM2", type: "CDM", x: 50, y: 68 },
@@ -28,17 +28,17 @@ const fieldSlots = [
   { id: "CM2", type: "CM", x: 50, y: 55 },
   { id: "CM3", type: "CM", x: 70, y: 55 },
 
-  { id: "CAM1", type: "CAM", x: 50, y: 40 },
+  { id: "CAM1", type: "CAM", x: 30, y: 40 },
+  { id: "CAM2", type: "CAM", x: 50, y: 38 },
+  { id: "CAM3", type: "CAM", x: 70, y: 40 },
 
-  { id: "LW1", type: "LW", x: 10, y: 30 },
-  { id: "RW1", type: "RW", x: 90, y: 30 },
-
-  { id: "ST1", type: "ST", x: 40, y: 18 },
-  { id: "ST2", type: "ST", x: 60, y: 18 }
+  { id: "ST1", type: "ST", x: 30, y: 18 },
+  { id: "ST2", type: "ST", x: 50, y: 16 },
+  { id: "ST3", type: "ST", x: 70, y: 18 }
 ];
 
 /* =====================================================
- TEAM PAGE
+   TEAM PAGE
 ===================================================== */
 
 export default function TeamPage() {
@@ -58,8 +58,8 @@ export default function TeamPage() {
       const teamRes = await fetch("/api/team", {
         headers: { Authorization: `Bearer ${token}` }
       });
-      const teamData = await teamRes.json();
 
+      const teamData = await teamRes.json();
       setTeam(teamData);
       setLineup(teamData.lineup || {});
       setBench(teamData.bench || []);
@@ -87,13 +87,18 @@ export default function TeamPage() {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`
       },
-      body: JSON.stringify({ lineup, bench, tactics: team.tactics })
+      body: JSON.stringify({
+        lineup,
+        bench,
+        tactics: team.tactics
+      })
     });
   }, [lineup, bench, team]);
 
   /* ================= DRAG ================= */
 
   const handleDragEnd = (event) => {
+
     const { active, over } = event;
     if (!over) return;
 
@@ -103,13 +108,17 @@ export default function TeamPage() {
     const slot = fieldSlots.find(s => s.id === over.id);
 
     /* ===== SPIELFELD ===== */
+
     if (slot) {
+
       if (!player.positions?.includes(slot.type)) return;
 
       setLineup(prev => {
+
         const updated = { ...prev };
 
-        if (!updated[player._id] && Object.keys(updated).length >= 11)
+        if (!updated[player._id] &&
+            Object.keys(updated).length >= 11)
           return prev;
 
         delete updated[player._id];
@@ -126,8 +135,11 @@ export default function TeamPage() {
     }
 
     /* ===== BANK ===== */
+
     if (over.id === "bench") {
-      if (bench.length >= 7 && !bench.includes(player._id)) return;
+
+      if (bench.length >= 7 &&
+          !bench.includes(player._id)) return;
 
       setLineup(prev => {
         const updated = { ...prev };
@@ -136,20 +148,26 @@ export default function TeamPage() {
       });
 
       setBench(prev =>
-        prev.includes(player._id) ? prev : [...prev, player._id]
+        prev.includes(player._id)
+          ? prev
+          : [...prev, player._id]
       );
       return;
     }
 
     /* ===== REST ===== */
+
     if (over.id === "rest") {
+
       setLineup(prev => {
         const updated = { ...prev };
         delete updated[player._id];
         return updated;
       });
 
-      setBench(prev => prev.filter(id => id !== player._id));
+      setBench(prev =>
+        prev.filter(id => id !== player._id)
+      );
     }
   };
 
@@ -179,7 +197,34 @@ export default function TeamPage() {
         setDraggingPlayer(null);
       }}
     >
+
       <div className="max-w-[1500px] mx-auto p-6 text-white">
+
+        {/* ================= 8 SPIELEINSTELLUNGEN ================= */}
+
+        <div className="grid grid-cols-4 gap-4 mb-8 bg-black/40 p-4 rounded-xl">
+          {[
+            ["Spielidee","style",["ballbesitz","konter","gegenpressing","mauern"]],
+            ["Tempo","tempo",["langsam","normal","hoch"]],
+            ["Mentalität","mentality",["defensiv","ausgewogen","offensiv"]],
+            ["Passspiel","passing",["kurz","variabel","lang"]],
+            ["Abwehrlinie","defensiveLine",["tief","mittel","hoch"]],
+            ["Pressing","pressing",["niedrig","mittel","hoch"]],
+            ["Breite","width",["schmal","normal","breit"]],
+            ["Ballverlust","transition",["gegenpressing","zurückziehen"]]
+          ].map(([label,key,options])=>(
+            <Select
+              key={key}
+              label={label}
+              value={team?.tactics?.[key]}
+              onChange={v=>setTeam(prev=>({
+                ...prev,
+                tactics:{...prev.tactics,[key]:v}
+              }))}
+              options={options}
+            />
+          ))}
+        </div>
 
         <div className="flex gap-12">
 
@@ -208,9 +253,10 @@ export default function TeamPage() {
         </div>
       </div>
 
-      {/* ===== DRAG OVERLAY ===== */}
       <DragOverlay dropAnimation={null}>
-        {draggingPlayer && <Circle player={draggingPlayer} />}
+        {draggingPlayer &&
+          <Circle player={draggingPlayer} />
+        }
       </DragOverlay>
 
     </DndContext>
@@ -218,24 +264,7 @@ export default function TeamPage() {
 }
 
 /* =====================================================
- CIRCLE
-===================================================== */
-
-function Circle({ player }) {
-  return (
-    <div className="flex flex-col items-center pointer-events-none">
-      <div className="w-14 h-14 rounded-full bg-blue-700 border-2 border-white flex items-center justify-center text-xs font-bold">
-        {player.positions[0]}
-      </div>
-      <div className="text-xs text-white mt-1">
-        {player.lastName}
-      </div>
-    </div>
-  );
-}
-
-/* =====================================================
- PITCH
+   PITCH
 ===================================================== */
 
 function Pitch({ lineup, players, draggingPlayer }) {
@@ -255,21 +284,24 @@ function Pitch({ lineup, players, draggingPlayer }) {
 
         const player = players.find(p => p._id === playerId);
 
+        const isValid =
+          draggingPlayer &&
+          draggingPlayer.positions?.includes(slot.type);
+
         return (
           <div
             key={slot.id}
             ref={setNodeRef}
             style={{
-              position: "absolute",
-              left: `${slot.x}%`,
-              top: `${slot.y}%`,
-              transform: "translate(-50%,-50%)"
+              position:"absolute",
+              left:`${slot.x}%`,
+              top:`${slot.y}%`,
+              transform:"translate(-50%,-50%)"
             }}
           >
             {player && <FieldPlayer player={player} />}
 
-            {/* Slots nur sichtbar beim Drag */}
-            {draggingPlayer && !player && (
+            {draggingPlayer && !player && isValid && (
               <div className="w-14 h-14 rounded-full border border-white/40 bg-white/10"></div>
             )}
 
@@ -281,10 +313,11 @@ function Pitch({ lineup, players, draggingPlayer }) {
 }
 
 /* =====================================================
- FIELD PLAYER
+   FIELD PLAYER
 ===================================================== */
 
 function FieldPlayer({ player }) {
+
   const { attributes, listeners, setNodeRef } =
     useDraggable({ id: player._id });
 
@@ -301,11 +334,29 @@ function FieldPlayer({ player }) {
 }
 
 /* =====================================================
- BENCH
+   CIRCLE
+===================================================== */
+
+function Circle({ player }) {
+  return (
+    <div className="flex flex-col items-center pointer-events-none">
+      <div className="w-14 h-14 rounded-full bg-blue-700 border-2 border-white flex items-center justify-center text-xs font-bold">
+        {player.positions[0]}
+      </div>
+      <div className="text-xs text-white mt-1">
+        {player.lastName}
+      </div>
+    </div>
+  );
+}
+
+/* =====================================================
+   BENCH
 ===================================================== */
 
 function Bench({ bench }) {
-  const { setNodeRef } = useDroppable({ id: "bench" });
+
+  const { setNodeRef } = useDroppable({ id:"bench" });
 
   const placeholders = 7 - bench.length;
 
@@ -323,7 +374,7 @@ function Bench({ bench }) {
           <FieldPlayer key={p._id} player={p} />
         ))}
 
-        {[...Array(placeholders)].map((_, i) => (
+        {[...Array(placeholders)].map((_,i)=>(
           <div
             key={i}
             className="w-14 h-14 rounded-full border border-white/40 bg-white/10"
@@ -335,20 +386,21 @@ function Bench({ bench }) {
 }
 
 /* =====================================================
- SQUAD LIST
+   SQUAD LIST
 ===================================================== */
 
 function SquadList({ starters, benchPlayers, rest }) {
-  const { setNodeRef } = useDroppable({ id: "rest" });
+
+  const { setNodeRef } = useDroppable({ id:"rest" });
 
   return (
     <div className="w-[420px] bg-black/40 p-6 rounded-xl">
 
-      <Category title={`Startelf (${starters.length}/11)`} players={starters} />
-      <Category title={`Bank (${benchPlayers.length}/7)`} players={benchPlayers} />
+      <Category title={`Startelf (${starters.length}/11)`} players={starters}/>
+      <Category title={`Bank (${benchPlayers.length}/7)`} players={benchPlayers}/>
 
       <div ref={setNodeRef}>
-        <Category title="Nicht im Kader" players={rest} />
+        <Category title="Nicht im Kader" players={rest}/>
       </div>
 
     </div>
@@ -360,17 +412,18 @@ function Category({ title, players }) {
     <>
       <h3 className="font-semibold mt-4 mb-2">{title}</h3>
       {players.map(p => (
-        <PlayerCard key={p._id} player={p} />
+        <PlayerCard key={p._id} player={p}/>
       ))}
     </>
   );
 }
 
 /* =====================================================
- PLAYER CARD
+   PLAYER CARD
 ===================================================== */
 
 function PlayerCard({ player }) {
+
   const { attributes, listeners, setNodeRef } =
     useDraggable({ id: player._id });
 
@@ -392,6 +445,28 @@ function PlayerCard({ player }) {
       <div className="text-yellow-400 text-xs">
         {"★".repeat(Math.round(player.stars))}
       </div>
+    </div>
+  );
+}
+
+/* =====================================================
+   SELECT
+===================================================== */
+
+function Select({ label, value, onChange, options }) {
+  return (
+    <div>
+      <div className="text-xs mb-1">{label}</div>
+      <select
+        value={value || ""}
+        onChange={e => onChange(e.target.value)}
+        className="w-full bg-gray-800 p-2 rounded"
+      >
+        <option value="">-</option>
+        {options.map(o => (
+          <option key={o} value={o}>{o}</option>
+        ))}
+      </select>
     </div>
   );
 }
