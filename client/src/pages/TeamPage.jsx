@@ -269,8 +269,10 @@ const player = players.find(p => p._id === cleanId);
   {draggingPlayer ? (
     <div
       style={{
+        pointerEvents: "none",
         position: "relative",
-        transform: `translate(-${dragOffset.x}px, -${dragOffset.y}px)`
+        left: -dragOffset.x,
+        top: -dragOffset.y
       }}
     >
       <Circle player={draggingPlayer} />
