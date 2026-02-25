@@ -101,6 +101,7 @@ export default function TeamPage() {
 
     const slot = fieldSlots.find(s => s.id === over.id);
 
+    /* ===== SPIELFELD ===== */
     if (slot) {
       if (!player.positions?.includes(slot.type)) return;
 
@@ -123,6 +124,7 @@ export default function TeamPage() {
       return;
     }
 
+    /* ===== BANK ===== */
     if (over.id === "bench") {
       if (bench.length >= 7 && !bench.includes(player._id)) return;
 
@@ -135,8 +137,10 @@ export default function TeamPage() {
       setBench(prev =>
         prev.includes(player._id) ? prev : [...prev, player._id]
       );
+      return;
     }
 
+    /* ===== REST ===== */
     if (over.id === "rest") {
       setLineup(prev => {
         const updated = { ...prev };
@@ -174,7 +178,6 @@ export default function TeamPage() {
         setDraggingPlayer(null);
       }}
     >
-
       <div className="max-w-[1500px] mx-auto p-6 text-white">
 
         {/* ================= SPIELEINSTELLUNGEN ================= */}
@@ -222,13 +225,30 @@ export default function TeamPage() {
         </div>
       </div>
 
+      {/* ===== DRAG OVERLAY ===== */}
+
       <DragOverlay dropAnimation={null}>
-        {draggingPlayer && (
-          <Circle player={draggingPlayer} />
-        )}
+        {draggingPlayer && <Circle player={draggingPlayer} />}
       </DragOverlay>
 
     </DndContext>
+  );
+}
+
+/* =====================================================
+ CIRCLE
+===================================================== */
+
+function Circle({ player }) {
+  return (
+    <div className="flex flex-col items-center pointer-events-none">
+      <div className="w-14 h-14 rounded-full bg-blue-700 border-2 border-white flex items-center justify-center text-xs font-bold">
+        {player.positions[0]}
+      </div>
+      <div className="text-yellow-400 text-xs">
+        {"★".repeat(Math.round(player.stars))}
+      </div>
+    </div>
   );
 }
 
@@ -302,23 +322,6 @@ function FieldPlayer({ player }) {
 }
 
 /* =====================================================
- CIRCLE COMPONENT
-===================================================== */
-
-function Circle({ player }) {
-  return (
-    <div className="flex flex-col items-center">
-      <div className="w-14 h-14 rounded-full bg-blue-700 border-2 border-white flex items-center justify-center text-xs font-bold">
-        {player.positions[0]}
-      </div>
-      <div className="text-yellow-400 text-xs">
-        {"★".repeat(Math.round(player.stars))}
-      </div>
-    </div>
-  );
-}
-
-/* =====================================================
  BENCH
 ===================================================== */
 
@@ -328,9 +331,10 @@ function Bench({ bench }) {
   const placeholders = 7 - bench.length;
 
   return (
-    <div ref={setNodeRef}
-      className="mt-6 w-[750px] bg-black/40 p-4 rounded-xl">
-
+    <div
+      ref={setNodeRef}
+      className="mt-6 w-[750px] bg-black/40 p-4 rounded-xl"
+    >
       <h3 className="mb-3 font-semibold">
         Bank ({bench.length}/7)
       </h3>
@@ -341,12 +345,12 @@ function Bench({ bench }) {
         ))}
 
         {[...Array(placeholders)].map((_,i)=>(
-          <div key={i}
-            className="w-14 h-14 rounded-full border border-white/40 bg-white/10">
-          </div>
+          <div
+            key={i}
+            className="w-14 h-14 rounded-full border border-white/40 bg-white/10"
+          />
         ))}
       </div>
-
     </div>
   );
 }
@@ -377,11 +381,39 @@ function Category({ title, players }) {
     <>
       <h3 className="font-semibold mt-4 mb-2">{title}</h3>
       {players.map(p => (
-        <div key={p._id} className="text-sm mb-1">
-          {p.firstName} {p.lastName}
-        </div>
+        <PlayerCard key={p._id} player={p} />
       ))}
     </>
+  );
+}
+
+/* =====================================================
+ PLAYER CARD
+===================================================== */
+
+function PlayerCard({ player }) {
+  const { attributes, listeners, setNodeRef } =
+    useDraggable({ id: player._id });
+
+  return (
+    <div
+      ref={setNodeRef}
+      {...listeners}
+      {...attributes}
+      className="bg-gray-900 p-3 rounded mb-2 shadow cursor-grab"
+    >
+      <div className="font-semibold">
+        {player.firstName} {player.lastName}
+      </div>
+
+      <div className="text-xs text-gray-400">
+        {player.age} Jahre • {player.positions.join(", ")}
+      </div>
+
+      <div className="text-yellow-400 text-xs">
+        {"★".repeat(Math.round(player.stars))}
+      </div>
+    </div>
   );
 }
 
