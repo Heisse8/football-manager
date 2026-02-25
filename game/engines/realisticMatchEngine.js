@@ -3,7 +3,7 @@ const { evaluatePhases } = require("./phaseEvaluator");
 const { calculateMatchup } = require("./phaseMatchupEngine");
 const { evaluateFinalLineDuels } = require("./finalLineDuels");
 const { simulate90Minutes } = require("./minuteMatchEngine");
-const { generateMatchReport } = require("./matchReportEngine");
+const { generateMatchReport } = require("./matchReport");
 
 /* ===============================================
    VARIANZ
