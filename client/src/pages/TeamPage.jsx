@@ -66,7 +66,6 @@ export default function TeamPage() {
   const [lineup, setLineup] = useState({});
   const [bench, setBench] = useState([]);
   const [draggingPlayer, setDraggingPlayer] = useState(null);
-  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   
 
   /* ================= LOAD ================= */
@@ -218,19 +217,15 @@ const player = players.find(p => p._id === cleanId);
   return (
     <DndContext
   onDragStart={(event) => {
-  const cleanId = event.active.id.replace("field-", "").replace("list-", "");
-  const p = players.find(pl => pl._id === cleanId);
-  setDraggingPlayer(p);
+    const cleanId = event.active.id
+      .replace("field-", "")
+      .replace("list-", "");
 
-  const { initial } = event.active.rect.current;
-
-  const offsetX = event.activatorEvent.clientX - initial.left;
-  const offsetY = event.activatorEvent.clientY - initial.top;
-
-  setDragOffset({ x: offsetX, y: offsetY });
-}}
-  onDragEnd={(e) => {
-    handleDragEnd(e);
+    const player = players.find(p => p._id === cleanId);
+    setDraggingPlayer(player);
+  }}
+  onDragEnd={(event) => {
+    handleDragEnd(event);
     setDraggingPlayer(null);
   }}
 >
@@ -267,16 +262,7 @@ const player = players.find(p => p._id === cleanId);
 
 <DragOverlay dropAnimation={null}>
   {draggingPlayer ? (
-    <div
-      style={{
-        pointerEvents: "none",
-        position: "relative",
-        left: -dragOffset.x,
-        top: -dragOffset.y
-      }}
-    >
-      <Circle player={draggingPlayer} />
-    </div>
+    <Circle player={draggingPlayer} />
   ) : null}
 </DragOverlay>
 
