@@ -7,7 +7,7 @@ import {
 } from "@dnd-kit/core";
 
 /* =====================================================
-   SLOT SYSTEM (FULL FREE FORMATION)
+   SLOT SYSTEM
 ===================================================== */
 
 const fieldSlots = [
@@ -48,14 +48,12 @@ const fieldSlots = [
 ===================================================== */
 
 export default function TeamPage() {
+
   const [team, setTeam] = useState(null);
   const [players, setPlayers] = useState([]);
   const [lineup, setLineup] = useState({});
   const [bench, setBench] = useState([]);
-  const [tactics, setTactics] = useState({});
   const [draggingPlayer, setDraggingPlayer] = useState(null);
-
-  /* ================= LOAD ================= */
 
   useEffect(() => {
     const load = async () => {
@@ -69,7 +67,6 @@ export default function TeamPage() {
       setTeam(teamData);
       setLineup(teamData.lineup || {});
       setBench(teamData.bench || []);
-      setTactics(teamData.tactics || {});
 
       const playersRes = await fetch("/api/player/my-team", {
         headers: { Authorization: `Bearer ${token}` }
@@ -80,8 +77,6 @@ export default function TeamPage() {
 
     load();
   }, []);
-
-  /* ================= AUTO SAVE ================= */
 
   useEffect(() => {
     if (!team) return;
@@ -94,9 +89,10 @@ export default function TeamPage() {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`
       },
-      body: JSON.stringify({ lineup, bench, tactics })
+      body: JSON.stringify({ lineup, bench })
     });
-  }, [lineup, bench, tactics]);
+
+  }, [lineup, bench]);
 
   /* ================= DRAG ================= */
 
@@ -109,7 +105,9 @@ export default function TeamPage() {
 
     const slot = fieldSlots.find(s => s.id === over.id);
 
+    /* ===== DROP AUF SPIELFELD ===== */
     if (slot) {
+
       if (!player.positions?.includes(slot.type)) return;
 
       setLineup(prev => {
@@ -130,9 +128,12 @@ export default function TeamPage() {
       });
 
       setBench(prev => prev.filter(id => id !== player._id));
+      return;
     }
 
+    /* ===== DROP AUF BANK ===== */
     if (over.id === "bench") {
+
       if (bench.length >= 7 && !bench.includes(player._id)) return;
 
       setLineup(prev => {
@@ -144,6 +145,22 @@ export default function TeamPage() {
       setBench(prev =>
         prev.includes(player._id) ? prev : [...prev, player._id]
       );
+
+      return;
+    }
+
+    /* ===== DROP AUF NICHT IM KADER ===== */
+    if (over.id === "rest") {
+
+      setLineup(prev => {
+        const updated = { ...prev };
+        delete updated[player._id];
+        return updated;
+      });
+
+      setBench(prev => prev.filter(id => id !== player._id));
+
+      return;
     }
   };
 
@@ -176,44 +193,22 @@ export default function TeamPage() {
 
       <div className="max-w-[1500px] mx-auto p-6 text-white">
 
-        {/* ================= 8 TACTICS ================= */}
-
-        <div className="grid grid-cols-4 gap-4 mb-8 bg-black/40 p-4 rounded-xl">
-          <Select label="Spielidee" value={tactics.style}
-            onChange={v => setTactics({ ...tactics, style: v })}
-            options={["ballbesitz","konter","gegenpressing","mauern"]} />
-          <Select label="Tempo" value={tactics.tempo}
-            onChange={v => setTactics({ ...tactics, tempo: v })}
-            options={["langsam","normal","hoch"]} />
-          <Select label="Mentalität" value={tactics.mentality}
-            onChange={v => setTactics({ ...tactics, mentality: v })}
-            options={["defensiv","ausgewogen","offensiv"]} />
-          <Select label="Passspiel" value={tactics.passing}
-            onChange={v => setTactics({ ...tactics, passing: v })}
-            options={["kurz","variabel","lang"]} />
-          <Select label="Abwehrlinie" value={tactics.defensiveLine}
-            onChange={v => setTactics({ ...tactics, defensiveLine: v })}
-            options={["tief","mittel","hoch"]} />
-          <Select label="Pressing" value={tactics.pressing}
-            onChange={v => setTactics({ ...tactics, pressing: v })}
-            options={["niedrig","mittel","hoch"]} />
-          <Select label="Breite" value={tactics.width}
-            onChange={v => setTactics({ ...tactics, width: v })}
-            options={["schmal","normal","breit"]} />
-          <Select label="Ballverlust" value={tactics.transition}
-            onChange={v => setTactics({ ...tactics, transition: v })}
-            options={["gegenpressing","zurückziehen"]} />
-        </div>
-
         <div className="flex gap-12">
 
           <div className="flex flex-col items-center">
+
+            <div className="mb-3 text-lg font-semibold">
+              Startelf ({starters.length}/11)
+            </div>
+
             <Pitch
               lineup={lineup}
               players={players}
               draggingPlayer={draggingPlayer}
             />
+
             <Bench bench={benchPlayers} />
+
           </div>
 
           <SquadList
@@ -225,14 +220,14 @@ export default function TeamPage() {
         </div>
       </div>
 
-      {/* 🔥 DRAG OVERLAY (RUNDER DUMMY) */}
-      <DragOverlay>
+      {/* ===== DRAG OVERLAY ===== */}
+      <DragOverlay dropAnimation={null}>
         {draggingPlayer ? (
-          <div className="flex flex-col items-center pointer-events-none">
+          <div className="pointer-events-none flex flex-col items-center">
             <div className="w-14 h-14 rounded-full bg-blue-700 border-2 border-white flex items-center justify-center text-xs font-bold">
               {draggingPlayer.positions[0]}
             </div>
-            <div className="text-xs text-white mt-1">
+            <div className="text-xs text-white">
               {draggingPlayer.lastName}
             </div>
           </div>
@@ -244,21 +239,16 @@ export default function TeamPage() {
 }
 
 /* =====================================================
-   COMPONENTS
+   PITCH
 ===================================================== */
 
 function Pitch({ lineup, players, draggingPlayer }) {
+
   return (
     <div className="relative w-[750px] h-[950px] bg-green-700 rounded-xl shadow-2xl">
 
-      {/* Linien */}
       <div className="absolute inset-0 border-4 border-white"></div>
       <div className="absolute top-1/2 w-full h-[2px] bg-white"></div>
-      <div className="absolute top-1/2 left-1/2 w-44 h-44 border-2 border-white rounded-full -translate-x-1/2 -translate-y-1/2"></div>
-      <div className="absolute top-0 left-1/2 w-96 h-48 border-2 border-white -translate-x-1/2"></div>
-      <div className="absolute bottom-0 left-1/2 w-96 h-48 border-2 border-white -translate-x-1/2"></div>
-      <div className="absolute top-0 left-1/2 w-40 h-20 border-2 border-white -translate-x-1/2"></div>
-      <div className="absolute bottom-0 left-1/2 w-40 h-20 border-2 border-white -translate-x-1/2"></div>
 
       {fieldSlots.map(slot => {
 
@@ -298,6 +288,10 @@ function Pitch({ lineup, players, draggingPlayer }) {
   );
 }
 
+/* =====================================================
+   FIELD PLAYER
+===================================================== */
+
 function FieldPlayer({ player }) {
   const { attributes, listeners, setNodeRef } =
     useDraggable({ id: player._id });
@@ -312,35 +306,55 @@ function FieldPlayer({ player }) {
       <div className="w-14 h-14 rounded-full bg-blue-700 border-2 border-white flex items-center justify-center text-xs font-bold">
         {player.positions[0]}
       </div>
-      <div className="text-xs text-white mt-1">
+      <div className="text-xs text-white">
         {player.lastName}
       </div>
     </div>
   );
 }
 
+/* =====================================================
+   BENCH
+===================================================== */
+
 function Bench({ bench }) {
+
   const { setNodeRef } = useDroppable({ id: "bench" });
 
   return (
     <div ref={setNodeRef}
       className="mt-6 w-[750px] bg-black/40 p-4 rounded-xl">
+
       <h3 className="mb-3 font-semibold">
         Bank ({bench.length}/7)
       </h3>
+
       {bench.map(p => (
         <PlayerCard key={p._id} player={p} />
       ))}
+
     </div>
   );
 }
 
+/* =====================================================
+   SQUAD LIST
+===================================================== */
+
 function SquadList({ starters, benchPlayers, rest }) {
+
+  const { setNodeRef } = useDroppable({ id: "rest" });
+
   return (
     <div className="w-[420px] bg-black/40 p-6 rounded-xl">
+
       <Category title="Startelf" players={starters} />
       <Category title="Bank" players={benchPlayers} />
-      <Category title="Nicht im Kader" players={rest} />
+
+      <div ref={setNodeRef}>
+        <Category title="Nicht im Kader" players={rest} />
+      </div>
+
     </div>
   );
 }
@@ -356,7 +370,12 @@ function Category({ title, players }) {
   );
 }
 
+/* =====================================================
+   PLAYER CARD
+===================================================== */
+
 function PlayerCard({ player }) {
+
   const { attributes, listeners, setNodeRef } =
     useDraggable({ id: player._id });
 
@@ -376,24 +395,6 @@ function PlayerCard({ player }) {
       <div className="text-yellow-400 text-xs">
         {"★".repeat(Math.round(player.stars))}
       </div>
-    </div>
-  );
-}
-
-function Select({ label, value, onChange, options }) {
-  return (
-    <div>
-      <div className="text-xs mb-1">{label}</div>
-      <select
-        value={value || ""}
-        onChange={e => onChange(e.target.value)}
-        className="w-full bg-gray-800 p-2 rounded"
-      >
-        <option value="">-</option>
-        {options.map(o => (
-          <option key={o} value={o}>{o}</option>
-        ))}
-      </select>
     </div>
   );
 }
