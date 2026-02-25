@@ -38,7 +38,7 @@ const fieldSlots = [
 ];
 
 /* =====================================================
- ROLLENSYSTEM (ENGINE READY KEYS)
+ ROLLENSYSTEM
 ===================================================== */
 
 const roleOptions = {
@@ -57,6 +57,7 @@ const roleOptions = {
 ===================================================== */
 
 export default function TeamPage() {
+
   const [team, setTeam] = useState(null);
   const [players, setPlayers] = useState([]);
   const [lineup, setLineup] = useState({});
@@ -120,11 +121,20 @@ export default function TeamPage() {
 
     const slot = fieldSlots.find(s => s.id === over.id);
 
+    /* ===== SPIELFELD ===== */
+
     if (slot) {
       if (!player.positions?.includes(slot.type)) return;
 
       setLineup(prev => {
         const updated = { ...prev };
+
+        // Spieler aus allen Slots entfernen
+        Object.keys(updated).forEach(key => {
+          if (updated[key]?.player === player._id) {
+            delete updated[key];
+          }
+        });
 
         if (!updated[slot.id] && Object.keys(updated).length >= 11)
           return prev;
@@ -141,32 +151,42 @@ export default function TeamPage() {
       return;
     }
 
+    /* ===== BANK ===== */
+
     if (over.id === "bench") {
+
       setLineup(prev => {
         const updated = { ...prev };
+
         Object.keys(updated).forEach(key => {
-          if (updated[key].player === player._id)
+          if (updated[key]?.player === player._id)
             delete updated[key];
         });
+
         return updated;
       });
 
-      setBench(prev =>
-        prev.includes(player._id)
-          ? prev
-          : prev.length < 7
-            ? [...prev, player._id]
-            : prev
-      );
+      setBench(prev => {
+        if (prev.includes(player._id)) return prev;
+        if (prev.length >= 7) return prev;
+        return [...prev, player._id];
+      });
+
+      return;
     }
 
+    /* ===== REST ===== */
+
     if (over.id === "rest") {
+
       setLineup(prev => {
         const updated = { ...prev };
+
         Object.keys(updated).forEach(key => {
-          if (updated[key].player === player._id)
+          if (updated[key]?.player === player._id)
             delete updated[key];
         });
+
         return updated;
       });
 
@@ -200,33 +220,8 @@ export default function TeamPage() {
         setDraggingPlayer(null);
       }}
     >
+
       <div className="max-w-[1500px] mx-auto p-6 text-white">
-
-        {/* ================= 8 SPIELEINSTELLUNGEN ================= */}
-
-        <div className="grid grid-cols-4 gap-4 mb-8 bg-black/40 p-4 rounded-xl">
-          {[
-            ["Spielidee","style",["ballbesitz","konter","gegenpressing","mauern"]],
-            ["Tempo","tempo",["langsam","normal","hoch"]],
-            ["Mentalität","mentality",["defensiv","ausgewogen","offensiv"]],
-            ["Passspiel","passing",["kurz","variabel","lang"]],
-            ["Abwehrlinie","defensiveLine",["tief","mittel","hoch"]],
-            ["Pressing","pressing",["niedrig","mittel","hoch"]],
-            ["Breite","width",["schmal","normal","breit"]],
-            ["Ballverlust","transition",["gegenpressing","zurückziehen"]]
-          ].map(([label,key,options])=>(
-            <Select
-              key={key}
-              label={label}
-              value={team?.tactics?.[key]}
-              onChange={v=>setTeam(prev=>({
-                ...prev,
-                tactics:{...prev.tactics,[key]:v}
-              }))}
-              options={options}
-            />
-          ))}
-        </div>
 
         <div className="flex gap-12">
 
@@ -269,20 +264,11 @@ export default function TeamPage() {
 ===================================================== */
 
 function Pitch({ lineup, players, draggingPlayer, setLineup }) {
-
   return (
     <div className="relative w-[750px] h-[950px] bg-green-700 rounded-xl shadow-2xl">
 
       <div className="absolute inset-0 border-4 border-white"></div>
       <div className="absolute top-1/2 w-full h-[2px] bg-white"></div>
-
-      {/* 16er */}
-      <div className="absolute top-0 left-1/2 w-96 h-48 border-2 border-white -translate-x-1/2"></div>
-      <div className="absolute bottom-0 left-1/2 w-96 h-48 border-2 border-white -translate-x-1/2"></div>
-
-      {/* 5er */}
-      <div className="absolute top-0 left-1/2 w-40 h-20 border-2 border-white -translate-x-1/2"></div>
-      <div className="absolute bottom-0 left-1/2 w-40 h-20 border-2 border-white -translate-x-1/2"></div>
 
       {fieldSlots.map(slot => {
 
@@ -302,10 +288,10 @@ function Pitch({ lineup, players, draggingPlayer, setLineup }) {
             key={slot.id}
             ref={setNodeRef}
             style={{
-              position:"absolute",
-              left:`${slot.x}%`,
-              top:`${slot.y}%`,
-              transform:"translate(-50%,-50%)"
+              position: "absolute",
+              left: `${slot.x}%`,
+              top: `${slot.y}%`,
+              transform: "translate(-50%,-50%)"
             }}
           >
 
@@ -327,7 +313,6 @@ function Pitch({ lineup, players, draggingPlayer, setLineup }) {
           </div>
         );
       })}
-
     </div>
   );
 }
@@ -343,8 +328,8 @@ function RoleSelect({ slot, entry, setLineup }) {
   return (
     <select
       value={entry.role}
-      onChange={(e)=>{
-        setLineup(prev=>({
+      onChange={(e) => {
+        setLineup(prev => ({
           ...prev,
           [slot.id]: {
             ...prev[slot.id],
@@ -354,7 +339,7 @@ function RoleSelect({ slot, entry, setLineup }) {
       }}
       className="mt-1 text-xs bg-gray-800 rounded"
     >
-      {roles.map(r=>(
+      {roles.map(r => (
         <option key={r} value={r}>{r}</option>
       ))}
     </select>
@@ -404,7 +389,7 @@ function Circle({ player }) {
 
 function Bench({ bench }) {
 
-  const { setNodeRef } = useDroppable({ id:"bench" });
+  const { setNodeRef } = useDroppable({ id: "bench" });
   const placeholders = 7 - bench.length;
 
   return (
@@ -421,7 +406,7 @@ function Bench({ bench }) {
           <FieldPlayer key={p._id} player={p} />
         ))}
 
-        {[...Array(placeholders)].map((_,i)=>(
+        {[...Array(placeholders)].map((_, i) => (
           <div
             key={i}
             className="w-14 h-14 rounded-full border border-white/40 bg-white/10"
@@ -438,16 +423,16 @@ function Bench({ bench }) {
 
 function SquadList({ starters, benchPlayers, rest }) {
 
-  const { setNodeRef } = useDroppable({ id:"rest" });
+  const { setNodeRef } = useDroppable({ id: "rest" });
 
   return (
     <div className="w-[420px] bg-black/40 p-6 rounded-xl">
 
-      <Category title="Startelf" players={starters}/>
-      <Category title="Bank" players={benchPlayers}/>
+      <Category title="Startelf" players={starters} />
+      <Category title="Bank" players={benchPlayers} />
 
       <div ref={setNodeRef}>
-        <Category title="Nicht im Kader" players={rest}/>
+        <Category title="Nicht im Kader" players={rest} />
       </div>
 
     </div>
@@ -459,7 +444,7 @@ function Category({ title, players }) {
     <>
       <h3 className="font-semibold mt-4 mb-2">{title}</h3>
       {players.map(p => (
-        <PlayerCard key={p._id} player={p}/>
+        <PlayerCard key={p._id} player={p} />
       ))}
     </>
   );
@@ -492,28 +477,6 @@ function PlayerCard({ player }) {
       <div className="text-yellow-400 text-xs">
         {"★".repeat(Math.round(player.stars))}
       </div>
-    </div>
-  );
-}
-
-/* =====================================================
- SELECT
-===================================================== */
-
-function Select({ label, value, onChange, options }) {
-  return (
-    <div>
-      <div className="text-xs mb-1">{label}</div>
-      <select
-        value={value || ""}
-        onChange={e => onChange(e.target.value)}
-        className="w-full bg-gray-800 p-2 rounded"
-      >
-        <option value="">-</option>
-        {options.map(o => (
-          <option key={o} value={o}>{o}</option>
-        ))}
-      </select>
     </div>
   );
 }
