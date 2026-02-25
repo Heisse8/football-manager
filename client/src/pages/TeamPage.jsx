@@ -63,7 +63,6 @@ export default function TeamPage() {
   const [lineup, setLineup] = useState({});
   const [bench, setBench] = useState([]);
   const [draggingPlayer, setDraggingPlayer] = useState(null);
-  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
 
   /* ================= LOAD ================= */
 
@@ -213,15 +212,8 @@ export default function TeamPage() {
   return (
     <DndContext
       onDragStart={(e) => {
-  const p = players.find(pl => pl._id === e.active.id);
-  setDraggingPlayer(p);
-
-  const rect = e.activatorEvent.target.getBoundingClientRect();
-
-  setDragOffset({
-    x: e.activatorEvent.clientX - rect.left,
-    y: e.activatorEvent.clientY - rect.top
-  });
+const p = players.find(pl => pl._id === e.active.id);
+setDraggingPlayer(p);
 }}
       onDragEnd={(e) => {
         handleDragEnd(e);
@@ -260,15 +252,7 @@ export default function TeamPage() {
       </div>
 
       <DragOverlay dropAnimation={null}>
-  {draggingPlayer && (
-    <div
-      style={{
-        transform: `translate(-${dragOffset.x}px, -${dragOffset.y}px)`
-      }}
-    >
-      <Circle player={draggingPlayer} />
-    </div>
-  )}
+{draggingPlayer && <Circle player={draggingPlayer} />}
 </DragOverlay>
 
     </DndContext>
@@ -376,6 +360,7 @@ function FieldPlayer({ player }) {
       {...listeners}
       {...attributes}
       className="cursor-grab"
+      style={{ touchAction: "none" }}
     >
       <Circle player={player} />
     </div>
