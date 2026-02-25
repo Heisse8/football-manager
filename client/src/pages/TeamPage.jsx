@@ -3,7 +3,8 @@ import {
 DndContext,
 DragOverlay,
 useDraggable,
-useDroppable
+useDroppable,
+defaultDropAnimationSideEffects
 } from "@dnd-kit/core";
 
 import { CSS } from "@dnd-kit/utilities";
@@ -66,6 +67,13 @@ export default function TeamPage() {
   const [bench, setBench] = useState([]);
   const [draggingPlayer, setDraggingPlayer] = useState(null);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const cursorOffsetModifier = ({ transform }) => {
+  return {
+    ...transform,
+    x: transform.x - dragOffset.x,
+    y: transform.y - dragOffset.y
+  };
+};
 
   /* ================= LOAD ================= */
 
@@ -215,27 +223,24 @@ const player = players.find(p => p._id === cleanId);
 
   return (
     <DndContext
-      onDragStart={(e) => {
-  const cleanId = e.active.id.replace("field-", "").replace("list-", "");
-  const p = players.find(pl => pl._id === cleanId);
-  setDraggingPlayer(p);
+  modifiers={[cursorOffsetModifier]}
+  onDragStart={(e) => {
+    const cleanId = e.active.id.replace("field-", "").replace("list-", "");
+    const p = players.find(pl => pl._id === cleanId);
+    setDraggingPlayer(p);
 
-  const node = e.active.data.current?.node;
+    const rect = e.activatorEvent.currentTarget.getBoundingClientRect();
 
-if (node) {
-  const rect = node.getBoundingClientRect();
-
-  setDragOffset({
-    x: e.activatorEvent.clientX - rect.left,
-    y: e.activatorEvent.clientY - rect.top
-  });
-}
-}}
-      onDragEnd={(e) => {
-        handleDragEnd(e);
-        setDraggingPlayer(null);
-      }}
-    >
+    setDragOffset({
+      x: e.activatorEvent.clientX - rect.left,
+      y: e.activatorEvent.clientY - rect.top
+    });
+  }}
+  onDragEnd={(e) => {
+    handleDragEnd(e);
+    setDraggingPlayer(null);
+  }}
+>
 
       <div className="max-w-[1500px] mx-auto p-6 text-white">
 
@@ -267,16 +272,11 @@ if (node) {
         </div>
 </div>
 
-<DragOverlay dropAnimation={null}>
-  {draggingPlayer ? (
-    <div
-      style={{
-        transform: `translate(-${dragOffset.x}px, -${dragOffset.y}px)`
-      }}
-    >
-      <Circle player={draggingPlayer} />
-    </div>
-  ) : null}
+<DragOverlay
+dropAnimation={null}
+modifiers={[cursorOffsetModifier]}
+>
+{draggingPlayer ? <Circle player={draggingPlayer} /> : null}
 </DragOverlay>
 
 </DndContext>
