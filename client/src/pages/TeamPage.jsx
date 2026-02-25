@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import {
 DndContext,
+DragOverlay,
 useDraggable,
 useDroppable
 } from "@dnd-kit/core";
@@ -252,12 +253,14 @@ setDraggingPlayer(p);
           />
 
         </div>
-      </div>
+</div>
 
+<DragOverlay dropAnimation={null}>
+  {draggingPlayer ? <Circle player={draggingPlayer} /> : null}
+</DragOverlay>
 
-
-    </DndContext>
-  );
+</DndContext>
+);
 }
 
 /* =====================================================
@@ -352,14 +355,8 @@ function RoleSelect({ slot, entry, setLineup }) {
 ===================================================== */
 
 function FieldPlayer({ player }) {
-  const { attributes, listeners, setNodeRef, transform } =
+  const { attributes, listeners, setNodeRef } =
     useDraggable({ id: `field-${player._id}` });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    touchAction: "none",
-    position: "relative"
-  };
 
   return (
     <div
@@ -367,7 +364,7 @@ function FieldPlayer({ player }) {
       {...listeners}
       {...attributes}
       className="cursor-grab"
-      style={style}
+      style={{ touchAction: "none" }}
     >
       <Circle player={player} />
     </div>
@@ -463,13 +460,8 @@ function Category({ title, players }) {
 ===================================================== */
 
 function PlayerCard({ player }) {
-  const { attributes, listeners, setNodeRef, transform } =
+  const { attributes, listeners, setNodeRef } =
     useDraggable({ id: `list-${player._id}` });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    position: "relative"
-  };
 
   return (
     <div
@@ -477,7 +469,6 @@ function PlayerCard({ player }) {
       {...listeners}
       {...attributes}
       className="bg-gray-900 p-3 rounded mb-2 shadow cursor-grab"
-      style={style}
     >
       <div className="font-semibold">
         {player.firstName} {player.lastName}
