@@ -33,7 +33,7 @@ function baseCoordinates(position) {
 }
 
 // ============================================
-// ROLLENBEWEGUNG
+// ROLLENBEWEGUNG (ERWEITERT)
 // ============================================
 
 function applyRoleMovement(coord, role) {
@@ -41,42 +41,110 @@ function applyRoleMovement(coord, role) {
 
   switch (role) {
 
-    case "wingback":
-      c.y += 15;
+    /* =========================
+       INNENVERTEIDIGER
+    ========================= */
+
+    case "ballspielender_verteidiger":
+      c.y += 5;
       break;
+
+    case "innenverteidiger":
+      break;
+
+    /* =========================
+       AUSSENVERTEIDIGER
+    ========================= */
 
     case "inverser_aussenverteidiger":
       c.x = 50;
       c.y += 5;
       break;
 
-    case "half_back":
+    case "halbverteidiger":
+      c.x = 50;
+      break;
+
+    case "wingback":
+      c.y += 15;
+      break;
+
+    case "halbraumspieler_av":
+      c.x = c.x < 50 ? 35 : 65;
+      c.y += 10;
+      break;
+
+    /* =========================
+       ZDM
+    ========================= */
+
+    case "tiefer_spielmacher":
+      c.y += 5;
+      break;
+
+    case "zerstoerer":
+      break;
+
+    case "falsche_6":
       c.y -= 10;
       break;
 
-    case "offensiver_halbverteidiger":
-      c.y += 10;
-      c.x += c.x < 50 ? 10 : -10;
+    /* =========================
+       ZM
+    ========================= */
+
+    case "spielmacher":
       break;
 
     case "box_to_box":
       c.y += 10;
       break;
 
+    /* =========================
+       ZOM
+    ========================= */
+
+    case "klassische_10":
+      c.y += 5;
+      break;
+
     case "schattenstuermer":
       c.y += 15;
+      break;
+
+    case "halbraumspieler":
+      c.x = c.x < 50 ? 35 : 65;
+      break;
+
+    case "fluegel_ueberladen":
+      c.x = c.x < 50 ? 20 : 80;
+      break;
+
+    /* =========================
+       ST
+    ========================= */
+
+    case "zielspieler":
+      c.y += 5;
+      break;
+
+    case "konterstuermer":
+      c.y += 20;
       break;
 
     case "falsche_9":
       c.y -= 10;
       break;
 
-    case "inverser_fluegel":
-      c.x = 50;
+    /* =========================
+       WINGER
+    ========================= */
+
+    case "fluegelspieler":
       break;
 
-    case "zielspieler":
-      c.y += 5;
+    case "inverser_fluegel":
+      c.x = 50;
       break;
   }
 
@@ -97,19 +165,16 @@ function interpretStructure(lineup, players) {
       attackingLine: 0
     },
 
-    // Raumverteilung
     wingPresence: 0,
     halfspacePresence: 0,
     centralPresence: 0,
 
-    // Erweiterte Metriken
     finalLineOccupation: 0,
     restDefenseUnits: 0,
 
     verticalCompactness: 0,
     widthScore: 0,
 
-    // Für Asymmetrie
     sideDistribution: {
       left: 0,
       right: 0,
@@ -139,7 +204,7 @@ function interpretStructure(lineup, players) {
 
     coord.y *= starFactor;
 
-    // Speichern für Duel Engine
+    // Für Duel Engine speichern
     player._simX = coord.x;
     player._simY = coord.y;
 

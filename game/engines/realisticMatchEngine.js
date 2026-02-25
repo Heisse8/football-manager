@@ -2,28 +2,30 @@ const { interpretStructure } = require("./structureInterpreter");
 const { evaluatePhases } = require("./phaseEvaluator");
 const { calculateMatchup } = require("./phaseMatchupEngine");
 const { evaluateFinalLineDuels } = require("./finalLineDuels");
-const {
-  calculateStandardChances,
-  calculateStandardXG
-} = require("../utils/standardEngine");
 const { simulate90Minutes } = require("./minuteMatchEngine");
+const { generateMatchReport } = require("./matchReportEngine");
 
-// ================= VARIANZ =================
+/* ===============================================
+   VARIANZ
+=============================================== */
+
 function applyVariance(value) {
-  const variance = value * 0.05;
+  const variance = value * 0.06;
   return value + (Math.random() * variance * 2 - variance);
 }
 
-// ================= TORE AUS xG =================
 function goalsFromXG(xG) {
-  if (xG < 0.5) return 0;
+  if (xG < 0.4) return 0;
   if (xG < 1.2) return 1;
-  if (xG < 2.2) return 2;
-  if (xG < 3.2) return 3;
-  return Math.round(xG / 1.2);
+  if (xG < 2.1) return 2;
+  if (xG < 3.0) return 3;
+  return Math.round(xG / 1.15);
 }
 
-// ================= MATCH ENGINE =================
+/* ===============================================
+   MAIN ENGINE
+=============================================== */
+
 function simulateRealisticMatch({
   homePlayers,
   awayPlayers,
@@ -36,33 +38,37 @@ function simulateRealisticMatch({
   const homeLineup = homeTeam.lockedLineup || homeTeam.lineup;
   const awayLineup = awayTeam.lockedLineup || awayTeam.lineup;
 
-  // 1️⃣ Struktur (Koordinatenanalyse)
+  /* =========================
+     1️⃣ STRUKTUR
+  ========================= */
+
   const homeStructure = interpretStructure(homeLineup, homePlayers);
   const awayStructure = interpretStructure(awayLineup, awayPlayers);
 
-  // 2️⃣ Phasen
+  /* =========================
+     2️⃣ PHASEN
+  ========================= */
+
   const homePhases = evaluatePhases(homeStructure, homeTeam.tactics);
   const awayPhases = evaluatePhases(awayStructure, awayTeam.tactics);
 
-  // 3️⃣ Matchup
+  /* =========================
+     3️⃣ MATCHUP
+  ========================= */
+
   const matchup = calculateMatchup(homePhases, awayPhases);
 
-  // 4️⃣ Halbraum-Bonus
-  matchup.chances.home += homeStructure.halfspacePresence * 0.03;
-  matchup.chances.away += awayStructure.halfspacePresence * 0.03;
+  /* =========================
+     4️⃣ POSITIONS-xG
+  ========================= */
 
-  // 5️⃣ Breitenlogik
-  if (homeStructure.widthScore > 2)
-    matchup.chances.home *= 1.05;
+  let homePosXG = matchup.chances.home * 0.11;
+  let awayPosXG = matchup.chances.away * 0.11;
 
-  if (awayStructure.widthScore > 2)
-    matchup.chances.away *= 1.05;
+  /* =========================
+     5️⃣ FINAL LINE DUELS
+  ========================= */
 
-  // 6️⃣ Positions-xG Basis
-  let homePositionalXG = matchup.chances.home * 0.11;
-  let awayPositionalXG = matchup.chances.away * 0.11;
-
-  // 🔥 6b️⃣ FINAL LINE DUELS
   const homeDuelImpact = evaluateFinalLineDuels(
     homeStructure,
     awayStructure,
@@ -77,67 +83,57 @@ function simulateRealisticMatch({
     homePlayers
   );
 
-  homePositionalXG *= 1 + homeDuelImpact * 0.06;
-  awayPositionalXG *= 1 + awayDuelImpact * 0.06;
+  homePosXG *= 1 + homeDuelImpact * 0.07;
+  awayPosXG *= 1 + awayDuelImpact * 0.07;
 
-  // 7️⃣ Konter-xG
+  /* =========================
+     6️⃣ TRANSITION xG
+  ========================= */
+
   const homeCounterXG =
     Math.max(
       0,
       homePhases.offensiveTransitionStrength -
       awayPhases.defensiveTransitionStrength
-    ) * 0.08;
+    ) * 0.09;
 
   const awayCounterXG =
     Math.max(
       0,
       awayPhases.offensiveTransitionStrength -
       homePhases.defensiveTransitionStrength
-    ) * 0.08;
+    ) * 0.09;
 
-  // 8️⃣ Standards
-  const homeStandards = calculateStandardChances(
-    homeStructure,
-    matchup.possession.home,
-    matchup.chances.home
-  );
+  /* =========================
+     7️⃣ STANDARDS
+  ========================= */
 
-  const awayStandards = calculateStandardChances(
-    awayStructure,
-    matchup.possession.away,
-    matchup.chances.away
-  );
+  const homeStandardXG =
+    homeStructure.finalLineOccupation * 0.05;
 
-  const homeStandardXG = calculateStandardXG({
-    attackingPlayers: homePlayers,
-    defendingStructure: awayStructure,
-    standardChances: homeStandards
-  });
+  const awayStandardXG =
+    awayStructure.finalLineOccupation * 0.05;
 
-  const awayStandardXG = calculateStandardXG({
-    attackingPlayers: awayPlayers,
-    defendingStructure: homeStructure,
-    standardChances: awayStandards
-  });
+  /* =========================
+     8️⃣ HEIMVORTEIL
+  ========================= */
 
-  // 9️⃣ Heimvorteil
   const stadiumFactor =
     (stadium.capacity / 50000) * fillRate;
 
   const homeAdvantage =
-    1 + stadiumFactor * 0.15;
+    1 + stadiumFactor * 0.18;
 
-  // 🔟 Gesamt-xG
+  /* =========================
+     9️⃣ GESAMT xG
+  ========================= */
+
   let homeXG =
-    (homePositionalXG +
-      homeCounterXG +
-      homeStandardXG) *
+    (homePosXG + homeCounterXG + homeStandardXG) *
     homeAdvantage;
 
   let awayXG =
-    awayPositionalXG +
-    awayCounterXG +
-    awayStandardXG;
+    awayPosXG + awayCounterXG + awayStandardXG;
 
   homeXG = applyVariance(homeXG);
   awayXG = applyVariance(awayXG);
@@ -145,43 +141,44 @@ function simulateRealisticMatch({
   const homeGoals = goalsFromXG(homeXG);
   const awayGoals = goalsFromXG(awayXG);
 
-  // 1️⃣1️⃣ 90 Minuten Simulation
+  /* =========================
+     🔟 MINUTE ENGINE
+  ========================= */
+
   const events = simulate90Minutes({
     homePlayers,
     awayPlayers,
-    breakdown: {
-      home: {
-        positional: homePositionalXG,
-        counter: homeCounterXG,
-        standard: homeStandardXG
-      },
-      away: {
-        positional: awayPositionalXG,
-        counter: awayCounterXG,
-        standard: awayStandardXG
-      }
-    },
     totalGoalsHome: homeGoals,
     totalGoalsAway: awayGoals
   });
 
+  /* =========================
+     1️⃣1️⃣ SPIELBERICHT
+  ========================= */
+
+  const report = generateMatchReport({
+    homeTeam,
+    awayTeam,
+    result: { homeGoals, awayGoals },
+    xG: { home: homeXG, away: awayXG },
+    possession: matchup.possession,
+    events,
+    matchType: matchup.matchType
+  });
+
   return {
     result: { homeGoals, awayGoals },
-    possession: matchup.possession,
-    chances: matchup.chances,
     xG: {
       home: parseFloat(homeXG.toFixed(2)),
       away: parseFloat(awayXG.toFixed(2))
     },
+    possession: matchup.possession,
     duelImpact: {
       home: parseFloat(homeDuelImpact.toFixed(2)),
       away: parseFloat(awayDuelImpact.toFixed(2))
     },
-    systemPreview: {
-      home: homeStructure.zones,
-      away: awayStructure.zones
-    },
     events,
+    report,
     matchType: matchup.matchType
   };
 }

@@ -7,7 +7,7 @@ import {
 } from "@dnd-kit/core";
 
 /* =====================================================
-   SLOT SYSTEM (ENGINE READY)
+ SLOT SYSTEM (ENGINE READY)
 ===================================================== */
 
 const fieldSlots = [
@@ -38,11 +38,25 @@ const fieldSlots = [
 ];
 
 /* =====================================================
-   TEAM PAGE
+ ROLLENSYSTEM (ENGINE READY KEYS)
+===================================================== */
+
+const roleOptions = {
+  CB: ["klassischer_innenverteidiger", "ballspielender_verteidiger"],
+  LWB: ["wingback", "inverser_aussenverteidiger"],
+  RWB: ["wingback", "inverser_aussenverteidiger"],
+  CDM: ["tiefer_spielmacher", "zerstoerer", "falsche_6"],
+  CM: ["spielmacher", "box_to_box"],
+  CAM: ["klassische_10", "schattenstuermer"],
+  ST: ["zielspieler", "konterstuermer", "falsche_9"],
+  GK: ["standard_keeper"]
+};
+
+/* =====================================================
+ TEAM PAGE
 ===================================================== */
 
 export default function TeamPage() {
-
   const [team, setTeam] = useState(null);
   const [players, setPlayers] = useState([]);
   const [lineup, setLineup] = useState({});
@@ -58,8 +72,8 @@ export default function TeamPage() {
       const teamRes = await fetch("/api/team", {
         headers: { Authorization: `Bearer ${token}` }
       });
-
       const teamData = await teamRes.json();
+
       setTeam(teamData);
       setLineup(teamData.lineup || {});
       setBench(teamData.bench || []);
@@ -95,10 +109,9 @@ export default function TeamPage() {
     });
   }, [lineup, bench, team]);
 
-  /* ================= DRAG ================= */
+  /* ================= DRAG END ================= */
 
   const handleDragEnd = (event) => {
-
     const { active, over } = event;
     if (!over) return;
 
@@ -107,26 +120,20 @@ export default function TeamPage() {
 
     const slot = fieldSlots.find(s => s.id === over.id);
 
-    /* ===== SPIELFELD ===== */
-
     if (slot) {
-
       if (!player.positions?.includes(slot.type)) return;
 
       setLineup(prev => {
-
         const updated = { ...prev };
 
-        if (!updated[player._id] &&
-            Object.keys(updated).length >= 11)
+        if (!updated[slot.id] && Object.keys(updated).length >= 11)
           return prev;
 
-        delete updated[player._id];
+        updated[slot.id] = {
+          player: player._id,
+          role: roleOptions[slot.type]?.[0] || "default"
+        };
 
-        if (Object.values(updated).includes(slot.id))
-          return prev;
-
-        updated[player._id] = slot.id;
         return updated;
       });
 
@@ -134,55 +141,51 @@ export default function TeamPage() {
       return;
     }
 
-    /* ===== BANK ===== */
-
     if (over.id === "bench") {
-
-      if (bench.length >= 7 &&
-          !bench.includes(player._id)) return;
-
       setLineup(prev => {
         const updated = { ...prev };
-        delete updated[player._id];
+        Object.keys(updated).forEach(key => {
+          if (updated[key].player === player._id)
+            delete updated[key];
+        });
         return updated;
       });
 
       setBench(prev =>
         prev.includes(player._id)
           ? prev
-          : [...prev, player._id]
+          : prev.length < 7
+            ? [...prev, player._id]
+            : prev
       );
-      return;
     }
 
-    /* ===== REST ===== */
-
     if (over.id === "rest") {
-
       setLineup(prev => {
         const updated = { ...prev };
-        delete updated[player._id];
+        Object.keys(updated).forEach(key => {
+          if (updated[key].player === player._id)
+            delete updated[key];
+        });
         return updated;
       });
 
-      setBench(prev =>
-        prev.filter(id => id !== player._id)
-      );
+      setBench(prev => prev.filter(id => id !== player._id));
     }
   };
 
   if (!team) return null;
 
-  const starters = players.filter(p =>
-    Object.keys(lineup).includes(p._id)
-  );
+  const starters = Object.values(lineup)
+    .map(entry => players.find(p => p._id === entry.player))
+    .filter(Boolean);
 
   const benchPlayers = players.filter(p =>
     bench.includes(p._id)
   );
 
   const rest = players.filter(p =>
-    !Object.keys(lineup).includes(p._id) &&
+    !starters.includes(p) &&
     !bench.includes(p._id)
   );
 
@@ -197,7 +200,6 @@ export default function TeamPage() {
         setDraggingPlayer(null);
       }}
     >
-
       <div className="max-w-[1500px] mx-auto p-6 text-white">
 
         {/* ================= 8 SPIELEINSTELLUNGEN ================= */}
@@ -238,6 +240,7 @@ export default function TeamPage() {
               lineup={lineup}
               players={players}
               draggingPlayer={draggingPlayer}
+              setLineup={setLineup}
             />
 
             <Bench bench={benchPlayers} />
@@ -254,9 +257,7 @@ export default function TeamPage() {
       </div>
 
       <DragOverlay dropAnimation={null}>
-        {draggingPlayer &&
-          <Circle player={draggingPlayer} />
-        }
+        {draggingPlayer && <Circle player={draggingPlayer} />}
       </DragOverlay>
 
     </DndContext>
@@ -264,10 +265,10 @@ export default function TeamPage() {
 }
 
 /* =====================================================
-   PITCH
+ PITCH
 ===================================================== */
 
-function Pitch({ lineup, players, draggingPlayer }) {
+function Pitch({ lineup, players, draggingPlayer, setLineup }) {
 
   return (
     <div className="relative w-[750px] h-[950px] bg-green-700 rounded-xl shadow-2xl">
@@ -275,16 +276,24 @@ function Pitch({ lineup, players, draggingPlayer }) {
       <div className="absolute inset-0 border-4 border-white"></div>
       <div className="absolute top-1/2 w-full h-[2px] bg-white"></div>
 
+      {/* 16er */}
+      <div className="absolute top-0 left-1/2 w-96 h-48 border-2 border-white -translate-x-1/2"></div>
+      <div className="absolute bottom-0 left-1/2 w-96 h-48 border-2 border-white -translate-x-1/2"></div>
+
+      {/* 5er */}
+      <div className="absolute top-0 left-1/2 w-40 h-20 border-2 border-white -translate-x-1/2"></div>
+      <div className="absolute bottom-0 left-1/2 w-40 h-20 border-2 border-white -translate-x-1/2"></div>
+
       {fieldSlots.map(slot => {
 
         const { setNodeRef } = useDroppable({ id: slot.id });
 
-        const playerId = Object.keys(lineup)
-          .find(id => lineup[id] === slot.id);
+        const entry = lineup[slot.id];
+        const player = entry
+          ? players.find(p => p._id === entry.player)
+          : null;
 
-        const player = players.find(p => p._id === playerId);
-
-        const isValid =
+        const valid =
           draggingPlayer &&
           draggingPlayer.positions?.includes(slot.type);
 
@@ -299,25 +308,64 @@ function Pitch({ lineup, players, draggingPlayer }) {
               transform:"translate(-50%,-50%)"
             }}
           >
-            {player && <FieldPlayer player={player} />}
 
-            {draggingPlayer && !player && isValid && (
+            {player && (
+              <>
+                <FieldPlayer player={player} />
+                <RoleSelect
+                  slot={slot}
+                  entry={entry}
+                  setLineup={setLineup}
+                />
+              </>
+            )}
+
+            {draggingPlayer && !player && valid && (
               <div className="w-14 h-14 rounded-full border border-white/40 bg-white/10"></div>
             )}
 
           </div>
         );
       })}
+
     </div>
   );
 }
 
 /* =====================================================
-   FIELD PLAYER
+ ROLE SELECT
+===================================================== */
+
+function RoleSelect({ slot, entry, setLineup }) {
+
+  const roles = roleOptions[slot.type] || [];
+
+  return (
+    <select
+      value={entry.role}
+      onChange={(e)=>{
+        setLineup(prev=>({
+          ...prev,
+          [slot.id]: {
+            ...prev[slot.id],
+            role: e.target.value
+          }
+        }));
+      }}
+      className="mt-1 text-xs bg-gray-800 rounded"
+    >
+      {roles.map(r=>(
+        <option key={r} value={r}>{r}</option>
+      ))}
+    </select>
+  );
+}
+
+/* =====================================================
+ FIELD PLAYER
 ===================================================== */
 
 function FieldPlayer({ player }) {
-
   const { attributes, listeners, setNodeRef } =
     useDraggable({ id: player._id });
 
@@ -334,7 +382,7 @@ function FieldPlayer({ player }) {
 }
 
 /* =====================================================
-   CIRCLE
+ CIRCLE
 ===================================================== */
 
 function Circle({ player }) {
@@ -351,13 +399,12 @@ function Circle({ player }) {
 }
 
 /* =====================================================
-   BENCH
+ BENCH
 ===================================================== */
 
 function Bench({ bench }) {
 
   const { setNodeRef } = useDroppable({ id:"bench" });
-
   const placeholders = 7 - bench.length;
 
   return (
@@ -386,7 +433,7 @@ function Bench({ bench }) {
 }
 
 /* =====================================================
-   SQUAD LIST
+ SQUAD LIST
 ===================================================== */
 
 function SquadList({ starters, benchPlayers, rest }) {
@@ -396,8 +443,8 @@ function SquadList({ starters, benchPlayers, rest }) {
   return (
     <div className="w-[420px] bg-black/40 p-6 rounded-xl">
 
-      <Category title={`Startelf (${starters.length}/11)`} players={starters}/>
-      <Category title={`Bank (${benchPlayers.length}/7)`} players={benchPlayers}/>
+      <Category title="Startelf" players={starters}/>
+      <Category title="Bank" players={benchPlayers}/>
 
       <div ref={setNodeRef}>
         <Category title="Nicht im Kader" players={rest}/>
@@ -419,7 +466,7 @@ function Category({ title, players }) {
 }
 
 /* =====================================================
-   PLAYER CARD
+ PLAYER CARD
 ===================================================== */
 
 function PlayerCard({ player }) {
@@ -450,7 +497,7 @@ function PlayerCard({ player }) {
 }
 
 /* =====================================================
-   SELECT
+ SELECT
 ===================================================== */
 
 function Select({ label, value, onChange, options }) {

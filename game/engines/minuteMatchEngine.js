@@ -6,69 +6,140 @@ function pickRandom(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
+function splitGoals(totalGoals, breakdown) {
+  const totalXG =
+    breakdown.positional +
+    breakdown.counter +
+    breakdown.standard;
+
+  if (totalXG <= 0) {
+    return { positional: totalGoals, counter: 0, standard: 0 };
+  }
+
+  const positional = Math.round(
+    totalGoals * (breakdown.positional / totalXG)
+  );
+
+  const counter = Math.round(
+    totalGoals * (breakdown.counter / totalXG)
+  );
+
+  return {
+    positional,
+    counter,
+    standard: Math.max(0, totalGoals - positional - counter)
+  };
+}
+
 function simulate90Minutes({
   homePlayers,
   awayPlayers,
-  breakdown, // positional, counter, standard
+  breakdown,
   totalGoalsHome,
   totalGoalsAway
 }) {
 
   const events = [];
 
-  // =========================
-  // 1️⃣ GOAL MINUTES GENERIEREN
-  // =========================
+  let homeScore = 0;
+  let awayScore = 0;
 
-  function generateGoalMinutes(totalGoals) {
-    const minutes = [];
-    for (let i = 0; i < totalGoals; i++) {
-      minutes.push(Math.floor(randomBetween(5, 90)));
-    }
-    return minutes.sort((a, b) => a - b);
-  }
+  const homeSplit = splitGoals(totalGoalsHome, breakdown.home);
+  const awaySplit = splitGoals(totalGoalsAway, breakdown.away);
 
-  const homeGoalMinutes = generateGoalMinutes(totalGoalsHome);
-  const awayGoalMinutes = generateGoalMinutes(totalGoalsAway);
-
-  // =========================
-  // 2️⃣ TORE ERZEUGEN
-  // =========================
-
-  function createGoalEvent(minute, team, players) {
+  function createGoalEvent(minute, team, players, subtype) {
 
     const scorer = pickRandom(players);
-    const assister = pickRandom(players.filter(p => p._id !== scorer._id));
+    const assisterPool =
+      players.filter(p => p._id !== scorer._id);
+
+    const assister =
+      assisterPool.length > 0
+        ? pickRandom(assisterPool)
+        : scorer;
+
+    if (team === "home") homeScore++;
+    else awayScore++;
 
     return {
       minute,
       type: "goal",
+      subtype,
       team,
       scorer: `${scorer.firstName} ${scorer.lastName}`,
-      assist: `${assister.firstName} ${assister.lastName}`
+      assist: `${assister.firstName} ${assister.lastName}`,
+      score: `${homeScore}-${awayScore}`
     };
   }
 
-  homeGoalMinutes.forEach(min =>
-    events.push(createGoalEvent(min, "home", homePlayers))
-  );
+  function goalMinuteWithGameState(team) {
 
-  awayGoalMinutes.forEach(min =>
-    events.push(createGoalEvent(min, "away", awayPlayers))
-  );
+    const isLosing =
+      (team === "home" && homeScore < awayScore) ||
+      (team === "away" && awayScore < homeScore);
+
+    const isWinning =
+      (team === "home" && homeScore > awayScore) ||
+      (team === "away" && awayScore > homeScore);
+
+    // Rückstand → späte Tore wahrscheinlicher
+    if (isLosing)
+      return Math.floor(randomBetween(60, 95));
+
+    // Führung → weniger Risiko, eher früher
+    if (isWinning)
+      return Math.floor(randomBetween(15, 70));
+
+    return Math.floor(randomBetween(10, 90));
+  }
 
   // =========================
-  // 3️⃣ GELBE KARTEN
+  // TORE ERZEUGEN
   // =========================
 
-  const yellowCards = Math.floor(randomBetween(2, 6));
+  function processGoals(split, team, players) {
+
+    for (let i = 0; i < split.positional; i++) {
+      const minute = goalMinuteWithGameState(team);
+      events.push(
+        createGoalEvent(minute, team, players, "positional")
+      );
+    }
+
+    for (let i = 0; i < split.counter; i++) {
+      const minute = Math.floor(randomBetween(30, 85));
+      events.push(
+        createGoalEvent(minute, team, players, "counter")
+      );
+    }
+
+    for (let i = 0; i < split.standard; i++) {
+      const minute = Math.floor(randomBetween(5, 95));
+      events.push(
+        createGoalEvent(minute, team, players, "standard")
+      );
+    }
+  }
+
+  processGoals(homeSplit, "home", homePlayers);
+  processGoals(awaySplit, "away", awayPlayers);
+
+  // =========================
+  // GELBE + ROTE KARTEN
+  // =========================
+
+  const totalGoals = totalGoalsHome + totalGoalsAway;
+  const yellowCards = Math.floor(randomBetween(3, 6));
 
   for (let i = 0; i < yellowCards; i++) {
+
     const minute = Math.floor(randomBetween(10, 90));
     const team = Math.random() > 0.5 ? "home" : "away";
-    const player = team === "home"
-      ? pickRandom(homePlayers)
-      : pickRandom(awayPlayers);
+
+    const player =
+      team === "home"
+        ? pickRandom(homePlayers)
+        : pickRandom(awayPlayers);
 
     events.push({
       minute,
@@ -76,10 +147,67 @@ function simulate90Minutes({
       team,
       player: `${player.firstName} ${player.lastName}`
     });
+
+    // 10% Chance auf rot nach gelb
+    if (Math.random() < 0.1) {
+      events.push({
+        minute: minute + 1,
+        type: "red",
+        team,
+        player: `${player.firstName} ${player.lastName}`
+      });
+    }
   }
 
   // =========================
-  // 4️⃣ SORTIEREN
+  // VERLETZUNGEN
+  // =========================
+
+  if (Math.random() < 0.15) {
+
+    const minute = Math.floor(randomBetween(20, 85));
+    const team = Math.random() > 0.5 ? "home" : "away";
+    const player =
+      team === "home"
+        ? pickRandom(homePlayers)
+        : pickRandom(awayPlayers);
+
+    events.push({
+      minute,
+      type: "injury",
+      team,
+      player: `${player.firstName} ${player.lastName}`
+    });
+  }
+
+  // =========================
+  // NACHspielzeit Drama
+  // =========================
+
+  if (Math.random() < 0.3) {
+
+    const team =
+      homeScore === awayScore
+        ? (Math.random() > 0.5 ? "home" : "away")
+        : homeScore < awayScore
+        ? "home"
+        : "away";
+
+    const players =
+      team === "home" ? homePlayers : awayPlayers;
+
+    events.push(
+      createGoalEvent(
+        Math.floor(randomBetween(90, 95)),
+        team,
+        players,
+        "late_drama"
+      )
+    );
+  }
+
+  // =========================
+  // SORTIEREN
   // =========================
 
   events.sort((a, b) => a.minute - b.minute);

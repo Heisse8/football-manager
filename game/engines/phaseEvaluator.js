@@ -5,67 +5,107 @@ function evaluatePhases(structure, tactics) {
   let offensiveTransitionStrength = 0;
   let defensiveTransitionStrength = 0;
 
-  // =========================
-  // 1️⃣ EIGENER BALLBESITZ
-  // =========================
+  /* =========================================
+     1️⃣ BALLBESITZ – KONTROLLINDEX
+  ========================================= */
 
-  ownPossessionStrength += structure.buildUpUnits * 2;
-  ownPossessionStrength += structure.midfieldPresence * 1.5;
-  ownPossessionStrength += structure.chanceCreation;
+  const controlCore =
+    structure.zones.buildUpLine * 2.4 +
+    structure.zones.midfieldLine * 2.0 +
+    structure.centralPresence * 1.5 +
+    structure.halfspacePresence * 1.8;
 
-  if (tactics.pressing === "hoch") {
-    ownPossessionStrength += 1;
-  }
+  const widthStretch =
+    structure.wingPresence * 0.9;
 
-  // =========================
-  // 2️⃣ GEGNERISCHER BALLBESITZ
-  // =========================
+  ownPossessionStrength = controlCore + widthStretch;
 
-  defensiveStructureStrength += structure.restDefense * 2;
-  defensiveStructureStrength += structure.midfieldPresence;
+  if (tactics?.style === "ballbesitz")
+    ownPossessionStrength *= 1.18;
 
-  if (tactics.defensiveLine === "tief") {
-    defensiveStructureStrength += 2;
-  }
+  if (tactics?.tempo === "hoch")
+    ownPossessionStrength *= 0.94;
 
-  if (tactics.pressing === "hoch") {
-    defensiveStructureStrength += 1;
-  }
+  if (tactics?.passing === "kurz")
+    ownPossessionStrength += 2.5;
 
-  // =========================
-  // 3️⃣ EIGENER BALLGEWINN
-  // =========================
 
-  offensiveTransitionStrength += structure.transitionThreat * 2;
+  /* =========================================
+     2️⃣ DEFENSIVE STABILITÄT
+  ========================================= */
 
-  if (tactics.pressing === "hoch") {
-    offensiveTransitionStrength += 2;
-  }
+  const compactness =
+    100 - structure.verticalCompactness;
 
-  if (tactics.attackFocus === "center") {
-    offensiveTransitionStrength += structure.centralPresence;
-  }
+  defensiveStructureStrength =
+    structure.restDefenseUnits * 2.6 +
+    structure.zones.midfieldLine * 1.4 +
+    compactness * 0.06;
 
-  if (tactics.attackFocus === "wings") {
-    offensiveTransitionStrength += structure.wingThreat;
-  }
+  if (tactics?.defensiveLine === "tief")
+    defensiveStructureStrength *= 1.12;
 
-  // =========================
-  // 4️⃣ GEGNERISCHER BALLGEWINN
-  // =========================
+  if (tactics?.pressing === "hoch")
+    defensiveStructureStrength += 1.8;
 
-  defensiveTransitionStrength += structure.restDefense * 2;
-  defensiveTransitionStrength -= structure.counterRisk;
 
-  if (tactics.defensiveLine === "hoch") {
-    defensiveTransitionStrength -= 2;
-  }
+  /* =========================================
+     3️⃣ OFFENSIVE TRANSITION – EXPLOSIVITÄT
+  ========================================= */
+
+  const asymmetry =
+    Math.abs(
+      structure.sideDistribution.left -
+      structure.sideDistribution.right
+    );
+
+  offensiveTransitionStrength =
+    structure.finalLineOccupation * 2.6 +
+    structure.wingPresence * 1.4 +
+    asymmetry * 0.8;
+
+  if (tactics?.style === "konter")
+    offensiveTransitionStrength *= 1.3;
+
+  if (tactics?.pressing === "hoch")
+    offensiveTransitionStrength += 2.2;
+
+
+  /* =========================================
+     4️⃣ DEFENSIVE TRANSITION – KONTERABSICHERUNG
+  ========================================= */
+
+  defensiveTransitionStrength =
+    structure.restDefenseUnits * 2.4 -
+    structure.finalLineOccupation * 1.5;
+
+  defensiveTransitionStrength -=
+    (structure.wingPresence -
+     structure.restDefenseUnits) * 0.9;
+
+  if (tactics?.defensiveLine === "hoch")
+    defensiveTransitionStrength -= 2.2;
+
+  if (tactics?.style === "ballbesitz")
+    defensiveTransitionStrength += 1.5;
+
+
+  /* =========================================
+     5️⃣ SYSTEM DOMINANCE INDEX
+  ========================================= */
+
+  const dominanceIndex =
+    ownPossessionStrength * 0.35 +
+    offensiveTransitionStrength * 0.25 +
+    defensiveStructureStrength * 0.25 +
+    defensiveTransitionStrength * 0.15;
 
   return {
     ownPossessionStrength,
     defensiveStructureStrength,
     offensiveTransitionStrength,
-    defensiveTransitionStrength
+    defensiveTransitionStrength,
+    dominanceIndex
   };
 }
 
