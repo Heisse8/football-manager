@@ -55,6 +55,8 @@ export default function TeamPage() {
   const [bench, setBench] = useState([]);
   const [draggingPlayer, setDraggingPlayer] = useState(null);
 
+  /* ================= LOAD ================= */
+
   useEffect(() => {
     const load = async () => {
       const token = localStorage.getItem("token");
@@ -78,6 +80,8 @@ export default function TeamPage() {
     load();
   }, []);
 
+  /* ================= AUTO SAVE ================= */
+
   useEffect(() => {
     if (!team) return;
 
@@ -96,14 +100,6 @@ export default function TeamPage() {
 
   /* ================= DRAG ================= */
 
-  const removePlayerFromLineup = (updated, playerId) => {
-    for (const slotId in updated) {
-      if (updated[slotId]?.player === playerId) {
-        delete updated[slotId];
-      }
-    }
-  };
-
   const handleDragEnd = (event) => {
     const { active, over } = event;
     if (!over) return;
@@ -113,7 +109,7 @@ export default function TeamPage() {
 
     const slot = fieldSlots.find(s => s.id === over.id);
 
-    /* ===== DROP AUF SPIELFELD ===== */
+    /* ===== SPIELFELD ===== */
     if (slot) {
 
       if (!player.positions?.includes(slot.type)) return;
@@ -121,14 +117,17 @@ export default function TeamPage() {
       setLineup(prev => {
         const updated = { ...prev };
 
-        if (!updated[slot.id] && Object.keys(updated).length >= 11)
+        if (!updated[player._id] && Object.keys(updated).length >= 11)
           return prev;
 
-        updated[slot.id] = {
-          player: player._id,
-          role: updated[slot.id]?.role || "standard"
-        };
+        const occupied = Object.keys(updated)
+          .find(id => updated[id] === slot.id);
 
+        if (occupied && occupied !== player._id) {
+          delete updated[occupied];
+        }
+
+        updated[player._id] = slot.id;
         return updated;
       });
 
@@ -136,14 +135,14 @@ export default function TeamPage() {
       return;
     }
 
-    /* ===== DROP AUF BANK ===== */
+    /* ===== BANK ===== */
     if (over.id === "bench") {
 
       if (bench.length >= 7 && !bench.includes(player._id)) return;
 
       setLineup(prev => {
         const updated = { ...prev };
-        removePlayerFromLineup(updated, player._id);
+        delete updated[player._id];
         return updated;
       });
 
@@ -154,23 +153,24 @@ export default function TeamPage() {
       return;
     }
 
-    /* ===== DROP AUF REST ===== */
+    /* ===== NICHT IM KADER ===== */
     if (over.id === "rest") {
 
       setLineup(prev => {
         const updated = { ...prev };
-        removePlayerFromLineup(updated, player._id);
+        delete updated[player._id];
         return updated;
       });
 
       setBench(prev => prev.filter(id => id !== player._id));
+      return;
     }
   };
 
   if (!team) return null;
 
   const starters = players.filter(p =>
-    Object.values(lineup).some(e => e.player === p._id)
+    Object.keys(lineup).includes(p._id)
   );
 
   const benchPlayers = players.filter(p =>
@@ -178,8 +178,8 @@ export default function TeamPage() {
   );
 
   const rest = players.filter(p =>
-    !bench.includes(p._id) &&
-    !Object.values(lineup).some(e => e.player === p._id)
+    !Object.keys(lineup).includes(p._id) &&
+    !bench.includes(p._id)
   );
 
   return (
@@ -211,6 +211,7 @@ export default function TeamPage() {
             />
 
             <Bench bench={benchPlayers} />
+
           </div>
 
           <SquadList
@@ -255,18 +256,20 @@ function Pitch({ lineup, players, draggingPlayer }) {
 
         const { setNodeRef } = useDroppable({ id: slot.id });
 
-        const entry = lineup[slot.id];
-        const player = players.find(p => p._id === entry?.player);
+        const playerId = Object.keys(lineup)
+          .find(id => lineup[id] === slot.id);
+
+        const player = players.find(p => p._id === playerId);
 
         return (
           <div
             key={slot.id}
             ref={setNodeRef}
             style={{
-              position: "absolute",
-              left: `${slot.x}%`,
-              top: `${slot.y}%`,
-              transform: "translate(-50%,-50%)"
+              position:"absolute",
+              left:`${slot.x}%`,
+              top:`${slot.y}%`,
+              transform:"translate(-50%,-50%)"
             }}
           >
 
@@ -276,12 +279,123 @@ function Pitch({ lineup, players, draggingPlayer }) {
               draggingPlayer.positions?.includes(slot.type) &&
               !player && (
                 <div className="w-14 h-14 rounded-full border border-white/40 bg-white/10"></div>
-              )}
+            )}
 
           </div>
         );
       })}
 
+    </div>
+  );
+}
+
+/* =====================================================
+ FIELD PLAYER
+===================================================== */
+
+function FieldPlayer({ player }) {
+  const { attributes, listeners, setNodeRef } =
+    useDraggable({ id: player._id });
+
+  return (
+    <div
+      ref={setNodeRef}
+      {...listeners}
+      {...attributes}
+      className="flex flex-col items-center cursor-grab"
+    >
+      <div className="w-14 h-14 rounded-full bg-blue-700 border-2 border-white flex items-center justify-center text-xs font-bold">
+        {player.positions[0]}
+      </div>
+      <div className="text-xs text-white">
+        {player.lastName}
+      </div>
+    </div>
+  );
+}
+
+/* =====================================================
+ BENCH
+===================================================== */
+
+function Bench({ bench }) {
+
+  const { setNodeRef } = useDroppable({ id: "bench" });
+
+  return (
+    <div ref={setNodeRef}
+      className="mt-6 w-[750px] bg-black/40 p-4 rounded-xl">
+
+      <h3 className="mb-3 font-semibold">
+        Bank ({bench.length}/7)
+      </h3>
+
+      {bench.map(p => (
+        <PlayerCard key={p._id} player={p} />
+      ))}
+
+    </div>
+  );
+}
+
+/* =====================================================
+ SQUAD LIST
+===================================================== */
+
+function SquadList({ starters, benchPlayers, rest }) {
+
+  const { setNodeRef } = useDroppable({ id: "rest" });
+
+  return (
+    <div className="w-[420px] bg-black/40 p-6 rounded-xl">
+
+      <Category title="Startelf" players={starters} />
+      <Category title="Bank" players={benchPlayers} />
+
+      <div ref={setNodeRef}>
+        <Category title="Nicht im Kader" players={rest} />
+      </div>
+
+    </div>
+  );
+}
+
+function Category({ title, players }) {
+  return (
+    <>
+      <h3 className="font-semibold mt-4 mb-2">{title}</h3>
+      {players.map(p => (
+        <PlayerCard key={p._id} player={p} />
+      ))}
+    </>
+  );
+}
+
+/* =====================================================
+ PLAYER CARD
+===================================================== */
+
+function PlayerCard({ player }) {
+
+  const { attributes, listeners, setNodeRef } =
+    useDraggable({ id: player._id });
+
+  return (
+    <div
+      ref={setNodeRef}
+      {...listeners}
+      {...attributes}
+      className="bg-gray-900 p-3 rounded mb-2 shadow cursor-grab"
+    >
+      <div className="font-semibold">
+        {player.firstName} {player.lastName}
+      </div>
+      <div className="text-xs text-gray-400">
+        {player.age} Jahre • {player.positions.join(", ")}
+      </div>
+      <div className="text-yellow-400 text-xs">
+        {"★".repeat(Math.round(player.stars))}
+      </div>
     </div>
   );
 }
