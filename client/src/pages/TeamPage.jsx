@@ -217,17 +217,17 @@ const player = players.find(p => p._id === cleanId);
 
   return (
     <DndContext
-  onDragStart={(e) => {
-  const cleanId = e.active.id.replace("field-", "").replace("list-", "");
+  onDragStart={(event) => {
+  const cleanId = event.active.id.replace("field-", "").replace("list-", "");
   const p = players.find(pl => pl._id === cleanId);
   setDraggingPlayer(p);
 
-  const rect = e.activatorEvent.currentTarget.getBoundingClientRect();
+  const { initial } = event.active.rect.current;
 
-  setDragOffset({
-    x: e.activatorEvent.clientX - rect.left,
-    y: e.activatorEvent.clientY - rect.top
-  });
+  const offsetX = event.activatorEvent.clientX - initial.left;
+  const offsetY = event.activatorEvent.clientY - initial.top;
+
+  setDragOffset({ x: offsetX, y: offsetY });
 }}
   onDragEnd={(e) => {
     handleDragEnd(e);
