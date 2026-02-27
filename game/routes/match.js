@@ -1,3 +1,8 @@
+const express = require("express");
+const router = express.Router();
+
+const Match = require("../models/Match");
+
 router.get("/:id", async (req, res) => {
   try {
     const match = await Match.findById(req.params.id)
@@ -50,3 +55,5 @@ router.get("/my-month", auth, async (req, res) => {
     res.status(500).json({ error: "Fehler beim Laden des Monats" });
   }
 });
+
+module.exports = router;
