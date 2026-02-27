@@ -303,25 +303,25 @@ const player = players.find(p => p._id === cleanId);
     !bench.includes(p._id)
   );
 
-  const defensiveShape = detectDefensiveLine(lineup);
-  const buildUpShape = calculateBuildUpShape(lineup, roleProfiles);
-  const overloadMatrix = calculateZoneOverloads(lineup, roleProfiles);
-  const teamPower = calculateTeamStrength({
-  lineup,
-  players,
-  defensiveShape,
-  buildUpShape,
-  overloadMatrix,
-  roleProfiles,
-  playstyle: team?.tactics
-});
-const dominance = calculateDominance({
-  teamPower,
-  overloadMatrix,
-  defensiveShape,
-  buildUpShape,
-  playstyle: team?.tactics
-});
+ // const defensiveShape = detectDefensiveLine(lineup);
+ // const buildUpShape = calculateBuildUpShape(lineup, roleProfiles);
+ // const overloadMatrix = calculateZoneOverloads(lineup, roleProfiles);
+ // const teamPower = calculateTeamStrength({
+ // lineup,
+ // players,
+ // defensiveShape,
+ // buildUpShape,
+ // overloadMatrix,
+ // roleProfiles,
+ // playstyle: team?.tactics
+//});
+//const dominance = calculateDominance({
+//  teamPower,
+//  overloadMatrix,
+//  defensiveShape,
+//  buildUpShape,
+//  playstyle: team?.tactics
+// });
 
   return (
     <DndContext
@@ -367,30 +367,8 @@ const dominance = calculateDominance({
 />
 
 {/* ===== ENGINE DEBUG PANEL ===== */}
-
-<div className="mt-8 text-xs text-gray-300 bg-black/40 p-4 rounded-xl w-[750px]">
-  <div>Defensive Shape: {defensiveShape}</div>
-  <div>Build Up Shape: {buildUpShape}</div>
-  <div>Left Overload: {overloadMatrix?.left}</div>
-  <div>Center Overload: {overloadMatrix?.center}</div>
-  <div>Right Overload: {overloadMatrix?.right}</div>
-
-  <hr className="my-3 opacity-30" />
-
-  <div>Attack Power: {teamPower?.attack}</div>
-  <div>Defense Power: {teamPower?.defense}</div>
-  <div>Control Power: {teamPower?.control}</div>
-
-  <hr className="my-3 opacity-30" />
-
-<div>Possession: {dominance?.possession}%</div>
-<div>Chance Creation: {dominance?.chanceCreation}</div>
-<div>Pressing: {dominance?.pressing}</div>
-<div>Rest Defense: {dominance?.restDefense}</div>
-</div>
-
-        </div>
-</div>
+</div>   {/* flex gap-12 */}
+</div>   {/* max-w wrapper */}
 
 <DragOverlay dropAnimation={null}>
   {draggingPlayer ? (
