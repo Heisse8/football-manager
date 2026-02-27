@@ -1,7 +1,21 @@
+const express = require("express");
+const router = express.Router();
+
+const Team = require("../models/Team");
+const Match = require("../models/Match");
+
+const {
+  getNextMatchdayStart,
+  generateLeagueSchedule
+} = require("../utils/seasonScheduler");
+
+/* ======================================================
+   START SEASON
+====================================================== */
+
 router.post("/start", async (req, res) => {
   try {
 
-    // 🔒 Hier rein!
     const activeSeason = await Match.findOne({
       competition: "league",
       played: false
@@ -37,3 +51,5 @@ router.post("/start", async (req, res) => {
     });
   }
 });
+
+module.exports = router;
