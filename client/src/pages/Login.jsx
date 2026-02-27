@@ -51,7 +51,11 @@ export default function Login() {
       className="min-h-screen flex items-center justify-center bg-cover bg-center"
       style={{ backgroundImage: "url('/stadium.jpg')" }}
     >
-      <div className="bg-black/70 backdrop-blur-md p-8 rounded-2xl shadow-2xl w-full max-w-md text-white">
+      <div
+className={`bg-black/70 backdrop-blur-md p-8 rounded-2xl shadow-2xl w-full max-w-md text-white transition-all duration-700 ${
+fadeIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5"
+}`}
+>
         <h2 className="text-3xl font-bold text-center mb-6">
           Login ⚽
         </h2>
