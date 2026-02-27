@@ -1,29 +1,15 @@
-const express = require("express");
-const router = express.Router();
-
-const Team = require("../models/Team");
-
-const {
-  getNextMatchdayStart,
-  generateLeagueSchedule
-} = require("../utils/seasonScheduler");
-
-const activeSeason = await Match.findOne({
-  competition: "league",
-  played: false
-});
-
 router.post("/start", async (req, res) => {
   try {
 
-    // 🔒 Prüfen ob bereits Liga-Spiele existieren
-    const existingMatches = await Match.findOne({
-      competition: "league"
+    // 🔒 Hier rein!
+    const activeSeason = await Match.findOne({
+      competition: "league",
+      played: false
     });
 
-    if (existingMatches) {
+    if (activeSeason) {
       return res.status(400).json({
-        error: "Saison wurde bereits gestartet"
+        error: "Saison läuft bereits"
       });
     }
 
@@ -34,14 +20,6 @@ router.post("/start", async (req, res) => {
         error: "Liga nicht vollständig (18 Teams nötig)"
       });
     }
-
-    if (activeSeason) {
-  return res.status(400).json({
-    error: "Saison läuft bereits"
-  });
-}
-
-    
 
     const startDate = getNextMatchdayStart(new Date());
 
@@ -59,5 +37,3 @@ router.post("/start", async (req, res) => {
     });
   }
 });
-
-module.exports = router;
