@@ -7,6 +7,8 @@ export default function Dashboard() {
 
   const [team, setTeam] = useState(null);
   const [leagueTeams, setLeagueTeams] = useState([]);
+  const [news, setNews] = useState([]);
+  const [nextMatches, setNextMatches] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const budget = 12500000;
@@ -23,9 +25,7 @@ export default function Dashboard() {
 
         // 🔹 Eigenes Team laden
         const teamRes = await fetch("/api/team", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
 
         if (!teamRes.ok) {
@@ -35,7 +35,6 @@ export default function Dashboard() {
 
         const teamData = await teamRes.json();
 
-        // ❗ Falls Backend null oder leer zurückgibt
         if (!teamData || !teamData._id) {
           navigate("/create-team");
           return;
@@ -43,11 +42,35 @@ export default function Dashboard() {
 
         setTeam(teamData);
 
-        // 🔹 Liga laden
+        // 🔹 Liga-Tabelle laden
         const leagueRes = await fetch(`/api/league/${teamData.league}`);
         if (leagueRes.ok) {
           const leagueData = await leagueRes.json();
           setLeagueTeams(leagueData);
+        }
+
+        // 🔹 Liga-News laden
+        const newsRes = await fetch(
+          `/api/news/league/${teamData.league}`
+        );
+        if (newsRes.ok) {
+          const newsData = await newsRes.json();
+          setNews(newsData);
+        }
+
+        // 🔹 Nächste 2 Spiele laden
+        const matchRes = await fetch(
+          `/api/match/team/${teamData._id}`
+        );
+        if (matchRes.ok) {
+          const allMatches = await matchRes.json();
+
+          const upcoming = allMatches
+            .filter(m => !m.played)
+            .sort((a, b) => new Date(a.date) - new Date(b.date))
+            .slice(0, 2);
+
+          setNextMatches(upcoming);
         }
 
       } catch (err) {
@@ -70,6 +93,7 @@ export default function Dashboard() {
 
   if (!team) return null;
 
+  // 🔹 Tabelle sortieren
   const sortedLeague = [...leagueTeams].sort((a, b) => {
     if (b.points !== a.points) return b.points - a.points;
 
@@ -87,9 +111,8 @@ export default function Dashboard() {
       <div
         className="absolute inset-0 bg-cover bg-center bg-fixed"
         style={{ backgroundImage: `url(${bgImage})` }}
-      ></div>
-
-      <div className="absolute inset-0 bg-black/80"></div>
+      />
+      <div className="absolute inset-0 bg-black/80" />
 
       <div className="relative z-10">
 
@@ -147,42 +170,70 @@ export default function Dashboard() {
             </h2>
 
             <div className="space-y-4">
-              <div className="bg-black/40 p-4 rounded-lg">
-                🔥 Willkommen in {team.league}
-              </div>
+              {news.length === 0 && (
+                <div className="opacity-60">
+                  Noch keine News vorhanden
+                </div>
+              )}
 
-              <div className="bg-black/40 p-4 rounded-lg">
-                Dein Verein ist bereit für die neue Saison.
-              </div>
-
-              <div className="bg-black/40 p-4 rounded-lg">
-                Transfers & Spieltage folgen bald.
-              </div>
+              {news.map(n => (
+                <div
+                  key={n._id}
+                  className="bg-black/40 p-4 rounded-lg"
+                >
+                  <div className="font-semibold">{n.title}</div>
+                  <div className="text-sm opacity-80 mt-1">
+                    {n.content}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
 
-          {/* 📅 Nächste Begegnung */}
+          {/* 📅 Nächste Begegnungen */}
           <div className="col-span-1 bg-black/50 backdrop-blur-md rounded-xl p-5">
             <h2 className="font-bold mb-4">
-              Nächste Begegnung
+              Nächste Begegnungen
             </h2>
 
-            <div className="text-center bg-black/30 p-6 rounded-lg">
-              <div>12.03.2026</div>
+            <div className="space-y-4">
+              {nextMatches.length === 0 && (
+                <div className="opacity-60 text-center">
+                  Keine kommenden Spiele
+                </div>
+              )}
 
-              <div className="text-2xl font-bold my-3">
-                {team.name}
-              </div>
+              {nextMatches.map(match => {
+                const isHome = match.homeTeam._id === team._id;
+                const opponent = isHome
+                  ? match.awayTeam.name
+                  : match.homeTeam.name;
 
-              <div>vs</div>
+                return (
+                  <div
+                    key={match._id}
+                    className="text-center bg-black/30 p-6 rounded-lg"
+                  >
+                    <div>
+                      {new Date(match.date).toLocaleDateString("de-DE")}
+                    </div>
 
-              <div className="text-2xl font-bold my-3">
-                Gegner
-              </div>
+                    <div className="text-2xl font-bold my-3">
+                      {team.name}
+                    </div>
 
-              <div className="text-yellow-400">
-                Heimspiel
-              </div>
+                    <div>vs</div>
+
+                    <div className="text-2xl font-bold my-3">
+                      {opponent}
+                    </div>
+
+                    <div className="text-yellow-400">
+                      {isHome ? "Heimspiel" : "Auswärtsspiel"}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
 

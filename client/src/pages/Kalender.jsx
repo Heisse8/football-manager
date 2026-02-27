@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Kalender() {
   const [matches, setMatches] = useState([]);
@@ -8,6 +9,7 @@ export default function Kalender() {
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
   const today = new Date();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -154,17 +156,18 @@ export default function Kalender() {
 
                 return (
                   <div
-                    key={match._id}
-                    className="text-xs p-2 mb-2 rounded bg-gray-900 border border-gray-700 relative"
-                  >
+  key={match._id}
+  onClick={() => navigate(`/match/${match._id}`)}
+  className="cursor-pointer text-xs p-2 mb-2 rounded bg-gray-900 border border-gray-700 relative hover:bg-gray-700 transition"
+>
                     <div className="absolute top-1 right-1 text-xs">
                       {isHome ? "🏠" : "✈"}
                     </div>
 
                     <div className="font-semibold text-gray-300">
-                      {match.competition === "LEAGUE"
-                        ? "Liga"
-                        : "Pokal"}
+                      {match.competition === "cup"
+  ? "Pokal"
+  : "Liga"}
                     </div>
 
                     <div className="text-gray-400">

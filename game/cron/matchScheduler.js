@@ -4,10 +4,12 @@ const Player = require("../models/Player");
 const Team = require("../models/Team");
 const Stadium = require("../models/Stadium");
 
+
 const { simulateRealisticMatch } = require("../engine/matchEngine");
 const { calculateAttendance } = require("../utils/matchEconomy");
 const { generateMatchTicker } = require("../utils/eventTextGenerator");
 const { generateKickerStyleReport } = require("../utils/aiMatchReport");
+const News = require("../models/News");
 
 /* ======================================================
  🔒 LINEUP LOCK (22:00)
@@ -57,9 +59,9 @@ cron.schedule("0 4 * * 3,5,0", async () => {
   console.log("⚽ Spielberechnung gestartet");
 
   const matches = await Match.find({
-    status: "lineups_locked",
-    played: false
-  }).populate("homeTeam awayTeam");
+  status: "lineups_locked",
+  played: false
+});
 
   for (const match of matches) {
 
@@ -103,6 +105,43 @@ cron.schedule("0 4 * * 3,5,0", async () => {
       homeTeam,
       awayTeam
     });
+
+    if (match.competition === "cup") {
+
+  const winner =
+    match.homeGoals > match.awayGoals
+      ? match.homeTeam
+      : match.awayTeam;
+
+  await advanceCupTeam(match, winner);
+
+  async function advanceCupTeam(match, winnerId) {
+  const nextMatch = await Match.findOne({
+    competition: "cup",
+    season: match.season,
+    cupRound: getNextRound(match.cupRound),
+    homeTeam: null
+  });
+
+  if (nextMatch) {
+    if (!nextMatch.homeTeam) {
+      nextMatch.homeTeam = winnerId;
+    } else {
+      nextMatch.awayTeam = winnerId;
+    }
+
+    await nextMatch.save();
+  }
+}
+}
+
+await News.create({
+  league: homeTeam.league,
+  type: "match",
+  title: `${homeTeam.name} ${match.homeGoals}:${match.awayGoals} ${awayTeam.name}`,
+  content: match.summary,
+  relatedMatch: match._id
+});
 
     /* ==============================
        🎟 Zuschauer & Einnahmen

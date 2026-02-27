@@ -6,6 +6,7 @@ require("dotenv").config();
 const teamRoutes = require("./routes/team");
 const matchRoutes = require("./routes/match");
 const playerRoutes = require("./routes/player");
+const seasonRoutes = require("./routes/season");
 
 // Cronjob laden (wichtig!)
 require("./cron/matchCron");
@@ -20,6 +21,8 @@ app.use(express.json());
 app.use("/api/team", teamRoutes);
 app.use("/api/match", matchRoutes);
 app.use("/api/player", playerRoutes);
+app.use("/api/season", seasonRoutes);
+app.use("/api/news", require("./routes/news"));
 
 // ================= MongoDB =================
 mongoose.connect(process.env.MONGO_URI)

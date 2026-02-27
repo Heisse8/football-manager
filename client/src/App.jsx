@@ -12,8 +12,8 @@ import VerifySuccess from "./pages/VerifySuccess";
 import Kalender from "./pages/Kalender";
 import StadiumPage from "./pages/StadiumPage"; // ✅ WICHTIG
 import MatchCenter from "./pages/MatchCenter";
-import Spieltag from "./pages/Spieltag";
 import MatchDetail from "./pages/MatchDetail";
+import Spieltag from "./pages/Spieltag";
 
 export default function App() {
   return (

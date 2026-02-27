@@ -10,6 +10,16 @@ const matchSchema = new mongoose.Schema({
     ref: "Team"
   },
 
+  date: Date,
+  matchday: Number,
+
+  competition: {
+    type: String,
+    default: "league"
+  },
+
+  cupRound: String,
+
   homeGoals: Number,
   awayGoals: Number,
 
@@ -24,31 +34,13 @@ const matchSchema = new mongoose.Schema({
   },
 
   stats: {
-    shots: {
-      home: Number,
-      away: Number
-    },
-    corners: {
-      home: Number,
-      away: Number
-    },
-    freeKicks: {
-      home: Number,
-      away: Number
-    },
-    penalties: {
-      home: Number,
-      away: Number
-    },
+    shots: { home: Number, away: Number },
+    corners: { home: Number, away: Number },
+    freeKicks: { home: Number, away: Number },
+    penalties: { home: Number, away: Number },
     cards: {
-      home: {
-        yellows: Number,
-        reds: Number
-      },
-      away: {
-        yellows: Number,
-        reds: Number
-      }
+      home: { yellows: Number, reds: Number },
+      away: { yellows: Number, reds: Number }
     }
   },
 

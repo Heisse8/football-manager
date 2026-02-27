@@ -3,151 +3,149 @@ import { useParams } from "react-router-dom";
 
 export default function MatchDetail() {
   const { id } = useParams();
+
   const [match, setMatch] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch(`/api/match/${id}`)
-      .then(res => res.json())
-      .then(data => setMatch(data))
-      .catch(() => setMatch(null));
+    const loadMatch = async () => {
+      try {
+        const res = await fetch(`/api/match/${id}`);
+        if (!res.ok) throw new Error("Match konnte nicht geladen werden");
+
+        const data = await res.json();
+        setMatch(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadMatch();
   }, [id]);
 
-  if (!match) {
+  if (loading)
     return (
-      <div className="p-10 text-gray-400">
+      <div className="text-center text-white mt-20">
         Spiel wird geladen...
       </div>
     );
-  }
 
-  const {
-    homeTeam,
-    awayTeam,
-    homeGoals,
-    awayGoals,
-    possession,
-    xG,
-    stats,
-    summary,
-    attendance
-  } = match;
+  if (error)
+    return (
+      <div className="text-center text-red-500 mt-20">
+        {error}
+      </div>
+    );
+
+  if (!match)
+    return (
+      <div className="text-center text-white mt-20">
+        Kein Spiel gefunden
+      </div>
+    );
 
   return (
     <div className="max-w-5xl mx-auto p-8 text-white">
 
       {/* ================= HEADER ================= */}
-      <div className="bg-white/10 backdrop-blur-md rounded-2xl p-10 shadow-2xl text-center mb-10">
 
-        <div className="text-2xl font-semibold mb-4">
-          {homeTeam?.name} vs {awayTeam?.name}
+      <div className="text-center mb-10">
+        <h1 className="text-3xl font-bold">
+          {match.homeTeam?.name} {match.homeGoals} : {match.awayGoals} {match.awayTeam?.name}
+        </h1>
+
+        <p className="text-gray-400 mt-2">
+          Zuschauer: {match.attendance?.toLocaleString() || 0}
+        </p>
+      </div>
+
+      {/* ================= POSSESSION ================= */}
+
+      <div className="bg-black/40 p-6 rounded-xl mb-8">
+        <h2 className="text-xl font-semibold mb-4">Ballbesitz</h2>
+        <div className="flex justify-between text-lg">
+          <span>{match.possession?.home || 0}%</span>
+          <span>{match.possession?.away || 0}%</span>
         </div>
+      </div>
 
-        <div className="text-6xl font-bold mb-4">
-          {homeGoals}:{awayGoals}
+      {/* ================= xG ================= */}
+
+      <div className="bg-black/40 p-6 rounded-xl mb-8">
+        <h2 className="text-xl font-semibold mb-4">Expected Goals (xG)</h2>
+        <div className="flex justify-between text-lg">
+          <span>{match.xG?.home?.toFixed(2) || "0.00"}</span>
+          <span>{match.xG?.away?.toFixed(2) || "0.00"}</span>
         </div>
-
-        <div className="text-sm text-gray-300">
-          Zuschauer: {attendance?.toLocaleString()}
-        </div>
-
       </div>
 
       {/* ================= STATS ================= */}
-      <div className="grid grid-cols-2 gap-8">
 
-        {/* LEFT SIDE */}
-        <div className="bg-white/5 rounded-xl p-6 space-y-4">
+      <div className="bg-black/40 p-6 rounded-xl mb-8">
+        <h2 className="text-xl font-semibold mb-4">Statistik</h2>
 
-          <StatRow 
-            label="Ballbesitz"
-            home={possession?.home + "%"}
-            away={possession?.away + "%"}
-          />
+        <StatRow
+          label="Schüsse"
+          home={match.stats?.shots?.home}
+          away={match.stats?.shots?.away}
+        />
 
-          <StatRow 
-            label="xG"
-            home={xG?.home}
-            away={xG?.away}
-          />
+        <StatRow
+          label="Ecken"
+          home={match.stats?.corners?.home}
+          away={match.stats?.corners?.away}
+        />
 
-          <StatRow 
-            label="Schüsse"
-            home={stats?.shots?.home}
-            away={stats?.shots?.away}
-          />
+        <StatRow
+          label="Freistöße"
+          home={match.stats?.freeKicks?.home}
+          away={match.stats?.freeKicks?.away}
+        />
 
-          <StatRow 
-            label="Ecken"
-            home={stats?.corners?.home}
-            away={stats?.corners?.away}
-          />
+        <StatRow
+          label="Elfmeter"
+          home={match.stats?.penalties?.home}
+          away={match.stats?.penalties?.away}
+        />
 
-          <StatRow 
-            label="Freistöße"
-            home={stats?.freeKicks?.home}
-            away={stats?.freeKicks?.away}
-          />
+        <StatRow
+          label="Gelbe Karten"
+          home={match.stats?.cards?.home?.yellows}
+          away={match.stats?.cards?.away?.yellows}
+        />
 
-          <StatRow 
-            label="Elfmeter"
-            home={stats?.penalties?.home}
-            away={stats?.penalties?.away}
-          />
-
-        </div>
-
-        {/* RIGHT SIDE */}
-        <div className="bg-white/5 rounded-xl p-6 space-y-4">
-
-          <StatRow 
-            label="Gelbe Karten"
-            home={stats?.cards?.home?.yellows}
-            away={stats?.cards?.away?.yellows}
-          />
-
-          <StatRow 
-            label="Rote Karten"
-            home={stats?.cards?.home?.reds}
-            away={stats?.cards?.away?.reds}
-          />
-
-        </div>
-
+        <StatRow
+          label="Rote Karten"
+          home={match.stats?.cards?.home?.reds}
+          away={match.stats?.cards?.away?.reds}
+        />
       </div>
 
       {/* ================= MATCH REPORT ================= */}
-      <div className="mt-10 bg-white/10 rounded-xl p-6">
 
-        <h2 className="text-xl font-bold mb-4">
-          Spielbericht
-        </h2>
-
-        <p className="text-gray-300 leading-relaxed whitespace-pre-line">
-          {summary}
-        </p>
-
-      </div>
-
+      {match.summary && (
+        <div className="bg-black/40 p-6 rounded-xl">
+          <h2 className="text-xl font-semibold mb-4">Spielbericht</h2>
+          <p className="text-gray-300 leading-relaxed">
+            {match.summary}
+          </p>
+        </div>
+      )}
     </div>
   );
 }
 
-/* ================= HELPER COMPONENT ================= */
+/* ================= STAT ROW COMPONENT ================= */
 
 function StatRow({ label, home, away }) {
   return (
-    <div className="flex justify-between items-center border-b border-white/10 pb-2">
-      <span className="w-1/4 text-left font-semibold">
-        {home}
-      </span>
-
-      <span className="w-1/2 text-center text-gray-400">
-        {label}
-      </span>
-
-      <span className="w-1/4 text-right font-semibold">
-        {away}
-      </span>
+    <div className="flex justify-between py-2 border-b border-white/10">
+      <span className="w-1/4 text-left">{home ?? 0}</span>
+      <span className="w-1/2 text-center text-gray-300">{label}</span>
+      <span className="w-1/4 text-right">{away ?? 0}</span>
     </div>
   );
 }
