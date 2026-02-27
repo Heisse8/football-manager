@@ -37,6 +37,7 @@ export default function App() {
   <Route path="/kalender" element={<Kalender />} />
   <Route path="/team" element={<TeamPage />} />
   <Route path="/stadium" element={<StadiumPage />} />
+  <Route path="/match/:id" element={<MatchDetail />} />
 
   <Route path="/spieltag" element={<Spieltag />} />
   <Route path="/match/:id" element={<MatchDetail />} />

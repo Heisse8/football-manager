@@ -15,3 +15,15 @@ router.get("/:id", async (req, res) => {
 });
 
 module.exports = router;
+
+router.get("/:id", async (req, res) => {
+  try {
+    const match = await Match.findById(req.params.id)
+      .populate("homeTeam")
+      .populate("awayTeam");
+
+    res.json(match);
+  } catch (err) {
+    res.status(500).json({ error: "Match nicht gefunden" });
+  }
+});

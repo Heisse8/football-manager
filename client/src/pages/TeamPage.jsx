@@ -8,11 +8,6 @@ defaultDropAnimationSideEffects
 } from "@dnd-kit/core";
 
 import { CSS } from "@dnd-kit/utilities";
-import { detectDefensiveLine } from "../engine/structureEngine";
-import { calculateBuildUpShape } from "../engine/buildUpEngine";
-import { calculateZoneOverloads } from "../engine/overloadEngine";
-import { calculateTeamStrength } from "../engine/matchEnginePhase3";
-import { calculateDominance } from "../engine/dominanceEngine";
 
 /* =====================================================
  SLOT SYSTEM (ENGINE READY)

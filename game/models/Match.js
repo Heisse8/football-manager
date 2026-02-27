@@ -1,50 +1,62 @@
 const mongoose = require("mongoose");
 
 const matchSchema = new mongoose.Schema({
-
-  competition: {
-    type: String,
-    default: "league"
-  },
-
   homeTeam: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Team",
-    required: true
+    ref: "Team"
   },
-
   awayTeam: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Team",
-    required: true
+    ref: "Team"
   },
 
-  homeGoals: { type: Number, default: 0 },
-  awayGoals: { type: Number, default: 0 },
-
-  xG: {
-    home: { type: Number, default: 0 },
-    away: { type: Number, default: 0 }
-  },
+  homeGoals: Number,
+  awayGoals: Number,
 
   possession: {
-    home: { type: Number, default: 50 },
-    away: { type: Number, default: 50 }
+    home: Number,
+    away: Number
   },
 
-  stats: { type: Object },
+  xG: {
+    home: Number,
+    away: Number
+  },
 
-  events: { type: Array, default: [] },
-  ticker: { type: Array, default: [] },
+  stats: {
+    shots: {
+      home: Number,
+      away: Number
+    },
+    corners: {
+      home: Number,
+      away: Number
+    },
+    freeKicks: {
+      home: Number,
+      away: Number
+    },
+    penalties: {
+      home: Number,
+      away: Number
+    },
+    cards: {
+      home: {
+        yellows: Number,
+        reds: Number
+      },
+      away: {
+        yellows: Number,
+        reds: Number
+      }
+    }
+  },
 
-  summary: { type: String },
-
-  attendance: { type: Number, default: 0 },
-  revenue: { type: Number, default: 0 },
+  summary: String,
+  attendance: Number,
 
   status: {
     type: String,
-    enum: ["scheduled", "lineups_locked", "played"],
     default: "scheduled"
   },
 
@@ -57,7 +69,6 @@ const matchSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   }
-
 });
 
 module.exports = mongoose.model("Match", matchSchema);

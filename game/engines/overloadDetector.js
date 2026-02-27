@@ -1,6 +1,6 @@
-// =======================================
+// ======================================================
 // OVERLOAD DETECTOR
-// =======================================
+// ======================================================
 
 const ZONES = [
   "LEFT_WING",
@@ -10,16 +10,16 @@ const ZONES = [
   "RIGHT_WING"
 ];
 
-function detectOverloads(zoneProfile, defensiveZoneProfile) {
+function detectOverloads(attackProfile, defenseProfile) {
 
   const result = {};
 
   ZONES.forEach(zone => {
 
-    const attackValue = zoneProfile[zone] || 0;
-    const defenseValue = defensiveZoneProfile[zone] || 0;
+    const attack = attackProfile[zone] || 0;
+    const defense = defenseProfile[zone] || 0;
 
-    const diff = attackValue - defenseValue;
+    const diff = attack - defense;
 
     result[zone] = {
       overload: diff >= 1,
