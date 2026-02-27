@@ -1,9 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-<Link to={`/match/${match._id}`}>
-  ...
-</Link>
 export default function Spieltag() {
   const [matches, setMatches] = useState([]);
 
