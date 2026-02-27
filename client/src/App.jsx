@@ -40,7 +40,6 @@ export default function App() {
   <Route path="/match/:id" element={<MatchDetail />} />
 
   <Route path="/spieltag" element={<Spieltag />} />
-  <Route path="/match/:id" element={<MatchDetail />} />
 
   <Route path="/matchcenter" element={<MatchCenter />} />
   <Route path="/finanzen" element={<div className="p-10">Finanzen</div>} />
