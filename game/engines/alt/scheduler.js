@@ -1,6 +1,6 @@
 const cron = require("node-cron");
-const Team = require("../models/Team");
-const League = require("../models/League");
+const Team = require("../../models/Team");
+const League = require("../../models/League");
 const { simulateMatch } = require("./matchEngine");
 
 /* =========================

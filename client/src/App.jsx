@@ -12,6 +12,8 @@ import VerifySuccess from "./pages/VerifySuccess";
 import Kalender from "./pages/Kalender";
 import StadiumPage from "./pages/StadiumPage"; // ✅ WICHTIG
 import MatchCenter from "./pages/MatchCenter";
+import Spieltag from "./pages/Spieltag";
+import MatchDetail from "./pages/MatchDetail";
 
 export default function App() {
   return (
@@ -25,39 +27,23 @@ export default function App() {
 
         {/* ================= GESCHÜTZTE SEITEN MIT NAVBAR ================= */}
         <Route
-          element={
-            <PrivateRoute>
-              <Layout />
-            </PrivateRoute>
-          }
-        >
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/kalender" element={<Kalender />} />
-          <Route path="/team" element={<TeamPage />} />
-          <Route path="/stadium" element={<StadiumPage />} /> {/* ✅ Stadion */}
+  element={
+    <PrivateRoute>
+      <Layout />
+    </PrivateRoute>
+  }
+>
+  <Route path="/" element={<Dashboard />} />
+  <Route path="/kalender" element={<Kalender />} />
+  <Route path="/team" element={<TeamPage />} />
+  <Route path="/stadium" element={<StadiumPage />} />
 
-          <Route
-            path="/training"
-            element={<div className="p-10">Training</div>}
-          />
+  <Route path="/spieltag" element={<Spieltag />} />
+  <Route path="/match/:id" element={<MatchDetail />} />
 
-          <Route
-            path="/transfermarkt"
-            element={<div className="p-10">Transfermarkt</div>}
-          />
-
-          <Route
-            path="/scouting"
-            element={<div className="p-10">Scouting</div>}
-          />
-
-          <Route path="/matchcenter" element={<MatchCenter />} />
-
-          <Route
-            path="/finanzen"
-            element={<div className="p-10">Finanzen</div>}
-          />
-        </Route>
+  <Route path="/matchcenter" element={<MatchCenter />} />
+  <Route path="/finanzen" element={<div className="p-10">Finanzen</div>} />
+</Route>
 
         {/* ================= CREATE TEAM OHNE NAVBAR ================= */}
         <Route

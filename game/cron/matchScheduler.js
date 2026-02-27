@@ -4,16 +4,17 @@ const Player = require("../models/Player");
 const Team = require("../models/Team");
 const Stadium = require("../models/Stadium");
 
-const { simulateRealisticMatch } = require("../engines/realisticMatchEngine");
+const { simulateRealisticMatch } = require("../engine/matchEngine");
 const { calculateAttendance } = require("../utils/matchEconomy");
 const { generateMatchTicker } = require("../utils/eventTextGenerator");
 const { generateKickerStyleReport } = require("../utils/aiMatchReport");
 
 /* ======================================================
- 🔒 LINEUP LOCK
+ 🔒 LINEUP LOCK (22:00)
 ====================================================== */
 
 cron.schedule("0 22 * * 2,4,6", async () => {
+
   console.log("🔒 Lineup Lock gestartet");
 
   const matches = await Match.find({ status: "scheduled" });
@@ -22,6 +23,7 @@ cron.schedule("0 22 * * 2,4,6", async () => {
 
     const homeTeam = await Team.findById(match.homeTeam);
     const awayTeam = await Team.findById(match.awayTeam);
+
     if (!homeTeam || !awayTeam) continue;
 
     if (!homeTeam.lineupLocked) {
@@ -43,10 +45,11 @@ cron.schedule("0 22 * * 2,4,6", async () => {
   }
 
   console.log("✅ Lineups gelockt");
-});
+
+}, { timezone: "Europe/Berlin" });
 
 /* ======================================================
- ⚽ SPIELBERECHNUNG
+ ⚽ SPIELBERECHNUNG (04:00)
 ====================================================== */
 
 cron.schedule("0 4 * * 3,5,0", async () => {
@@ -55,15 +58,21 @@ cron.schedule("0 4 * * 3,5,0", async () => {
 
   const matches = await Match.find({
     status: "lineups_locked",
-    played: false,
+    played: false
   }).populate("homeTeam awayTeam");
 
   for (const match of matches) {
+
+    if (match.played) continue;
 
     const homeTeam = match.homeTeam;
     const awayTeam = match.awayTeam;
 
     if (!homeTeam.lockedLineup || !awayTeam.lockedLineup) continue;
+
+    /* ==============================
+       🔄 Lineup → Spieler laden
+    ============================== */
 
     const homePlayerIds = Object.values(homeTeam.lockedLineup)
       .map(slot => slot.player);
@@ -79,44 +88,64 @@ cron.schedule("0 4 * * 3,5,0", async () => {
       continue;
     }
 
-    const stadium = await Stadium.findOne({ team: homeTeam._id });
-    if (!stadium) continue;
+    /* ==============================
+       🧠 Engine kompatibel machen
+    ============================== */
 
-    const { attendance, revenue, fillRate } =
-      calculateAttendance({
+    homeTeam.lineup = homePlayers;
+    awayTeam.lineup = awayPlayers;
+
+    /* ==============================
+       ⚽ MATCH SIMULATION
+    ============================== */
+
+    const result = simulateRealisticMatch({
+      homeTeam,
+      awayTeam
+    });
+
+    /* ==============================
+       🎟 Zuschauer & Einnahmen
+    ============================== */
+
+    const stadium = await Stadium.findOne({ team: homeTeam._id });
+
+    let attendance = 0;
+    let revenue = 0;
+
+    if (stadium) {
+      const data = calculateAttendance({
         capacity: stadium.capacity,
         ticketPrice: stadium.ticketPrice,
         homePosition: homeTeam.tablePosition || 10,
-        awayPosition: awayTeam.tablePosition || 10,
+        awayPosition: awayTeam.tablePosition || 10
       });
 
-    const result = simulateRealisticMatch({
-      homePlayers,
-      awayPlayers,
-      homeTeam,
-      awayTeam,
-      stadium,
-      fillRate,
-    });
+      attendance = data.attendance;
+      revenue = data.revenue;
+    }
 
-    /* ===== Ergebnis speichern ===== */
+    /* ==============================
+       💾 Ergebnis speichern
+    ============================== */
 
-    match.homeGoals = result.result.homeGoals;
-    match.awayGoals = result.result.awayGoals;
-    match.possession = result.possession;
-    match.chances = result.chances;
+    match.homeGoals = result.homeGoals;
+    match.awayGoals = result.awayGoals;
     match.xG = result.xG;
+    match.possession = result.possession;
+    match.stats = result.stats;
     match.events = result.events;
+
     match.ticker = generateMatchTicker(result.events);
 
     match.summary = generateKickerStyleReport({
       homeTeam,
       awayTeam,
-      homeGoals: match.homeGoals,
-      awayGoals: match.awayGoals,
-      possession: match.possession,
-      xG: match.xG,
-      events: result.events,
+      homeGoals: result.homeGoals,
+      awayGoals: result.awayGoals,
+      possession: result.possession,
+      xG: result.xG,
+      events: result.events
     });
 
     match.attendance = attendance;
@@ -124,11 +153,11 @@ cron.schedule("0 4 * * 3,5,0", async () => {
     match.played = true;
     match.status = "played";
 
-    /* ===== Tabelle ===== */
+    /* ==============================
+       📊 Tabelle aktualisieren
+    ============================== */
 
     updateTable(homeTeam, awayTeam, match);
-
-    /* ===== Einnahmen ===== */
 
     homeTeam.balance += revenue;
 
@@ -141,7 +170,7 @@ cron.schedule("0 4 * * 3,5,0", async () => {
       match.save()
     ]);
 
-    /* ===== Tabelle sortieren ===== */
+    /* Tabelle neu sortieren */
 
     const teams = await Team.find({ league: homeTeam.league })
       .sort({ points: -1, goalDifference: -1, goalsFor: -1 });
@@ -154,10 +183,11 @@ cron.schedule("0 4 * * 3,5,0", async () => {
   }
 
   console.log("✅ Spielberechnung abgeschlossen");
-});
+
+}, { timezone: "Europe/Berlin" });
 
 /* ======================================================
- Tabellenlogik
+ 📊 Tabellenlogik
 ====================================================== */
 
 function updateTable(homeTeam, awayTeam, match) {

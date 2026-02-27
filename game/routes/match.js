@@ -1,7 +1,25 @@
 const express = require("express");
 const router = express.Router();
-
 const Match = require("../models/Match");
+
+router.get("/:id", async (req, res) => {
+  try {
+    const match = await Match.findById(req.params.id)
+      .populate("homeTeam")
+      .populate("awayTeam");
+
+    if (!match) {
+      return res.status(404).json({ error: "Match nicht gefunden" });
+    }
+
+    res.json(match);
+  } catch (err) {
+    res.status(500).json({ error: "Serverfehler" });
+  }
+});
+
+module.exports = router;
+
 const Team = require("../models/Team");
 const Player = require("../models/Player");
 
