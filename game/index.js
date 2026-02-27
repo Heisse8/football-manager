@@ -4,6 +4,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const path = require("path");
+const matchRoutes = require("./routes/match");
 
 const app = express();
 
@@ -24,7 +25,7 @@ app.use("/api/team", require("./routes/team"));
 app.use("/api/league", require("./routes/league"));
 app.use("/api/schedule", require("./routes/schedule"));
 app.use("/api/season", require("./routes/season"));
-app.use("/api/match", require("./routes/match"));
+app.use("/api/match", matchRoutes);
 app.use("/api/player", require("./routes/player"));
 app.use("/api/stadium", require("./routes/stadium"));
 

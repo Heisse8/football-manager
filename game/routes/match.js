@@ -2,36 +2,30 @@ const express = require("express");
 const router = express.Router();
 
 const Match = require("../models/Match");
-
-router.get("/:id", async (req, res) => {
-  try {
-    const match = await Match.findById(req.params.id)
-      .populate("homeTeam")
-      .populate("awayTeam");
-
-    if (!match) return res.status(404).json({ error: "Match nicht gefunden" });
-
-    res.json(match);
-  } catch (err) {
-    res.status(500).json({ error: "Serverfehler" });
-  }
-});
-
-const auth = require("../middleware/auth");
 const Team = require("../models/Team");
+const auth = require("../middleware/auth");
+
+/* ======================================================
+   GET MATCHES FOR CURRENT USER (MONTH VIEW)
+====================================================== */
 
 router.get("/my-month", auth, async (req, res) => {
   try {
     const { year, month } = req.query;
 
     if (!year || month === undefined) {
-      return res.status(400).json({ error: "Year und Month fehlen" });
+      return res.status(400).json({
+        error: "Year und Month fehlen"
+      });
     }
 
-    // 🔥 Team des eingeloggten Users finden
+    // Team des eingeloggten Users finden
     const team = await Team.findOne({ owner: req.user.userId });
+
     if (!team) {
-      return res.status(404).json({ error: "Kein Team gefunden" });
+      return res.status(404).json({
+        error: "Kein Team gefunden"
+      });
     }
 
     const start = new Date(year, month, 1);
@@ -52,7 +46,34 @@ router.get("/my-month", auth, async (req, res) => {
 
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Fehler beim Laden des Monats" });
+    res.status(500).json({
+      error: "Fehler beim Laden des Monats"
+    });
+  }
+});
+
+/* ======================================================
+   GET MATCH BY ID (Match Detail)
+====================================================== */
+
+router.get("/:id", async (req, res) => {
+  try {
+    const match = await Match.findById(req.params.id)
+      .populate("homeTeam")
+      .populate("awayTeam");
+
+    if (!match) {
+      return res.status(404).json({
+        error: "Match nicht gefunden"
+      });
+    }
+
+    res.json(match);
+
+  } catch (err) {
+    res.status(500).json({
+      error: "Serverfehler"
+    });
   }
 });
 
