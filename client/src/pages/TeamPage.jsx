@@ -168,16 +168,26 @@ if (over.id === "REST") {
 
     /* ====== POSITION CHECK ====== */
 
-    let canPlay=false;
+    /* ====== POSITION CHECK ====== */
 
-    player.positions?.forEach(pos=>{
-      const group=positionGroups[pos];
-      if(group && group.includes(slot)){
-        canPlay=true;
-      }
-    });
+let canPlay = false;
 
-    if(!canPlay) return;
+player.positions?.forEach(pos => {
+
+  // Wenn Slot exakt gleiche Position ist
+  if (pos === slot) {
+    canPlay = true;
+  }
+
+  // Wenn Position Gruppe existiert (z.B. CM → LCM, RCM)
+  const group = positionGroups[pos];
+  if (group && group.includes(slot)) {
+    canPlay = true;
+  }
+
+});
+
+if (!canPlay) return;
 
     /* ====== PLACE IN START11 ====== */
 
