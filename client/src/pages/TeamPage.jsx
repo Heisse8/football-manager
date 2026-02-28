@@ -126,26 +126,26 @@ export default function TeamPage(){
     if(!player) return;
 
     /* ====== DROP TO BENCH ====== */
-    if(over.id==="BENCH"){
+    if (over.id === "BENCH") {
 
-      // aus Start11 entfernen
-      setLineup(prev=>{
-        const updated={...prev};
-        Object.keys(updated).forEach(k=>{
-          if(updated[k]===player._id) delete updated[k];
-        });
-        return updated;
-      });
+  // aus Start11 entfernen
+  setLineup(prev => {
+    const updated = { ...prev };
+    Object.keys(updated).forEach(k => {
+      if (updated[k] === player._id) delete updated[k];
+    });
+    return updated;
+  });
 
-      // zur Bank hinzufügen
-      setBench(prev=>{
-        if(prev.includes(player._id)) return prev;
-        if(prev.length>=7) return prev;
-        return [...prev,player._id];
-      });
+  // nur hinzufügen wenn Platz
+  setBench(prev => {
+    if (prev.includes(player._id)) return prev;
+    if (prev.length >= 7) return prev;
+    return [...prev, player._id];
+  });
 
-      return;
-    }
+  return;
+}
 
     const slot=over.id;
     // ===== REST DROP =====
@@ -313,9 +313,9 @@ const restPlayers = players.filter(p =>
 
         {/* BENCH */}
         <div
-          ref={setBenchRef}
-          className="mt-6 bg-black/40 p-4 rounded-xl w-[750px]"
-        >
+  ref={setBenchRef}
+  className="mt-6 bg-black/40 p-4 rounded-xl w-[750px] min-h-[120px]"
+>
           <h3 className="mb-3 font-semibold">Auswechselbank</h3>
           <div className="flex gap-4 flex-wrap">
             {[...Array(7)].map((_,i)=>{
