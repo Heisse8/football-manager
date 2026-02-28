@@ -90,26 +90,30 @@ export default function TeamPage(){
 
   useEffect(() => {
   const save = async () => {
-    const token = localStorage.getItem("token");
+    try {
+      const token = localStorage.getItem("token");
 
-    await fetch("/api/team/lineup", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`
-      },
-      body: JSON.stringify({
-        formation,
-        lineup,
-        bench,
-        roles,
-        tactics
-      })
-    });
+      await fetch("/api/team/lineup", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          formation,
+          lineup,
+          bench,
+          tactics
+        })
+      });
+
+    } catch (err) {
+      console.error("AutoSave Fehler:", err);
+    }
   };
 
   save();
-}, [formation, lineup, bench, roles, tactics]);
+}, [formation, lineup, bench, tactics]);
 
   /* ================= DRAG END ================= */
 
