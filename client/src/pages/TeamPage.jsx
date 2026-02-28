@@ -310,10 +310,18 @@ function FieldPlayer({player}){
   );
 }
 
-function Circle({player}){
-  return(
-    <div className="w-14 h-14 rounded-full bg-blue-700 border-2 border-white flex items-center justify-center text-xs font-bold">
-      {player.positions[0]}
+function Circle({ player }) {
+  return (
+    <div className="flex flex-col items-center pointer-events-none">
+      
+      <div className="w-14 h-14 rounded-full bg-blue-700 border-2 border-white flex items-center justify-center text-xs font-bold">
+        {player.positions[0]}
+      </div>
+
+      <div className="text-[10px] text-white mt-1 text-center w-20 truncate">
+        {player.lastName}
+      </div>
+
     </div>
   );
 }
