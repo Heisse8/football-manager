@@ -7,7 +7,7 @@ import {
 } from "@dnd-kit/core";
 
 /* =====================================================
-   FORMATIONS
+ FORMATIONS
 ===================================================== */
 
 const formations = {
@@ -21,6 +21,10 @@ const formations = {
   "5-3-2": ["GK","LB","LCB","CCB","RCB","RB","LCM","CCM","RCM","LST","RST"]
 };
 
+/* =====================================================
+ POSITION GROUPS (flexible zentrale Rollen)
+===================================================== */
+
 const positionGroups = {
   ST: ["LST", "ST", "RST"],
   CAM: ["LAM", "CAM", "RAM"],
@@ -31,38 +35,49 @@ const positionGroups = {
   RB: ["RB"],
   LW: ["LW"],
   RW: ["RW"],
+  LM: ["LM"],
+  RM: ["RM"],
   GK: ["GK"]
 };
 
 /* =====================================================
-   SLOT COORDINATES (bleibt wie bei dir)
+ SLOT COORDINATES
 ===================================================== */
 
 const slotCoordinates = {
   GK: { x: 50, y: 95 },
+
   LB: { x: 10, y: 80 },
   LCB: { x: 30, y: 85 },
   CCB: { x: 50, y: 88 },
   RCB: { x: 70, y: 85 },
   RB: { x: 90, y: 80 },
+
   LDM: { x: 30, y: 65 },
   CDM: { x: 50, y: 68 },
   RDM: { x: 70, y: 65 },
+
   LCM: { x: 30, y: 55 },
   CCM: { x: 50, y: 55 },
   RCM: { x: 70, y: 55 },
+
   LAM: { x: 30, y: 40 },
   CAM: { x: 50, y: 38 },
   RAM: { x: 70, y: 40 },
+
   LW: { x: 15, y: 25 },
   RW: { x: 85, y: 25 },
+
+  LM: { x: 15, y: 45 },
+  RM: { x: 85, y: 45 },
+
   LST: { x: 35, y: 18 },
   ST: { x: 50, y: 16 },
   RST: { x: 65, y: 18 }
 };
 
 /* =====================================================
-   TEAM PAGE
+ TEAM PAGE
 ===================================================== */
 
 export default function TeamPage() {
@@ -70,7 +85,6 @@ export default function TeamPage() {
   const [formation, setFormation] = useState("4-3-3");
   const [players, setPlayers] = useState([]);
   const [lineup, setLineup] = useState({});
-  const [bench, setBench] = useState([]);
   const [draggingPlayer, setDraggingPlayer] = useState(null);
 
   useEffect(() => {
@@ -81,14 +95,15 @@ export default function TeamPage() {
         headers: { Authorization: `Bearer ${token}` }
       });
 
-      setPlayers(await playersRes.json());
+      const data = await playersRes.json();
+      setPlayers(Array.isArray(data) ? data : []);
     };
 
     load();
   }, []);
 
   /* =====================================================
-     DRAG END
+   DRAG END
   ===================================================== */
 
   const handleDragEnd = (event) => {
@@ -101,26 +116,26 @@ export default function TeamPage() {
 
     const slotId = over.id;
 
-    // Nur Slots der Formation erlauben
-    const canPlayPosition = player.positions?.some(pos =>
-  positionGroups[pos]?.includes(slotId)
-);
+    // Slot muss in aktueller Formation existieren
+    if (!formations[formation].includes(slotId)) return;
 
-if (!canPlayPosition) return;
+    // Flexible Positionsprüfung
+    const canPlay = player.positions?.some(pos =>
+      positionGroups[pos]?.includes(slotId)
+    );
 
-    // Position prüfen
-    if (!player.positions?.includes(slotId.replace("L","").replace("R","")))
-      return;
+    if (!canPlay) return;
 
     setLineup(prev => {
       const updated = { ...prev };
 
-      // Spieler vorher entfernen
+      // Spieler aus alter Position entfernen
       Object.keys(updated).forEach(key => {
         if (updated[key] === player._id) delete updated[key];
       });
 
-      if (Object.keys(updated).length >= 11 && !updated[slotId])
+      // Max 11 Spieler
+      if (!updated[slotId] && Object.keys(updated).length >= 11)
         return prev;
 
       updated[slotId] = player._id;
@@ -129,12 +144,8 @@ if (!canPlayPosition) return;
   };
 
   /* =====================================================
-     RENDER
+   RENDER
   ===================================================== */
-
-  const starters = Object.values(lineup)
-    .map(id => players.find(p => p._id === id))
-    .filter(Boolean);
 
   return (
     <DndContext
@@ -142,7 +153,6 @@ if (!canPlayPosition) return;
         const cleanId = event.active.id
           .replace("field-", "")
           .replace("list-", "");
-
         const player = players.find(p => p._id === cleanId);
         setDraggingPlayer(player);
       }}
@@ -180,6 +190,8 @@ if (!canPlayPosition) return;
               const { setNodeRef } = useDroppable({ id: slotId });
               const coords = slotCoordinates[slotId];
 
+              if (!coords) return null; // kein Crash mehr
+
               const player = players.find(
                 p => p._id === lineup[slotId]
               );
@@ -195,16 +207,14 @@ if (!canPlayPosition) return;
                     transform: "translate(-50%,-50%)"
                   }}
                 >
-                  {player && (
-                    <FieldPlayer player={player} />
-                  )}
+                  {player && <FieldPlayer player={player} />}
                 </div>
               );
             })}
 
           </div>
 
-          {/* Squad List */}
+          {/* Squad */}
           <div className="w-[420px] bg-black/40 p-6 rounded-xl">
             {players.map(p => (
               <PlayerCard key={p._id} player={p} />
@@ -215,9 +225,7 @@ if (!canPlayPosition) return;
       </div>
 
       <DragOverlay dropAnimation={null}>
-        {draggingPlayer && (
-          <Circle player={draggingPlayer} />
-        )}
+        {draggingPlayer && <Circle player={draggingPlayer} />}
       </DragOverlay>
 
     </DndContext>
@@ -225,7 +233,7 @@ if (!canPlayPosition) return;
 }
 
 /* =====================================================
-   PLAYER CARD
+ PLAYER CARD
 ===================================================== */
 
 function PlayerCard({ player }) {
@@ -245,7 +253,7 @@ function PlayerCard({ player }) {
 }
 
 /* =====================================================
-   FIELD PLAYER
+ FIELD PLAYER
 ===================================================== */
 
 function FieldPlayer({ player }) {
