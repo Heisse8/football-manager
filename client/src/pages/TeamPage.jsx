@@ -24,12 +24,12 @@ const formations = {
  POSITION GROUPS
 ===================================================== */
 
-const positionGroups = {
+  const positionGroups = {
   ST: ["LST","ST","RST"],
-  CAM: ["CAM"],
   CM: ["LCM","CCM","RCM"],
   CDM: ["LDM","CDM","RDM"],
   CB: ["LCB","CCB","RCB"],
+  CAM: ["CAM"],
   LB: ["LB"],
   RB: ["RB"],
   LW: ["LW"],
