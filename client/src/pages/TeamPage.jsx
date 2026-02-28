@@ -75,12 +75,8 @@ const slotCoordinates = {
 ===================================================== */
 
 const defaultTactics = {
-  pressing:50,
-  tempo:50,
-  width:50,
-  defensiveLine:50,
-  transition:"balanced",
-  playstyle:"balanced"
+  playstyle: "ballbesitz", // ballbesitz | konter | mauern
+  pressing: "mittel"       // sehr_hoch | hoch | mittel | tief
 };
 
 /* =====================================================
@@ -234,18 +230,38 @@ export default function TeamPage(){
   </div>
 
   {/* TACTICS */}
-  <div className="mt-8 bg-black/40 p-6 rounded-xl w-[750px]">
-    <h3 className="text-lg font-semibold mb-6">Team Taktik</h3>
-    {Object.keys(defaultTactics).map(key=>(
-      typeof defaultTactics[key]==="number"?
-      <TacticSlider key={key}
-        label={key}
-        value={tactics[key]}
-        onChange={(v)=>setTactics({...tactics,[key]:v})}
-      />
-      :null
-    ))}
+<div className="mt-8 bg-black/40 p-6 rounded-xl w-[750px]">
+  <h3 className="text-lg font-semibold mb-6">Team Taktik</h3>
+
+  {/* Spielidee */}
+  <div className="mb-6">
+    <label className="block text-sm mb-2">Spielidee</label>
+    <select
+      value={tactics.playstyle}
+      onChange={(e)=>setTactics({...tactics, playstyle:e.target.value})}
+      className="bg-gray-800 p-2 rounded w-full"
+    >
+      <option value="ballbesitz">Ballbesitz</option>
+      <option value="konter">Kontern</option>
+      <option value="mauern">Mauern</option>
+    </select>
   </div>
+
+  {/* Pressinghöhe */}
+  <div>
+    <label className="block text-sm mb-2">Pressinghöhe</label>
+    <select
+      value={tactics.pressing}
+      onChange={(e)=>setTactics({...tactics, pressing:e.target.value})}
+      className="bg-gray-800 p-2 rounded w-full"
+    >
+      <option value="sehr_hoch">Sehr hoch</option>
+      <option value="hoch">Hoch</option>
+      <option value="mittel">Mittel</option>
+      <option value="tief">Tief</option>
+    </select>
+  </div>
+</div>
 
   </div>
 
@@ -313,25 +329,6 @@ function Circle({player}){
         {player.positions[0]}
       </div>
       <div className="text-xs mt-1">{player.lastName}</div>
-    </div>
-  );
-}
-
-function TacticSlider({label,value,onChange}){
-  return(
-    <div className="mb-4">
-      <div className="flex justify-between text-sm">
-        <span>{label}</span>
-        <span>{value}</span>
-      </div>
-      <input
-        type="range"
-        min="0"
-        max="100"
-        value={value}
-        onChange={(e)=>onChange(Number(e.target.value))}
-        className="w-full"
-      />
     </div>
   );
 }
