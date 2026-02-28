@@ -68,8 +68,8 @@ const ultraSlots = [
   { id: "RAM", zone: "right_halfspace_high", base: "CAM" },
 
   // WING
-  { id: "LW", zone: "left_wing_high", base: "WINGER" },
-  { id: "RW", zone: "right_wing_high", base: "WINGER" },
+  { id: "LW", zone: "left_wing_high", base: "LW" },
+  { id: "RW", zone: "right_wing_high", base: "RW" },
 
   // STRIKERS
   { id: "LST", zone: "left_channel_box", base: "ST" },
@@ -87,10 +87,11 @@ const roleOptions = {
   RWB: ["wingback", "inverser_aussenverteidiger"],
   CDM: ["tiefer_spielmacher", "zerstoerer", "falsche_6"],
   CM: ["spielmacher", "box_to_box"],
-  CAM: ["klassische_10", "schattenstuermer"],
+  CAM: ["klassische_10", "schattenstuermer"],  
   ST: ["zielspieler", "konterstuermer", "falsche_9"],
   GK: ["standard_keeper"],
-  WINGER: ["breitspieler", "inverser_fluegel"],
+  LW: ["breitspieler", "inverser_fluegel"],
+  RW: ["breitspieler", "inverser_fluegel"],
 };
 
 /* =====================================================
