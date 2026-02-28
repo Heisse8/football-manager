@@ -231,9 +231,6 @@ const player = players.find(p => p._id === cleanId);
           }
         });
 
-        if (!updated[slot.id] && Object.keys(updated).length >= 11)
-          return prev;
-
         updated[slot.id] = {
   player: player._id,
   role: roleOptions[slot.base]?.[0] || "default"
