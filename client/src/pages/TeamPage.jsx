@@ -11,14 +11,82 @@ import {
 ===================================================== */
 
 const formations = {
-  "4-4-2": ["GK","LB","LCB","RCB","RB","LCM","RCM","LM","RM","LST","RST"],
-  "4-2-3-1": ["GK","LB","LCB","RCB","RB","LDM","RDM","LAM","CAM","RAM","ST"],
-  "4-3-3": ["GK","LB","LCB","RCB","RB","CDM","LCM","RCM","LW","ST","RW"],
-  "4-1-2-1-2": ["GK","LB","LCB","RCB","RB","CDM","LCM","RCM","CAM","LST","RST"],
-  "3-4-3": ["GK","LCB","CCB","RCB","LCM","RCM","LM","RM","LW","ST","RW"],
-  "3-5-2": ["GK","LCB","CCB","RCB","LDM","CDM","RDM","LCM","RCM","LST","RST"],
-  "5-4-1": ["GK","LB","LCB","CCB","RCB","RB","LCM","RCM","LM","RM","ST"],
-  "5-3-2": ["GK","LB","LCB","CCB","RCB","RB","LCM","CCM","RCM","LST","RST"]
+
+  "4-4-2": [
+    "GK",
+    "LB","LCB","RCB","RB",
+    "LCM","RCM",
+    "LW","RW",
+    "LST","RST"
+  ],
+
+  "4-2-3-1": [
+    "GK",
+    "LB","LCB","RCB","RB",
+    "LDM","RDM",
+    "CAM",
+    "LW","RW",
+    "ST"
+  ],
+
+  "4-3-3": [
+    "GK",
+    "LB","LCB","RCB","RB",
+    "CDM",
+    "LCM","RCM",
+    "LW","RW",
+    "ST"
+  ],
+
+  "4-1-4-1": [
+    "GK",
+    "LB","LCB","RCB","RB",
+    "CDM",
+    "LCM","RCM",
+    "LW","RW",
+    "ST"
+  ],
+
+  "4-1-2-1-2": [
+    "GK",
+    "LB","LCB","RCB","RB",
+    "CDM",
+    "LCM","RCM",
+    "CAM",
+    "LST","RST"
+  ],
+
+  /* =========================
+     NEUE FORMATIONEN
+     ========================= */
+
+  "3-4-3": [
+    "GK",
+    "LCB","CCB","RCB",
+    "LB","RB",
+    "LCM","RCM",
+    "LW","RW",
+    "ST"
+  ],
+
+  "3-4-2-1": [
+    "GK",
+    "LCB","CCB","RCB",
+    "LB","RB",
+    "LCM","RCM",
+    "LAM","RAM",
+    "ST"
+  ],
+
+  "3-5-2": [
+    "GK",
+    "LCB","CCB","RCB",
+    "LB","RB",
+    "CDM",
+    "LCM","RCM",
+    "LST","RST"
+  ]
+
 };
 
 /* =====================================================
