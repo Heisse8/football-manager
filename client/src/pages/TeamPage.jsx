@@ -168,23 +168,20 @@ if (over.id === "REST") {
 
     /* ====== POSITION CHECK ====== */
 
-    /* ====== POSITION CHECK ====== */
-
 let canPlay = false;
 
 player.positions?.forEach(pos => {
-
-  // Wenn Slot exakt gleiche Position ist
   if (pos === slot) {
     canPlay = true;
   }
 
-  // Wenn Position Gruppe existiert (z.B. CM → LCM, RCM)
-  const group = positionGroups[pos];
-  if (group && group.includes(slot)) {
+  // fallback: gleiche Grundposition (z.B. LCM → CM)
+  const basePos = pos.replace("L","").replace("R","");
+  const baseSlot = slot.replace("L","").replace("R","");
+
+  if (basePos === baseSlot) {
     canPlay = true;
   }
-
 });
 
 if (!canPlay) return;
@@ -297,36 +294,22 @@ const restPlayers = players.filter(p =>
           <div className="absolute bottom-0 left-1/2 w-[60%] h-40 border-2 border-white -translate-x-1/2"></div>
           <div className="absolute bottom-0 left-1/2 w-[30%] h-20 border-2 border-white -translate-x-1/2"></div>
 
-          {formations[formation].map((slot,index)=>{
-            const coords=slotCoordinates[slot];
-            if(!coords) return null;
+{formations[formation].map((slot, index) => {
+  const coords = slotCoordinates[slot];
+  if (!coords) return null;
 
-            const {setNodeRef}=useDroppable({id:slot});
-            const player=players.find(p=>p._id===lineup[slot]);
+  const player = players.find(p => p._id === lineup[slot]);
 
-            return(
-              <div
-                key={slot+index}
-                ref={setNodeRef}
-                style={{
-                  position:"absolute",
-                  left:`${coords.x}%`,
-                  top:`${coords.y}%`,
-                  transform:"translate(-50%,-50%)"
-                }}
-              >
-                {player ? (
-                  <FieldPlayer player={player}/>
-                ):(
-                  <div className="w-14 h-14 rounded-full border border-white/40 bg-white/10 flex items-center justify-center text-[10px]">
-                    {slot}
-                  </div>
-                )}
-              </div>
-            );
-          })}
-
-        </div>
+  return (
+    <PitchSlot
+      key={slot + index}
+      id={slot}
+      coords={coords}
+      player={player}
+    />
+  );
+})}
+</div>
 
         {/* BENCH */}
         <div
@@ -429,6 +412,30 @@ function Circle({player}){
         {player.positions[0]}
       </div>
       <div className="text-xs mt-1">{player.lastName}</div>
+    </div>
+  );
+}
+
+function PitchSlot({ id, coords, player }) {
+  const { setNodeRef } = useDroppable({ id });
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={{
+        position: "absolute",
+        left: `${coords.x}%`,
+        top: `${coords.y}%`,
+        transform: "translate(-50%,-50%)"
+      }}
+    >
+      {player ? (
+        <FieldPlayer player={player}/>
+      ) : (
+        <div className="w-14 h-14 rounded-full border border-white/40 bg-white/10 flex items-center justify-center text-[10px]">
+          {id}
+        </div>
+      )}
     </div>
   );
 }
