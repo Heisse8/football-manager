@@ -9,6 +9,14 @@ const auth = require("../middleware/auth");
    GET MATCHES FOR CURRENT USER (MONTH VIEW)
 ====================================================== */
 
+router.get("/has-new", async (req, res) => {
+  try {
+    res.json({ hasNew: false });
+  } catch (err) {
+    res.status(500).json({ hasNew: false });
+  }
+});
+
 router.get("/my-month", auth, async (req, res) => {
   try {
     const { year, month } = req.query;
