@@ -2,7 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv").config();
-
+const managerRoutes = require("./routes/manager");
 const teamRoutes = require("./routes/team");
 const matchRoutes = require("./routes/match");
 const playerRoutes = require("./routes/player");
@@ -23,6 +23,7 @@ app.use("/api/match", require("./routes/match"));
 app.use("/api/player", playerRoutes);
 app.use("/api/season", seasonRoutes);
 app.use("/api/news", require("./routes/news"));
+app.use("/api/manager", managerRoutes);
 
 // ================= MongoDB =================
 mongoose.connect(process.env.MONGO_URI)
