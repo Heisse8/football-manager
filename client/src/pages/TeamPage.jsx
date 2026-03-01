@@ -162,16 +162,29 @@ export default function TeamPage(){
 
   /* ================= LOAD ================= */
 
-  useEffect(()=>{
-    const load=async()=>{
-      const token=localStorage.getItem("token");
-      const res=await fetch("/api/player/my-team",{
-        headers:{Authorization:`Bearer ${token}`}
+  useEffect(() => {
+  const load = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const res = await fetch("/api/player/my-team", {
+        headers: { Authorization: `Bearer ${token}` }
       });
-      setPlayers(await res.json());
-    };
-    load();
-  },[]);
+
+      if (!res.ok) {
+        console.error("API Fehler:", res.status);
+        return;
+      }
+
+      const data = await res.json();
+      setPlayers(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error("Load Fehler:", err);
+    }
+  };
+
+  load();
+}, []);
 
   /* ================= DRAG ================= */
 
@@ -402,8 +415,8 @@ export default function TeamPage(){
   </div>
 
   <DragOverlay>
-    {dragging && <Circle player={dragging} slot={draggingSlot}/>}
-  </DragOverlay>
+  {dragging && <Circle player={dragging} />}
+</DragOverlay>
 
   </div>
   </DndContext>
