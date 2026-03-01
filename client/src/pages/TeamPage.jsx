@@ -13,71 +13,67 @@ import {
 const formations = {
   "4-3-3": ["GK","LB","LCB","RCB","RB","CDM","LCM","RCM","LW","ST","RW"],
 
-  // LW & RW tiefer (auf CM Höhe)
+  // LW/RW breiter
   "4-4-2": ["GK","LB","LCB","RCB","RB","LCM","RCM","LW","RW","LST","RST"],
 
-  // 2 Sechser + 3 Offensive auf gleicher Höhe
+  // LW/RW gleiche Höhe wie CAM
   "4-2-3-1": ["GK","LB","LCB","RCB","RB","LCDM","RCDM","LW","CAM","RW","ST"],
 
-  // zwei offensive 8er (LZOM / RZOM)
+  // LW/RW gleiche Höhe wie LZOM/RZOM
   "4-1-4-1": ["GK","LB","LCB","RCB","RB","CDM","LZOM","RZOM","LW","RW","ST"],
 
   "4-1-2-1-2": ["GK","LB","LCB","RCB","RB","CDM","LCM","RCM","CAM","LST","RST"],
 
-  // GK nicht mehr überlappend
-  "3-5-2": ["GK","LCB","CCB","RCB","LWB","RWB","CDM","LCM","RCM","LST","RST"],
-
   "3-4-3": ["GK","LCB","CCB","RCB","LWB","RWB","LCM","RCM","LW","ST","RW"],
 
-  "5-3-2": ["GK","LCB","CCB","RCB","LWB","RWB","LCM","RCM","CDM","LST","RST"],
+  "3-5-2": ["GK","LCB","CCB","RCB","LWB","RWB","CDM","LCM","RCM","LST","RST"],
 
   "5-4-1": ["GK","LCB","CCB","RCB","LWB","RWB","LCM","RCM","LW","RW","ST"],
 
-  // 4-5-1 entfernen → 3-4-2-1 neu
   "3-4-2-1": ["GK","LCB","CCB","RCB","LWB","RWB","LCM","RCM","LZOM","RZOM","ST"]
 };
+
 /* =====================================================
    SLOT POSITIONEN
 ===================================================== */
 
 const slotCoordinates = {
-  GK:{x:50,y:95},
+  GK:{x:50,y:96},
 
   // Viererkette
-  LB:{x:12,y:80}, RB:{x:88,y:80},
-  LCB:{x:30,y:88}, CCB:{x:50,y:90}, RCB:{x:70,y:88},
+  LB:{x:12,y:82}, RB:{x:88,y:82},
+  LCB:{x:30,y:90}, CCB:{x:50,y:92}, RCB:{x:70,y:90},
 
   // Wingbacks
-  LWB:{x:12,y:70},
-  RWB:{x:88,y:70},
+  LWB:{x:10,y:72},
+  RWB:{x:90,y:72},
 
-  // Doppelsechs
-  LCDM:{x:40,y:68},
-  RCDM:{x:60,y:68},
-  CDM:{x:50,y:68},
+  // Doppel‑6
+  LCDM:{x:40,y:70},
+  RCDM:{x:60,y:70},
+  CDM:{x:50,y:70},
 
   // ZM
-  LCM:{x:35,y:55},
-  RCM:{x:65,y:55},
+  LCM:{x:35,y:58},
+  RCM:{x:65,y:58},
 
-  // ZOM breit (4‑1‑4‑1)
-  LZOM:{x:35,y:45},
-  RZOM:{x:65,y:45},
+  // 4‑1‑4‑1 offensive 8er
+  LZOM:{x:35,y:48},
+  RZOM:{x:65,y:48},
 
   // ZOM zentral
-  CAM:{x:50,y:45},
+  CAM:{x:50,y:48},
 
-  // Flügel 4‑4‑2 auf CM Höhe
-  LW:{x:20,y:55},
-  RW:{x:80,y:55},
+  // -------- FLÜGEL --------
 
-  // Flügel offensiv (für 4‑3‑3 etc.)
-  // werden automatisch durch Formation gesteuert
+  // 4‑3‑3 → höher
+  LW:{x:18,y:28},
+  RW:{x:82,y:28},
 
   // Sturm
-  ST:{x:50,y:18},
-  LST:{x:38,y:20},
-  RST:{x:62,y:20}
+  ST:{x:50,y:16},
+  LST:{x:38,y:18},
+  RST:{x:62,y:18}
 };
 
 /* =====================================================
