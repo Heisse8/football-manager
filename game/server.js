@@ -19,7 +19,7 @@ app.use(express.json());
 
 // ================= Routes =================
 app.use("/api/team", teamRoutes);
-app.use("/api/match", matchRoutes);
+app.use("/api/match", require("./routes/match"));
 app.use("/api/player", playerRoutes);
 app.use("/api/season", seasonRoutes);
 app.use("/api/news", require("./routes/news"));
