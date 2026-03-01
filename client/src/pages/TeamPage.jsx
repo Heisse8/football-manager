@@ -309,6 +309,23 @@ export default function TeamPage(){
   <div className="flex flex-col">
 
   <div className="relative w-[750px] h-[950px] bg-green-700 rounded-xl border-4 border-white">
+  {/* MITTELLINIE */}
+<div className="absolute top-1/2 left-0 w-full h-[2px] bg-white -translate-y-1/2"></div>
+
+{/* MITTELKREIS */}
+<div className="absolute top-1/2 left-1/2 w-40 h-40 border-2 border-white rounded-full -translate-x-1/2 -translate-y-1/2"></div>
+
+{/* OBERER 16ER */}
+<div className="absolute top-0 left-1/2 w-[60%] h-[160px] border-2 border-white -translate-x-1/2"></div>
+
+{/* OBERER 5ER */}
+<div className="absolute top-0 left-1/2 w-[30%] h-[70px] border-2 border-white -translate-x-1/2"></div>
+
+{/* UNTERER 16ER */}
+<div className="absolute bottom-0 left-1/2 w-[60%] h-[160px] border-2 border-white -translate-x-1/2"></div>
+
+{/* UNTERER 5ER */}
+<div className="absolute bottom-0 left-1/2 w-[30%] h-[70px] border-2 border-white -translate-x-1/2"></div>
 
   {formations[formation].map((slot,index)=>{
     const coords=slotCoordinates[slot];
@@ -522,22 +539,39 @@ const baseRole = getBaseRole(slot);
 
       {/* ROLLEN DROPDOWN */}
       <select
-        value={roles[slot] ?? ""}
-        onChange={(e)=>
-          setRoles(prev=>({...prev,[slot]:e.target.value}))
-        }
-        onPointerDown={(e)=>e.stopPropagation()}
-        className="text-xs mt-1 bg-gray-800 rounded px-1"
-      >
-        <option value="">Rolle wählen</option>
+value={roles[slot] ?? ""}
+onChange={(e)=>
+setRoles(prev=>({...prev,[slot]:e.target.value}))
+}
+onPointerDown={(e)=>e.stopPropagation()}
+className="
+mt-2
+text-[11px]
+bg-black/70
+border border-white/20
+rounded-lg
+px-2 py-1
+text-white
+focus:outline-none
+focus:ring-1
+focus:ring-blue-400
+transition
+"
+>
+<option value="" className="bg-gray-800">
+Rolle wählen
+</option>
 
-        {(roleOptions[basePos] || []).map(r => (
-          <option key={r} value={r}>
-            {r}
-          </option>
-        ))}
-
-      </select>
+{(roleOptions[basePos] || []).map(r => (
+<option
+key={r}
+value={r}
+className="bg-gray-800"
+>
+{r}
+</option>
+))}
+</select>
 
     </div>
   );
