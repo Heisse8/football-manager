@@ -418,7 +418,21 @@ function FieldPlayer({player, slot, roles, setRoles}) {
   const {attributes,listeners,setNodeRef} =
     useDraggable({id:`field-${player._id}`});
 
-  const basePos = slot.replace("L","").replace("R","");
+  function getBaseRole(slot) {
+  if (slot.includes("CB")) return "CB";
+  if (slot.includes("CDM")) return "CDM";
+  if (slot.includes("CM")) return "CM";
+  if (slot.includes("CAM")) return "CAM";
+  if (slot.includes("ST")) return "ST";
+  if (slot.includes("LW")) return "LW";
+  if (slot.includes("RW")) return "RW";
+  if (slot.includes("LB")) return "LB";
+  if (slot.includes("RB")) return "RB";
+  if (slot.includes("GK")) return "GK";
+  return null;
+}
+
+const basePos = getBaseRole(slot);
 
   return(
     <div className="flex flex-col items-center text-center">
