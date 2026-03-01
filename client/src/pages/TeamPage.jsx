@@ -12,32 +12,72 @@ import {
 
 const formations = {
   "4-3-3": ["GK","LB","LCB","RCB","RB","CDM","LCM","RCM","LW","ST","RW"],
-  "4-4-2": ["GK","LB","LCB","RCB","RB","LCM","RCM","LW","RW","LST","RST"],
-  "4-2-3-1": ["GK","LB","LCB","RCB","RB","CDM","LCM","RCM","CAM","LW","ST"],
-  "4-1-4-1": ["GK","LB","LCB","RCB","RB","CDM","LCM","RCM","LW","RW","ST"],
-  "4-1-2-1-2": ["GK","LB","LCB","RCB","RB","CDM","LCM","RCM","CAM","LST","RST"],
-  "3-5-2": ["GK","LCB","CCB","RCB","LWB","RWB","CDM","LCM","RCM","LST","RST"],
-  "3-4-3": ["GK","LCB","CCB","RCB","LWB","RWB","LCM","RCM","LW","ST","RW"],
-  "5-3-2": ["GK","LCB","CCB","RCB","LWB","RWB","LCM","RCM","CDM","LST","RST"],
-  "5-4-1": ["GK","LCB","CCB","RCB","LWB","RWB","LCM","RCM","LW","RW","ST"],
-  "4-5-1": ["GK","LB","LCB","RCB","RB","CDM","LCM","RCM","LW","RW","ST"]
-};
 
+  // LW & RW tiefer (auf CM Höhe)
+  "4-4-2": ["GK","LB","LCB","RCB","RB","LCM","RCM","LW","RW","LST","RST"],
+
+  // 2 Sechser + 3 Offensive auf gleicher Höhe
+  "4-2-3-1": ["GK","LB","LCB","RCB","RB","LCDM","RCDM","LW","CAM","RW","ST"],
+
+  // zwei offensive 8er (LZOM / RZOM)
+  "4-1-4-1": ["GK","LB","LCB","RCB","RB","CDM","LZOM","RZOM","LW","RW","ST"],
+
+  "4-1-2-1-2": ["GK","LB","LCB","RCB","RB","CDM","LCM","RCM","CAM","LST","RST"],
+
+  // GK nicht mehr überlappend
+  "3-5-2": ["GK","LCB","CCB","RCB","LWB","RWB","CDM","LCM","RCM","LST","RST"],
+
+  "3-4-3": ["GK","LCB","CCB","RCB","LWB","RWB","LCM","RCM","LW","ST","RW"],
+
+  "5-3-2": ["GK","LCB","CCB","RCB","LWB","RWB","LCM","RCM","CDM","LST","RST"],
+
+  "5-4-1": ["GK","LCB","CCB","RCB","LWB","RWB","LCM","RCM","LW","RW","ST"],
+
+  // 4-5-1 entfernen → 3-4-2-1 neu
+  "3-4-2-1": ["GK","LCB","CCB","RCB","LWB","RWB","LCM","RCM","LZOM","RZOM","ST"]
+};
 /* =====================================================
    SLOT POSITIONEN
 ===================================================== */
 
 const slotCoordinates = {
-  GK:{x:50,y:92},
-  LB:{x:12,y:75}, RB:{x:88,y:75},
-  LWB:{x:15,y:70}, RWB:{x:85,y:70},
-  LCB:{x:30,y:85}, CCB:{x:50,y:88}, RCB:{x:70,y:85},
-  CDM:{x:50,y:65},
-  LCM:{x:30,y:52}, RCM:{x:70,y:52},
-  CAM:{x:50,y:40},
-  LW:{x:15,y:22}, RW:{x:85,y:22},
-  ST:{x:50,y:15},
-  LST:{x:35,y:17}, RST:{x:65,y:17}
+  GK:{x:50,y:95},
+
+  // Viererkette
+  LB:{x:12,y:80}, RB:{x:88,y:80},
+  LCB:{x:30,y:88}, CCB:{x:50,y:90}, RCB:{x:70,y:88},
+
+  // Wingbacks
+  LWB:{x:12,y:70},
+  RWB:{x:88,y:70},
+
+  // Doppelsechs
+  LCDM:{x:40,y:68},
+  RCDM:{x:60,y:68},
+  CDM:{x:50,y:68},
+
+  // ZM
+  LCM:{x:35,y:55},
+  RCM:{x:65,y:55},
+
+  // ZOM breit (4‑1‑4‑1)
+  LZOM:{x:35,y:45},
+  RZOM:{x:65,y:45},
+
+  // ZOM zentral
+  CAM:{x:50,y:45},
+
+  // Flügel 4‑4‑2 auf CM Höhe
+  LW:{x:20,y:55},
+  RW:{x:80,y:55},
+
+  // Flügel offensiv (für 4‑3‑3 etc.)
+  // werden automatisch durch Formation gesteuert
+
+  // Sturm
+  ST:{x:50,y:18},
+  LST:{x:38,y:20},
+  RST:{x:62,y:20}
 };
 
 /* =====================================================
