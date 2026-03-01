@@ -413,23 +413,37 @@ function PitchSlot({id,coords,player,roles,setRoles}){
   );
 }
 
-function FieldPlayer({player,slot,roles,setRoles}){
-  const {attributes,listeners,setNodeRef}=
+function FieldPlayer({player, slot, roles, setRoles}) {
+
+  const {attributes,listeners,setNodeRef} =
     useDraggable({id:`field-${player._id}`});
 
+  const basePos = slot.replace("L","").replace("R","");
+
   return(
-    <div ref={setNodeRef} {...listeners} {...attributes}
-      className="flex flex-col items-center cursor-grab">
+    <div className="flex flex-col items-center">
 
-      <Circle player={player}/>
+      {/* DRAG NUR AUF DEM KREIS */}
+      <div
+        ref={setNodeRef}
+        {...listeners}
+        {...attributes}
+        className="cursor-grab"
+      >
+        <Circle player={player}/>
+      </div>
 
+      {/* Dropdown darf KEIN Drag auslösen */}
       <select
-        value={roles[slot]||""}
-        onChange={(e)=>setRoles(prev=>({...prev,[slot]:e.target.value}))}
-        className="text-xs mt-1 bg-gray-800 rounded"
+        value={roles[slot] || ""}
+        onChange={(e)=>
+          setRoles(prev=>({...prev,[slot]:e.target.value}))
+        }
+        onPointerDown={(e)=>e.stopPropagation()}
+        className="text-xs mt-1 bg-gray-800 rounded px-1"
       >
         <option value="">Rolle</option>
-        {(roleOptions[slot]||[]).map(r=>
+        {(roleOptions[basePos] || []).map(r=>
           <option key={r}>{r}</option>
         )}
       </select>
