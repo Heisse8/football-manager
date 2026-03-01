@@ -4,6 +4,7 @@ const Team = require("../models/Team");
 const Stadium = require("../models/Stadium");
 const auth = require("../middleware/auth");
 const { generatePlayersForTeam } = require("../utils/playerGenerator");
+const Manager = require("../models/Manager");
 
 /* =====================================================
  CREATE TEAM
@@ -94,6 +95,32 @@ router.post("/create", auth, async (req, res) => {
     // 🔥 SPIELER GENERIEREN
     // =============================
     await generatePlayersForTeam(newTeam);
+
+    // =============================
+// 🧠 MANAGER ERSTELLEN
+// =============================
+
+const formations = [
+  "4-3-3",
+  "4-4-2",
+  "4-2-3-1",
+  "3-5-2"
+];
+
+const playstyles = [
+  "Ballbesitz",
+  "Kontern",
+  "Gegenpressing",
+  "Mauern"
+];
+
+await Manager.create({
+  team: newTeam._id,
+  age: Math.floor(Math.random() * 25) + 35, // 35–60 Jahre
+  rating: 2.0, // immer 2 Sterne
+  formation: formations[Math.floor(Math.random() * formations.length)],
+  playstyle: playstyles[Math.floor(Math.random() * playstyles.length)]
+});
 
     // =============================
     // STADION ERSTELLEN

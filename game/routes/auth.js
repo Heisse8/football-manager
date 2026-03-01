@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const sgMail = require("@sendgrid/mail");
 
+
 const User = require("../models/User");
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
