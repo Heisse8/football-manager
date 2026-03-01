@@ -421,7 +421,7 @@ function FieldPlayer({player, slot, roles, setRoles}) {
   const basePos = slot.replace("L","").replace("R","");
 
   return(
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center text-center">
 
       {/* DRAG NUR AUF DEM KREIS */}
       <div
@@ -433,19 +433,33 @@ function FieldPlayer({player, slot, roles, setRoles}) {
         <Circle player={player}/>
       </div>
 
-      {/* Dropdown darf KEIN Drag auslösen */}
+      {/* SPIELERNAME */}
+      <div className="text-xs mt-1 font-semibold">
+        {player.lastName}
+      </div>
+
+      {/* RATING */}
+      <div className="text-yellow-400 text-xs">
+        {"★".repeat(Math.round(player.stars || 0))}
+      </div>
+
+      {/* ROLLEN DROPDOWN */}
       <select
-        value={roles[slot] || ""}
+        value={roles[slot] ?? ""}
         onChange={(e)=>
           setRoles(prev=>({...prev,[slot]:e.target.value}))
         }
         onPointerDown={(e)=>e.stopPropagation()}
         className="text-xs mt-1 bg-gray-800 rounded px-1"
       >
-        <option value="">Rolle</option>
-        {(roleOptions[basePos] || []).map(r=>
-          <option key={r}>{r}</option>
-        )}
+        <option value="">Rolle wählen</option>
+
+        {(roleOptions[basePos] || []).map(r => (
+          <option key={r} value={r}>
+            {r}
+          </option>
+        ))}
+
       </select>
 
     </div>
