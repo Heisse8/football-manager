@@ -7,25 +7,31 @@ import {
 } from "@dnd-kit/core";
 
 /* =====================================================
-   FORMATIONS
+   FORMATIONS (ALLE)
 ===================================================== */
 
 const formations = {
   "4-3-3": ["GK","LB","LCB","RCB","RB","CDM","LCM","RCM","LW","ST","RW"],
   "4-4-2": ["GK","LB","LCB","RCB","RB","LCM","RCM","LW","RW","LST","RST"],
   "4-2-3-1": ["GK","LB","LCB","RCB","RB","CDM","LCM","RCM","CAM","LW","ST"],
-  "3-5-2": ["GK","LCB","CCB","RCB","LWB","RWB","CDM","LCM","RCM","LST","RST"]
+  "4-1-4-1": ["GK","LB","LCB","RCB","RB","CDM","LCM","RCM","LW","RW","ST"],
+  "4-1-2-1-2": ["GK","LB","LCB","RCB","RB","CDM","LCM","RCM","CAM","LST","RST"],
+  "3-5-2": ["GK","LCB","CCB","RCB","LWB","RWB","CDM","LCM","RCM","LST","RST"],
+  "3-4-3": ["GK","LCB","CCB","RCB","LWB","RWB","LCM","RCM","LW","ST","RW"],
+  "5-3-2": ["GK","LCB","CCB","RCB","LWB","RWB","LCM","RCM","CDM","LST","RST"],
+  "5-4-1": ["GK","LCB","CCB","RCB","LWB","RWB","LCM","RCM","LW","RW","ST"],
+  "4-5-1": ["GK","LB","LCB","RCB","RB","CDM","LCM","RCM","LW","RW","ST"]
 };
 
 /* =====================================================
-   SLOT POSITIONS
+   SLOT POSITIONEN
 ===================================================== */
 
 const slotCoordinates = {
   GK:{x:50,y:92},
   LB:{x:12,y:75}, RB:{x:88,y:75},
-  LCB:{x:30,y:85}, CCB:{x:50,y:88}, RCB:{x:70,y:85},
   LWB:{x:15,y:70}, RWB:{x:85,y:70},
+  LCB:{x:30,y:85}, CCB:{x:50,y:88}, RCB:{x:70,y:85},
   CDM:{x:50,y:65},
   LCM:{x:30,y:52}, RCM:{x:70,y:52},
   CAM:{x:50,y:40},
@@ -35,20 +41,27 @@ const slotCoordinates = {
 };
 
 /* =====================================================
-   ROLES
+   ROLLEN
 ===================================================== */
 
 const roleOptions = {
   GK:["Shotstopper","Mitspielender Torwart"],
   LB:["Inverser AV","Wingback"],
   RB:["Inverser AV","Wingback"],
-  CB:["Mitspielender IV","Klassischer IV"],
+  LWB:["Wingback"],
+  RWB:["Wingback"],
+  LCB:["Mitspielender IV","Klassischer IV"],
+  CCB:["Mitspielender IV","Klassischer IV"],
+  RCB:["Mitspielender IV","Klassischer IV"],
   CDM:["Zerstörer","Tiefer Spielmacher"],
-  CM:["Spielmacher","Box-to-Box"],
+  LCM:["Spielmacher","Box-to-Box"],
+  RCM:["Spielmacher","Box-to-Box"],
   CAM:["Klassische 10","Schattenstürmer"],
   LW:["Winger","Inverser Flügel"],
   RW:["Winger","Inverser Flügel"],
-  ST:["Zielspieler","Falsche 9","Konterstürmer"]
+  ST:["Zielspieler","Falsche 9","Konterstürmer"],
+  LST:["Zielspieler","Konterstürmer"],
+  RST:["Zielspieler","Konterstürmer"]
 };
 
 /* =====================================================
@@ -167,44 +180,55 @@ export default function TeamPage(){
 
   <div className="max-w-[1500px] mx-auto p-6 text-white">
 
-  {/* ===== TOP BAR ===== */}
+  {/* ===== TOP BAR MIT ÜBERSCHRIFTEN ===== */}
 
-  <div className="flex gap-6 mb-6">
+  <div className="flex gap-8 mb-8">
 
-    <select
-      value={formation}
-      onChange={(e)=>{setFormation(e.target.value);setLineup({});}}
-      className="bg-gray-800 p-2 rounded"
-    >
-      {Object.keys(formations).map(f=>
-        <option key={f}>{f}</option>
-      )}
-    </select>
+    <div>
+      <label className="block text-sm mb-2 font-semibold">Formation</label>
+      <select
+        value={formation}
+        onChange={(e)=>{setFormation(e.target.value);setLineup({});}}
+        className="bg-gray-800 p-2 rounded"
+      >
+        {Object.keys(formations).map(f=>
+          <option key={f}>{f}</option>
+        )}
+      </select>
+    </div>
 
-    <select
-      value={tactics.playstyle}
-      onChange={(e)=>setTactics({...tactics,playstyle:e.target.value})}
-      className="bg-gray-800 p-2 rounded"
-    >
-      <option value="ballbesitz">Ballbesitz</option>
-      <option value="konter">Konter</option>
-    </select>
+    <div>
+      <label className="block text-sm mb-2 font-semibold">Spielidee</label>
+      <select
+        value={tactics.playstyle}
+        onChange={(e)=>setTactics({...tactics,playstyle:e.target.value})}
+        className="bg-gray-800 p-2 rounded"
+      >
+        <option value="ballbesitz">Ballbesitz</option>
+        <option value="konter">Konter</option>
+        <option value="mauern">Mauern</option>
+      </select>
+    </div>
 
-    <select
-      value={tactics.pressing}
-      onChange={(e)=>setTactics({...tactics,pressing:e.target.value})}
-      className="bg-gray-800 p-2 rounded"
-    >
-      <option value="hoch">Hoch</option>
-      <option value="mittel">Mittel</option>
-      <option value="tief">Tief</option>
-    </select>
+    <div>
+      <label className="block text-sm mb-2 font-semibold">Pressing</label>
+      <select
+        value={tactics.pressing}
+        onChange={(e)=>setTactics({...tactics,pressing:e.target.value})}
+        className="bg-gray-800 p-2 rounded"
+      >
+        <option value="sehr_hoch">Sehr hoch</option>
+        <option value="hoch">Hoch</option>
+        <option value="mittel">Mittel</option>
+        <option value="tief">Tief</option>
+      </select>
+    </div>
 
   </div>
 
   <div className="flex gap-12">
 
-  {/* FIELD */}
+  {/* SPIELFELD */}
   <div className="flex flex-col">
 
   <div className="relative w-[750px] h-[950px] bg-green-700 rounded-xl border-4 border-white">
@@ -229,45 +253,56 @@ export default function TeamPage(){
 
   </div>
 
-  {/* BENCH */}
+  {/* BANK */}
   <div className="mt-6 bg-black/40 p-4 rounded-xl w-[750px]">
-  <h3 className="mb-3 font-semibold">Auswechselbank</h3>
-  <div className="flex gap-4">
-    {[...Array(7)].map((_,i)=>{
-      const slotId=`BENCH-${i}`;
-      const {setNodeRef}=useDroppable({id:slotId});
-      const playerId=bench[i];
-      const player=players.find(p=>p._id===playerId);
+    <h3 className="mb-3 font-semibold">Auswechselbank</h3>
+    <div className="flex gap-4">
+      {[...Array(7)].map((_,i)=>{
+        const slotId=`BENCH-${i}`;
+        const {setNodeRef}=useDroppable({id:slotId});
+        const playerId=bench[i];
+        const player=players.find(p=>p._id===playerId);
 
-      return(
-        <div key={slotId} ref={setNodeRef}>
-          {player?
-            <Circle player={player}/>
-            :
-            <div className="w-14 h-14 border border-white/40 rounded-full"/>
-          }
-        </div>
-      );
-    })}
-  </div>
+        return(
+          <div key={slotId} ref={setNodeRef}>
+            {player?
+              <Circle player={player}/>
+              :
+              <div className="w-14 h-14 border border-white/40 rounded-full flex items-center justify-center text-xs">
+                Bank
+              </div>
+            }
+          </div>
+        );
+      })}
+    </div>
   </div>
 
   </div>
 
-  {/* RIGHT SIDE */}
+  {/* RECHTE SEITE */}
   <div className="w-[420px] bg-black/40 p-6 rounded-xl">
 
-  <h3>Startelf ({starters.length}/11)</h3>
+  <h3 className="font-semibold mb-2">
+    Startelf ({starters.length}/11)
+  </h3>
+
   {starters.map(p=>
     <PlayerCard key={p._id} player={p}/>
   )}
 
-  <h3 className="mt-6">Auswechselbank</h3>
+  <h3 className="mt-6 font-semibold">
+    Auswechselbank
+  </h3>
+
   {benchPlayers.map(p=>
     <PlayerCard key={p._id} player={p}/>
   )}
 
-  <h3 className="mt-6">Nicht im Kader</h3>
+  <h3 className="mt-6 font-semibold">
+    Nicht im Kader
+  </h3>
+
   <div ref={setRestRef}>
     {restPlayers.map(p=>
       <PlayerCard key={p._id} player={p}/>
@@ -296,15 +331,19 @@ function PlayerCard({player}){
   return(
     <div ref={setNodeRef} {...listeners} {...attributes}
       className="bg-gray-900 p-3 rounded mb-2 cursor-grab">
+
       <div className="font-semibold">
         {player.firstName} {player.lastName}
       </div>
+
       <div className="text-xs text-gray-400">
         {player.age} Jahre • {player.positions.join(", ")}
       </div>
+
       <div className="text-yellow-400 text-xs">
         {"★".repeat(Math.round(player.stars))}
       </div>
+
     </div>
   );
 }
@@ -323,9 +362,16 @@ function PitchSlot({id,coords,player,roles,setRoles}){
       }}
     >
       {player?
-        <FieldPlayer player={player} slot={id} roles={roles} setRoles={setRoles}/>
+        <FieldPlayer
+          player={player}
+          slot={id}
+          roles={roles}
+          setRoles={setRoles}
+        />
         :
-        <div className="w-14 h-14 border border-white/40 rounded-full"/>
+        <div className="w-14 h-14 border border-white/40 rounded-full flex items-center justify-center text-xs">
+          {id}
+        </div>
       }
     </div>
   );
@@ -334,8 +380,6 @@ function PitchSlot({id,coords,player,roles,setRoles}){
 function FieldPlayer({player,slot,roles,setRoles}){
   const {attributes,listeners,setNodeRef}=
     useDraggable({id:`field-${player._id}`});
-
-  const basePos=slot.replace("L","").replace("R","");
 
   return(
     <div ref={setNodeRef} {...listeners} {...attributes}
@@ -349,7 +393,7 @@ function FieldPlayer({player,slot,roles,setRoles}){
         className="text-xs mt-1 bg-gray-800 rounded"
       >
         <option value="">Rolle</option>
-        {(roleOptions[basePos]||[]).map(r=>
+        {(roleOptions[slot]||[]).map(r=>
           <option key={r}>{r}</option>
         )}
       </select>
