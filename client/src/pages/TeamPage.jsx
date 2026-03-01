@@ -351,25 +351,19 @@ export default function TeamPage(){
   <div className="mt-6 bg-black/40 p-4 rounded-xl w-[750px]">
     <h3 className="mb-3 font-semibold">Auswechselbank</h3>
     <div className="flex gap-4">
-      {[...Array(7)].map((_,i)=>{
-        const slotId=`BENCH-${i}`;
-        const {setNodeRef}=useDroppable({id:slotId});
-        const playerId=bench[i];
-        const player=players.find(p=>p._id===playerId);
+  {bench.map((playerId, i) => {
+    const slotId = `BENCH-${i}`;
+    const player = players.find(p => p._id === playerId);
 
-        return(
-          <div key={slotId} ref={setNodeRef}>
-            {player?
-              <Circle player={player}/>
-              :
-              <div className="w-14 h-14 border border-white/40 rounded-full flex items-center justify-center text-xs">
-                Bank
-              </div>
-            }
-          </div>
-        );
-      })}
-    </div>
+    return (
+      <BenchSlot
+        key={slotId}
+        id={slotId}
+        player={player}
+      />
+    );
+  })}
+</div>
   </div>
 
   </div>
@@ -408,7 +402,7 @@ export default function TeamPage(){
   </div>
 
   <DragOverlay>
-    {dragging && <Circle player={dragging}/>}
+    {dragging && <Circle player={dragging} slot={draggingSlot}/>}
   </DragOverlay>
 
   </div>
@@ -467,6 +461,23 @@ function PitchSlot({id,coords,player,roles,setRoles}){
           {id}
         </div>
       }
+    </div>
+  );
+}
+
+function BenchSlot({ id, player }) {
+
+  const { setNodeRef } = useDroppable({ id });
+
+  return (
+    <div ref={setNodeRef}>
+      {player ? (
+        <Circle player={player} slot={"BANK"} />
+      ) : (
+        <div className="w-14 h-14 border border-white/40 rounded-full flex items-center justify-center text-xs">
+          Bank
+        </div>
+      )}
     </div>
   );
 }
@@ -577,10 +588,10 @@ className="bg-gray-800"
   );
 }
 
-function Circle({player}){
-  return(
-    <div className="w-14 h-14 rounded-full bg-blue-700 border-2 border-white flex items-center justify-center text-xs">
-      {player.positions[0]}
-    </div>
-  );
+function Circle({player, slot}) {
+return(
+<div className="w-14 h-14 rounded-full bg-blue-700 border-2 border-white flex items-center justify-center text-xs">
+{slot}
+</div>
+);
 }
