@@ -420,7 +420,7 @@ function FieldPlayer({player, slot, roles, setRoles}) {
 
 function getBaseRole(slot) {
 
-  // Wingbacks
+  // Wingbacks → Außenverteidiger Rollen
   if (slot === "LWB") return "LB";
   if (slot === "RWB") return "RB";
 
@@ -430,11 +430,12 @@ function getBaseRole(slot) {
   // Defensives Mittelfeld
   if (slot.includes("CDM")) return "CDM";
 
-  // Zentrales Mittelfeld
-  if (slot.includes("CM")) return "CM";
+  // Zentrales Mittelfeld (LCM, RCM, CM)
+  if (slot.includes("CM") && !slot.includes("CDM")) return "CM";
 
   // Offensives Mittelfeld
   if (slot.includes("CAM")) return "CAM";
+  if (slot.includes("ZOM")) return "CAM";   // ← WICHTIG für LZOM / RZOM
 
   // Stürmer
   if (slot.includes("ST")) return "ST";
@@ -453,6 +454,7 @@ function getBaseRole(slot) {
 }
 
 const basePos = getBaseRole(slot);
+const baseRole = getBaseRole(slot);
 
   return(
     <div className="flex flex-col items-center text-center">
