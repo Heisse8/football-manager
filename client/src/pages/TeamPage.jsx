@@ -81,23 +81,64 @@ const slotCoordinates = {
 ===================================================== */
 
 const roleOptions = {
-GK: ["Shotstopper","Mitspielender Torwart"],
 
-LB: ["Inverser AV","Wingback"],
-RB: ["Inverser AV","Wingback"],
+GK: [
+"Shotstopper",
+"Mitspielender Torwart"
+],
 
-CB: ["Mitspielender IV","Klassischer IV"],
+LB: [
+"Inverser Außenverteidiger",
+"Halbverteidiger",
+"Wingback",
+"Halbraumspieler"
+],
 
-CDM: ["Zerstörer","Tiefer Spielmacher"],
+RB: [
+"Inverser Außenverteidiger",
+"Halbverteidiger",
+"Wingback",
+"Halbraumspieler"
+],
 
-CM: ["Spielmacher","Box-to-Box"],
+CB: [
+"Mitspielender Verteidiger",
+"Klassischer Verteidiger"
+],
 
-CAM: ["Klassische 10","Schattenstürmer"],
+CDM: [
+"Tiefer Spielmacher",
+"Zerstörer",
+"Tiefer 6er"
+],
 
-LW: ["Winger","Inverser Flügel"],
-RW: ["Winger","Inverser Flügel"],
+CM: [
+"Spielmacher",
+"Box-to-Box"
+],
 
-ST: ["Zielspieler","Falsche 9","Konterstürmer"]
+CAM: [
+"Klassische 10",
+"Schattenstürmer",
+"Halbraumspieler"
+],
+
+LW: [
+"Winger",
+"Inverser Flügel"
+],
+
+RW: [
+"Winger",
+"Inverser Flügel"
+],
+
+ST: [
+"Zielspieler",
+"Falsche 9",
+"Konterstürmer"
+]
+
 };
 
 /* =====================================================
