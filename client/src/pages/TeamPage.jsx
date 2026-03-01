@@ -601,10 +601,10 @@ className="bg-gray-800"
   );
 }
 
-function Circle({player, slot}) {
-return(
-<div className="w-14 h-14 rounded-full bg-blue-700 border-2 border-white flex items-center justify-center text-xs">
-{slot}
-</div>
-);
+function Circle({player}) {
+  return(
+    <div className="w-14 h-14 rounded-full bg-blue-700 border-2 border-white flex items-center justify-center text-xs">
+      {player.positions?.[0] || ""}
+    </div>
+  );
 }
