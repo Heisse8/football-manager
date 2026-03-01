@@ -78,3 +78,35 @@ router.get("/:id", async (req, res) => {
 });
 
 module.exports = router;
+
+/* ======================================================
+ CHECK IF USER HAS NEW MATCH RESULT
+====================================================== */
+
+router.get("/has-new", auth, async (req, res) => {
+  try {
+    const team = await Team.findOne({ owner: req.user.userId });
+
+    if (!team) {
+      return res.json({ hasNew: false });
+    }
+
+    // Beispiel-Logik:
+    // Prüft, ob es ein bereits gespieltes Match gibt,
+    // das noch nicht angesehen wurde
+    const match = await Match.findOne({
+      $or: [
+        { homeTeam: team._id },
+        { awayTeam: team._id }
+      ],
+      played: true,
+      viewedBy: { $ne: team._id }
+    });
+
+    res.json({ hasNew: !!match });
+
+  } catch (err) {
+    console.error("Has-New Fehler:", err);
+    res.json({ hasNew: false }); // NIEMALS .send()
+  }
+});
