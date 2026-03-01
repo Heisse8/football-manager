@@ -188,58 +188,91 @@ export default function TeamPage(){
 
   /* ================= DRAG ================= */
 
-  const handleDragEnd=(event)=>{
-    const {active,over}=event;
-    if(!over) return;
+  function canPlayerPlaySlot(player, slot) {
 
-    const id=active.id.replace("list-","").replace("field-","");
-    const player=players.find(p=>p._id===id);
-    if(!player) return;
+  if (!player.positions) return false;
 
-    if(over.id.startsWith("BENCH-")){
-      const index=parseInt(over.id.split("-")[1]);
+  return player.positions.some(pos => {
 
-      setLineup(prev=>{
-        const updated={...prev};
-        Object.keys(updated).forEach(k=>{
-          if(updated[k]===player._id) delete updated[k];
-        });
-        return updated;
+    // Exakte Übereinstimmung
+    if (pos === slot) return true;
+
+    // L/R entfernen (LCM → CM)
+    const basePos = pos.replace("L", "").replace("R", "");
+    const baseSlot = slot.replace("L", "").replace("R", "");
+
+    return basePos === baseSlot;
+  });
+}
+  
+  const handleDragEnd = (event) => {
+  const { active, over } = event;
+  if (!over) return;
+
+  const id = active.id.replace("list-", "").replace("field-", "");
+  const player = players.find(p => p._id === id);
+  if (!player) return;
+
+  /* ===== BENCH ===== */
+  if (over.id.startsWith("BENCH-")) {
+    const index = parseInt(over.id.split("-")[1]);
+
+    setLineup(prev => {
+      const updated = { ...prev };
+      Object.keys(updated).forEach(k => {
+        if (updated[k] === player._id) delete updated[k];
       });
-
-      setBench(prev=>{
-        const updated=[...prev];
-        updated[index]=player._id;
-        return updated;
-      });
-      return;
-    }
-
-    if(over.id==="REST"){
-      setLineup(prev=>{
-        const updated={...prev};
-        Object.keys(updated).forEach(k=>{
-          if(updated[k]===player._id) delete updated[k];
-        });
-        return updated;
-      });
-      setBench(prev=>prev.map(id=>id===player._id?null:id));
-      return;
-    }
-
-    const slot=over.id;
-
-    setLineup(prev=>{
-      const updated={...prev};
-      Object.keys(updated).forEach(k=>{
-        if(updated[k]===player._id) delete updated[k];
-      });
-      updated[slot]=player._id;
       return updated;
     });
 
-    setBench(prev=>prev.map(id=>id===player._id?null:id));
-  };
+    setBench(prev => {
+      const updated = [...prev];
+      updated[index] = player._id;
+      return updated;
+    });
+
+    return;
+  }
+
+  /* ===== REST ===== */
+  if (over.id === "REST") {
+    setLineup(prev => {
+      const updated = { ...prev };
+      Object.keys(updated).forEach(k => {
+        if (updated[k] === player._id) delete updated[k];
+      });
+      return updated;
+    });
+
+    setBench(prev =>
+      prev.map(id => id === player._id ? null : id)
+    );
+
+    return;
+  }
+
+  /* ===== STARTELF ===== */
+
+  const slot = over.id;
+
+  // ❌ Position nicht erlaubt
+  if (!canPlayerPlaySlot(player, slot)) return;
+
+  setLineup(prev => {
+    const updated = { ...prev };
+
+    Object.keys(updated).forEach(k => {
+      if (updated[k] === player._id) delete updated[k];
+    });
+
+    updated[slot] = player._id;
+    return updated;
+  });
+
+  setBench(prev =>
+    prev.map(id => id === player._id ? null : id)
+  );
+};
 
   /* ================= DERIVED ================= */
 
