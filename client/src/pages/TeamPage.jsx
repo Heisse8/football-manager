@@ -81,23 +81,23 @@ const slotCoordinates = {
 ===================================================== */
 
 const roleOptions = {
-  GK:["Shotstopper","Mitspielender Torwart"],
-  LB:["Inverser AV","Wingback"],
-  RB:["Inverser AV","Wingback"],
-  LWB:["Wingback"],
-  RWB:["Wingback"],
-  LCB:["Mitspielender IV","Klassischer IV"],
-  CCB:["Mitspielender IV","Klassischer IV"],
-  RCB:["Mitspielender IV","Klassischer IV"],
-  CDM:["Zerstörer","Tiefer Spielmacher"],
-  LCM:["Spielmacher","Box-to-Box"],
-  RCM:["Spielmacher","Box-to-Box"],
-  CAM:["Klassische 10","Schattenstürmer"],
-  LW:["Winger","Inverser Flügel"],
-  RW:["Winger","Inverser Flügel"],
-  ST:["Zielspieler","Falsche 9","Konterstürmer"],
-  LST:["Zielspieler","Konterstürmer"],
-  RST:["Zielspieler","Konterstürmer"]
+GK: ["Shotstopper","Mitspielender Torwart"],
+
+LB: ["Inverser AV","Wingback"],
+RB: ["Inverser AV","Wingback"],
+
+CB: ["Mitspielender IV","Klassischer IV"],
+
+CDM: ["Zerstörer","Tiefer Spielmacher"],
+
+CM: ["Spielmacher","Box-to-Box"],
+
+CAM: ["Klassische 10","Schattenstürmer"],
+
+LW: ["Winger","Inverser Flügel"],
+RW: ["Winger","Inverser Flügel"],
+
+ST: ["Zielspieler","Falsche 9","Konterstürmer"]
 };
 
 /* =====================================================
