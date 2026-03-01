@@ -418,17 +418,37 @@ function FieldPlayer({player, slot, roles, setRoles}) {
   const {attributes,listeners,setNodeRef} =
     useDraggable({id:`field-${player._id}`});
 
-  function getBaseRole(slot) {
+function getBaseRole(slot) {
+
+  // Wingbacks
+  if (slot === "LWB") return "LB";
+  if (slot === "RWB") return "RB";
+
+  // Innenverteidiger
   if (slot.includes("CB")) return "CB";
+
+  // Defensives Mittelfeld
   if (slot.includes("CDM")) return "CDM";
+
+  // Zentrales Mittelfeld
   if (slot.includes("CM")) return "CM";
+
+  // Offensives Mittelfeld
   if (slot.includes("CAM")) return "CAM";
+
+  // Stürmer
   if (slot.includes("ST")) return "ST";
-  if (slot.includes("LW")) return "LW";
-  if (slot.includes("RW")) return "RW";
-  if (slot.includes("LB")) return "LB";
-  if (slot.includes("RB")) return "RB";
-  if (slot.includes("GK")) return "GK";
+
+  // Flügel
+  if (slot === "LW") return "LW";
+  if (slot === "RW") return "RW";
+
+  // Außenverteidiger
+  if (slot === "LB") return "LB";
+  if (slot === "RB") return "RB";
+
+  if (slot === "GK") return "GK";
+
   return null;
 }
 
