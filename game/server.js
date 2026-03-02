@@ -1,21 +1,28 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const path = require("path");
 require("dotenv").config();
 
-const app = express(); // ✅ GANZ OBEN
+const app = express();
 
-// Middleware
 app.use(cors());
 app.use(express.json());
 
-// Routes
+// API Routes
 app.use("/api/team", require("./routes/team"));
 app.use("/api/match", require("./routes/match"));
 app.use("/api/player", require("./routes/player"));
 app.use("/api/season", require("./routes/season"));
 app.use("/api/news", require("./routes/news"));
-app.use("/api/manager", require("./routes/manager")); // ✅ HIER
+app.use("/api/manager", require("./routes/manager"));
+
+// React Build ausliefern
+app.use(express.static(path.join(__dirname, "../client/dist")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../client/dist/index.html"));
+});
 
 // MongoDB
 mongoose.connect(process.env.MONGO_URI)
