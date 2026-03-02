@@ -108,7 +108,7 @@ export default function TeamPage() {
         <div>
           <h2 className="text-2xl font-bold">{team.name}</h2>
           <p className="text-gray-400">
-            Trainer: {manager.age} Jahre • {"★".repeat(Math.round(manager.rating || 0))}
+            Trainer: {manager.firstName} {manager.lastName} • {manager.age} Jahre
           </p>
         </div>
 
