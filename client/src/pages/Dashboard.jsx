@@ -5,7 +5,9 @@ import bgImage from "../assets/manager-office.jpg";
 export default function Dashboard() {
   const navigate = useNavigate();
 
-  const [team, setTeam] = useState(null);
+  const [team, setTeam] = useState(undefined); 
+  // undefined = noch nicht geladen
+  // null = definitiv kein Team
   const [leagueTeams, setLeagueTeams] = useState([]);
   const [news, setNews] = useState([]);
   const [nextMatches, setNextMatches] = useState([]);
@@ -29,50 +31,34 @@ export default function Dashboard() {
         });
 
         if (teamRes.status === 404) {
-  navigate("/create-team");
-  return;
-}
-
-if (!teamRes.ok) {
-  throw new Error("Team konnte nicht geladen werden");
-}
-
-const contentType = teamRes.headers.get("content-type");
-
-if (!contentType || !contentType.includes("application/json")) {
-  navigate("/create-team");
-  return;
-}
-
-const teamData = await teamRes.json();
-
-        if (!teamData || !teamData._id) {
-          navigate("/create-team");
+          setTeam(null);      // ❗ KEIN redirect hier
+          setLoading(false);
           return;
         }
 
+        if (!teamRes.ok) {
+          throw new Error("Team konnte nicht geladen werden");
+        }
+
+        const teamData = await teamRes.json();
         setTeam(teamData);
 
-        // 🔹 Liga-Tabelle laden
+        // 🔹 Liga-Tabelle
         const leagueRes = await fetch(`/api/league/${teamData.league}`);
         if (leagueRes.ok) {
           const leagueData = await leagueRes.json();
           setLeagueTeams(leagueData);
         }
 
-        // 🔹 Liga-News laden
-        const newsRes = await fetch(
-          `/api/news/league/${teamData.league}`
-        );
+        // 🔹 News
+        const newsRes = await fetch(`/api/news/league/${teamData.league}`);
         if (newsRes.ok) {
           const newsData = await newsRes.json();
           setNews(newsData);
         }
 
-        // 🔹 Nächste 2 Spiele laden
-        const matchRes = await fetch(
-          `/api/match/team/${teamData._id}`
-        );
+        // 🔹 Spiele
+        const matchRes = await fetch(`/api/match/team/${teamData._id}`);
         if (matchRes.ok) {
           const allMatches = await matchRes.json();
 
@@ -94,7 +80,8 @@ const teamData = await teamRes.json();
     fetchData();
   }, [navigate]);
 
-  if (loading) {
+  // 🔄 Ladeanzeige
+  if (loading || team === undefined) {
     return (
       <div className="p-10 text-white animate-pulse">
         Lade Dashboard...
@@ -102,7 +89,11 @@ const teamData = await teamRes.json();
     );
   }
 
-  if (!team) return null;
+  // ❗ Redirect erst NACH vollständigem Laden
+  if (team === null) {
+    navigate("/create-team", { replace: true });
+    return null;
+  }
 
   // 🔹 Tabelle sortieren
   const sortedLeague = [...leagueTeams].sort((a, b) => {
@@ -162,12 +153,8 @@ const teamData = await teamRes.json();
                         : "hover:bg-white/10"
                     }`}
                   >
-                    <span>
-                      {index + 1}. {club.name}
-                    </span>
-                    <span>
-                      {club.points || 0} P
-                    </span>
+                    <span>{index + 1}. {club.name}</span>
+                    <span>{club.points || 0} P</span>
                   </div>
                 );
               })}
@@ -188,10 +175,7 @@ const teamData = await teamRes.json();
               )}
 
               {news.map(n => (
-                <div
-                  key={n._id}
-                  className="bg-black/40 p-4 rounded-lg"
-                >
+                <div key={n._id} className="bg-black/40 p-4 rounded-lg">
                   <div className="font-semibold">{n.title}</div>
                   <div className="text-sm opacity-80 mt-1">
                     {n.content}
@@ -201,7 +185,7 @@ const teamData = await teamRes.json();
             </div>
           </div>
 
-          {/* 📅 Nächste Begegnungen */}
+          {/* 📅 Nächste Spiele */}
           <div className="col-span-1 bg-black/50 backdrop-blur-md rounded-xl p-5">
             <h2 className="font-bold mb-4">
               Nächste Begegnungen
