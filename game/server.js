@@ -3,28 +3,26 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv").config();
 
-const app = express();   // ✅ APP MUSS ZUERST KOMMEN
+const app = express(); // ✅ GANZ OBEN
 
-// ================= Middleware =================
+// Middleware
 app.use(cors());
 app.use(express.json());
 
-// ================= Routes =================
+// Routes
 app.use("/api/team", require("./routes/team"));
 app.use("/api/match", require("./routes/match"));
 app.use("/api/player", require("./routes/player"));
 app.use("/api/season", require("./routes/season"));
 app.use("/api/news", require("./routes/news"));
-app.use("/api/manager", require("./routes/manager"));  // ✅ HIER UNTEN
+app.use("/api/manager", require("./routes/manager")); // ✅ HIER
 
-// ================= MongoDB =================
+// MongoDB
 mongoose.connect(process.env.MONGO_URI)
-.then(() => console.log("MongoDB verbunden"))
-.catch(err => console.error("MongoDB Fehler:", err));
+  .then(() => console.log("MongoDB verbunden"))
+  .catch(err => console.error("MongoDB Fehler:", err));
 
-// ================= Server =================
 const PORT = process.env.PORT || 5000;
-
 app.listen(PORT, () => {
   console.log(`Server läuft auf Port ${PORT}`);
 });
