@@ -9,7 +9,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// API Routes
+/* ===== API ROUTES ===== */
+app.use("/api/auth", require("./routes/auth"));   // ✅ FEHLTE
 app.use("/api/team", require("./routes/team"));
 app.use("/api/match", require("./routes/match"));
 app.use("/api/player", require("./routes/player"));
@@ -17,7 +18,7 @@ app.use("/api/season", require("./routes/season"));
 app.use("/api/news", require("./routes/news"));
 app.use("/api/manager", require("./routes/manager"));
 
-// React Build ausliefern
+/* ===== React Build ===== */
 app.use(express.static(path.join(__dirname, "../client/dist")));
 
 app.use((req, res) => {
