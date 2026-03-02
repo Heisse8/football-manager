@@ -114,12 +114,23 @@ const playstyles = [
   "Mauern"
 ];
 
+const firstNames = ["Thomas", "Michael", "Stefan", "Lukas", "Daniel"];
+const lastNames = ["Schmidt", "Müller", "Wagner", "Becker", "Hoffmann"];
+
+const randomFirst =
+  firstNames[Math.floor(Math.random() * firstNames.length)];
+
+const randomLast =
+  lastNames[Math.floor(Math.random() * lastNames.length)];
+
 await Manager.create({
   team: newTeam._id,
-  age: Math.floor(Math.random() * 25) + 35, // 35–60 Jahre
-  rating: 2.0, // immer 2 Sterne
-  formation: formations[Math.floor(Math.random() * formations.length)],
-  playstyle: playstyles[Math.floor(Math.random() * playstyles.length)]
+  firstName: randomFirst,
+  lastName: randomLast,
+  age: 40 + Math.floor(Math.random() * 15),
+  rating: 1 + Math.floor(Math.random() * 4),
+  formation: "4-3-3",
+  playstyle: "Ballbesitz"
 });
 
     // =============================
