@@ -28,12 +28,23 @@ export default function Dashboard() {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        if (!teamRes.ok) {
-          navigate("/create-team");
-          return;
-        }
+        if (teamRes.status === 404) {
+  navigate("/create-team");
+  return;
+}
 
-        const teamData = await teamRes.json();
+if (!teamRes.ok) {
+  throw new Error("Team konnte nicht geladen werden");
+}
+
+const contentType = teamRes.headers.get("content-type");
+
+if (!contentType || !contentType.includes("application/json")) {
+  navigate("/create-team");
+  return;
+}
+
+const teamData = await teamRes.json();
 
         if (!teamData || !teamData._id) {
           navigate("/create-team");
