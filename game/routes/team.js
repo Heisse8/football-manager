@@ -8,7 +8,7 @@ const auth = require("../middleware/auth");
 const { generatePlayersForTeam } = require("../utils/playerGenerator");
 
 /* =====================================================
-   FORMATIONEN
+ FORMATIONEN
 ===================================================== */
 
 const formations = {
@@ -19,7 +19,7 @@ const formations = {
 };
 
 /* =====================================================
-   POSITIONS-INTELLIGENZ
+ POSITIONS-INTELLIGENZ
 ===================================================== */
 
 function positionMatches(playerPositions, slot) {
@@ -33,11 +33,10 @@ function positionMatches(playerPositions, slot) {
 }
 
 /* =====================================================
-   TRAINER-KI
+ TRAINER-KI
 ===================================================== */
 
 function generateSmartLineup(players, formation) {
-
   const lineup = {};
   const bench = [];
   const used = new Set();
@@ -71,7 +70,7 @@ function generateSmartLineup(players, formation) {
 }
 
 /* =====================================================
-   CREATE TEAM
+ CREATE TEAM
 ===================================================== */
 
 router.post("/create", auth, async (req, res) => {
@@ -138,13 +137,12 @@ router.post("/create", auth, async (req, res) => {
 
     await newTeam.save();
 
-    /* ================= SPIELER GENERIEREN ================= */
+    /* ================= SPIELER ================= */
 
     await generatePlayersForTeam(newTeam);
-
     const players = await Player.find({ team: newTeam._id });
 
-    /* ================= MANAGER ERSTELLEN ================= */
+    /* ================= MANAGER ================= */
 
     const firstNames = ["Thomas", "Michael", "Stefan", "Lukas", "Daniel"];
     const lastNames = ["Schmidt", "Müller", "Wagner", "Becker", "Hoffmann"];
@@ -194,5 +192,31 @@ router.post("/create", auth, async (req, res) => {
     res.status(500).json({ message: "Serverfehler" });
   }
 });
+
+
+/* =====================================================
+ GET MY TEAM  ✅ WICHTIG
+===================================================== */
+
+router.get("/", auth, async (req, res) => {
+  try {
+    const team = await Team.findOne({
+      owner: req.user.userId,
+    });
+
+    if (!team) {
+      return res.status(404).json({
+        message: "Kein Team gefunden",
+      });
+    }
+
+    res.json(team);
+
+  } catch (err) {
+    console.error("Get Team Fehler:", err);
+    res.status(500).json({ message: "Serverfehler" });
+  }
+});
+
 
 module.exports = router;
