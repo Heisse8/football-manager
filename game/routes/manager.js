@@ -1,12 +1,23 @@
 const express = require("express");
 const router = express.Router();
 const Manager = require("../models/Manager");
+const Team = require("../models/Team");
 const auth = require("../middleware/auth");
 
 router.get("/my", auth, async (req, res) => {
   try {
+    const team = await Team.findOne({
+      owner: req.user.userId
+    });
+
+    if (!team) {
+      return res.status(404).json({
+        message: "Kein Team gefunden"
+      });
+    }
+
     const manager = await Manager.findOne({
-      userId: req.user.userId
+      team: team._id
     });
 
     if (!manager) {
@@ -16,6 +27,7 @@ router.get("/my", auth, async (req, res) => {
     }
 
     res.json(manager);
+
   } catch (err) {
     console.error("Manager Fehler:", err);
     res.status(500).json({
