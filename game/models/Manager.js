@@ -1,41 +1,34 @@
-const express = require("express");
-const router = express.Router();
-const Manager = require("../models/Manager");
-const Team = require("../models/Team");
-const auth = require("../middleware/auth");
+const mongoose = require("mongoose");
 
-router.get("/my", auth, async (req, res) => {
-  try {
-    // 1️⃣ Team des Users finden
-    const team = await Team.findOne({
-      owner: req.user.userId
-    });
-
-    if (!team) {
-      return res.status(404).json({
-        message: "Kein Team gefunden"
-      });
-    }
-
-    // 2️⃣ Manager über Team finden
-    const manager = await Manager.findOne({
-      team: team._id
-    });
-
-    if (!manager) {
-      return res.status(404).json({
-        message: "Kein Manager gefunden"
-      });
-    }
-
-    res.json(manager);
-
-  } catch (err) {
-    console.error("Manager Fehler:", err);
-    res.status(500).json({
-      message: "Serverfehler"
-    });
+const managerSchema = new mongoose.Schema({
+  team: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Team",
+    required: true,
+    unique: true
+  },
+  age: {
+    type: Number,
+    required: true,
+    min: 30,
+    max: 75
+  },
+  rating: {
+    type: Number,
+    required: true,
+    min: 0,
+    max: 5
+  },
+  formation: {
+    type: String,
+    required: true,
+    enum: ["4-3-3", "4-4-2", "4-2-3-1", "3-5-2"]
+  },
+  playstyle: {
+    type: String,
+    required: true,
+    enum: ["Ballbesitz", "Kontern", "Gegenpressing", "Mauern"]
   }
-});
+}, { timestamps: true });
 
-module.exports = router;
+module.exports = mongoose.model("Manager", managerSchema);
