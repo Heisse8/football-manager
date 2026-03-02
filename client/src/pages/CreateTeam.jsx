@@ -7,12 +7,19 @@ export default function CreateTeam() {
   const [name, setName] = useState("");
   const [shortName, setShortName] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setError(null);
 
     const token = localStorage.getItem("token");
+
+    if (!token) {
+      navigate("/login");
+      return;
+    }
 
     try {
       const res = await fetch("/api/team/create", {
@@ -22,21 +29,25 @@ export default function CreateTeam() {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          name,
-          shortName,
+          name: name.trim(),
+          shortName: shortName.trim().toUpperCase(),
         }),
       });
 
+      const data = await res.json();
+
       if (!res.ok) {
+        setError(data.message || "Fehler beim Erstellen");
         setLoading(false);
         return;
       }
 
-      // ✅ Direkt zur Teamseite
-      navigate("/team");
+      // ✅ Nach erfolgreicher Erstellung direkt ins Dashboard
+      navigate("/", { replace: true });
 
     } catch (err) {
       console.error("Create Team Fehler:", err);
+      setError("Serverfehler");
     }
 
     setLoading(false);
@@ -49,6 +60,12 @@ export default function CreateTeam() {
         className="bg-black/40 p-8 rounded-xl w-[500px] space-y-6"
       >
         <h2 className="text-2xl font-bold">Team erstellen</h2>
+
+        {error && (
+          <div className="bg-red-600/30 border border-red-500 p-3 rounded text-sm">
+            {error}
+          </div>
+        )}
 
         <input
           type="text"
@@ -74,7 +91,7 @@ export default function CreateTeam() {
 
         <button
           disabled={loading}
-          className="w-full bg-green-600 py-3 rounded hover:bg-green-500"
+          className="w-full bg-green-600 py-3 rounded hover:bg-green-500 transition"
         >
           {loading ? "Erstelle..." : "Team erstellen"}
         </button>
