@@ -14,20 +14,29 @@ export default function CreateTeam() {
 
     const token = localStorage.getItem("token");
 
-    const res = await fetch("/api/team/create", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`
-      },
-      body: JSON.stringify({
-        name,
-        shortName
-      })
-    });
+    try {
+      const res = await fetch("/api/team/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          name,
+          shortName,
+        }),
+      });
 
-    if (res.ok) {
-      navigate("/");
+      if (!res.ok) {
+        setLoading(false);
+        return;
+      }
+
+      // ✅ Direkt zur Teamseite
+      navigate("/team");
+
+    } catch (err) {
+      console.error("Create Team Fehler:", err);
     }
 
     setLoading(false);
