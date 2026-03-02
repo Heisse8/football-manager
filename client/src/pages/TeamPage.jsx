@@ -44,26 +44,24 @@ export default function TeamPage() {
           return;
         }
 
-        const fetchSafe = async (url) => {
-          const res = await fetch(url, {
-            headers: { Authorization: `Bearer ${token}` },
-            cache: "no-store"
-          });
+       const fetchSafe = async (url) => {
+  const res = await fetch(url, {
+    headers: { Authorization: `Bearer ${token}` },
+    cache: "no-store"
+  });
 
-          if (!res.ok) {
-            throw new Error(`Fehler bei ${url}`);
-          }
+  const text = await res.text();
 
-          const text = await res.text();
+  console.log("URL:", url);
+  console.log("Status:", res.status);
+  console.log("Response Text:", text);
 
-          try {
-            return JSON.parse(text);
-          } catch {
-            console.error("Kein JSON bei:", url);
-            console.error("Response:", text);
-            throw new Error("Server antwortet nicht korrekt.");
-          }
-        };
+  if (!res.ok) {
+    throw new Error(`Fehler bei ${url}`);
+  }
+
+  return JSON.parse(text);
+};
 
         const teamData = await fetchSafe("/api/team");
         const playerData = await fetchSafe("/api/player/my-team");
