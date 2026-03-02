@@ -39,7 +39,15 @@ export default function Dashboard() {
         }
 
         const teamData = await teamRes.json();
-        setTeam(teamData);
+
+// 🔥 WICHTIG: prüfen ob wirklich ein Team existiert
+if (!teamData || !teamData._id) {
+  setTeam(null);
+  setLoading(false);
+  return;
+}
+
+setTeam(teamData);
 
         const leagueRes = await fetch(`/api/league/${teamData.league}`);
         if (leagueRes.ok) {
