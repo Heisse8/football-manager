@@ -16,7 +16,6 @@ const slotCoordinates = {
 
   LCM:{x:35,y:58}, RCM:{x:65,y:58},
 
-  LZOM:{x:35,y:48}, RZOM:{x:65,y:48},
   CAM:{x:50,y:48},
 
   LW:{x:18,y:28}, RW:{x:82,y:28},
@@ -31,74 +30,45 @@ export default function TeamPage() {
   const [players, setPlayers] = useState([]);
   const [manager, setManager] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
     const load = async () => {
-      try {
-        const token = localStorage.getItem("token");
 
-        if (!token) {
-          setError("Nicht eingeloggt.");
-          setLoading(false);
-          return;
-        }
+      const token = localStorage.getItem("token");
+      if (!token) return;
 
-       const fetchSafe = async (url) => {
-  const res = await fetch(url, {
-    headers: { Authorization: `Bearer ${token}` },
-    cache: "no-store"
-  });
+      const headers = { Authorization: `Bearer ${token}` };
 
-  const text = await res.text();
+      const teamRes = await fetch("/api/team", { headers });
+      const playerRes = await fetch("/api/player/my-team", { headers });
+      const managerRes = await fetch("/api/manager/my", { headers });
 
-  console.log("URL:", url);
-  console.log("Status:", res.status);
-  console.log("Response Text:", text);
+      const teamData = await teamRes.json();
+      const playerData = await playerRes.json();
+      const managerData = await managerRes.json();
 
-  if (!res.ok) {
-    throw new Error(`Fehler bei ${url}`);
-  }
+      setTeam(teamData);
+      setPlayers(playerData);
+      setManager(managerData);
 
-  return JSON.parse(text);
-};
-
-        const teamData = await fetchSafe("/api/team");
-        const playerData = await fetchSafe("/api/player/my-team");
-        const managerData = await fetchSafe("/api/manager/my");
-
-        setTeam(teamData);
-        setPlayers(Array.isArray(playerData) ? playerData : []);
-        setManager(managerData);
-
-        setLoading(false);
-
-      } catch (err) {
-        console.error("TeamPage Fehler:", err);
-        setError(err.message);
-        setLoading(false);
-      }
+      setLoading(false);
     };
 
     load();
   }, []);
 
-  /* ================= STATES ================= */
-
-  if (loading) {
-    return <div className="p-10 text-white">Lade Team...</div>;
-  }
-
-  if (error) {
-    return <div className="p-10 text-red-500">{error}</div>;
-  }
-
-  if (!team || !manager) {
-    return <div className="p-10 text-gray-400">Kein Team oder Manager gefunden.</div>;
-  }
+  if (loading) return <div className="p-10 text-white">Lade Team...</div>;
+  if (!team || !manager) return null;
 
   const lineup = team.lockedLineup || {};
   const bench = team.lockedBench || [];
+
+  /* =====================================================
+     HILFSFUNKTION → ID MATCH FIX
+  ===================================================== */
+
+  const getPlayerById = (id) =>
+    players.find(p => p._id.toString() === id.toString());
 
   return (
     <div className="max-w-[1500px] mx-auto p-6 text-white">
@@ -128,24 +98,17 @@ export default function TeamPage() {
 
           <div className="relative w-[750px] h-[950px] bg-green-700 rounded-xl border-4 border-white">
 
-            {/* MITTELLINIE */}
+            {/* Linien */}
             <div className="absolute top-1/2 left-0 w-full h-[2px] bg-white -translate-y-1/2"></div>
-
-            {/* MITTELKREIS */}
             <div className="absolute top-1/2 left-1/2 w-40 h-40 border-2 border-white rounded-full -translate-x-1/2 -translate-y-1/2"></div>
 
-            {/* STRAFRÄUME */}
-            <div className="absolute top-0 left-1/2 w-[60%] h-[160px] border-2 border-white -translate-x-1/2"></div>
-            <div className="absolute top-0 left-1/2 w-[30%] h-[70px] border-2 border-white -translate-x-1/2"></div>
-            <div className="absolute bottom-0 left-1/2 w-[60%] h-[160px] border-2 border-white -translate-x-1/2"></div>
-            <div className="absolute bottom-0 left-1/2 w-[30%] h-[70px] border-2 border-white -translate-x-1/2"></div>
-
             {/* STARTELF */}
-            {Object.keys(lineup).map(slot => {
+            {Object.entries(lineup).map(([slot, playerId]) => {
+
               const coords = slotCoordinates[slot];
               if (!coords) return null;
 
-              const player = players.find(p => p._id === lineup[slot]);
+              const player = getPlayerById(playerId);
               if (!player) return null;
 
               return (
@@ -175,30 +138,42 @@ export default function TeamPage() {
           {/* BANK */}
           <div className="mt-6 bg-black/40 p-4 rounded-xl w-[750px]">
             <h3 className="mb-3 font-semibold">Auswechselbank</h3>
-            <div className="flex gap-4">
+
+            <div className="grid grid-cols-4 gap-4">
               {bench.map(id => {
-                const player = players.find(p => p._id === id);
+                const player = getPlayerById(id);
                 if (!player) return null;
-                return <Circle key={id} player={player} />;
+
+                return (
+                  <div key={id} className="text-center">
+                    <Circle player={player} />
+                    <div className="text-xs mt-1">
+                      {player.lastName}
+                    </div>
+                    <div className="text-yellow-400 text-xs">
+                      {"★".repeat(Math.round(player.stars || 0))}
+                    </div>
+                  </div>
+                );
               })}
             </div>
           </div>
 
         </div>
 
-        {/* RECHTE SEITE */}
+        {/* RECHTS LISTE */}
         <div className="w-[420px] bg-black/40 p-6 rounded-xl">
 
           <h3 className="font-semibold mb-4">Startelf</h3>
           {Object.values(lineup).map(id => {
-            const p = players.find(pl => pl._id === id);
+            const p = getPlayerById(id);
             if (!p) return null;
             return <PlayerCard key={p._id} player={p} />;
           })}
 
           <h3 className="mt-6 font-semibold">Auswechselbank</h3>
           {bench.map(id => {
-            const p = players.find(pl => pl._id === id);
+            const p = getPlayerById(id);
             if (!p) return null;
             return <PlayerCard key={p._id} player={p} />;
           })}
