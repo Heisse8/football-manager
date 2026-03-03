@@ -44,24 +44,60 @@ function generateSmartLineup(players, formation) {
 
   const slots = formations[formation] || formations["4-3-3"];
 
-  // Beste Spieler zuerst
   const sortedPlayers = [...players].sort(
     (a, b) => b.stars - a.stars
   );
 
+  function isDefender(slot) {
+    return ["LCB","CCB","RCB","LB","RB","LWB","RWB"].includes(slot);
+  }
+
+  function isMidfielder(slot) {
+    return ["CDM","LCDM","RCDM","LCM","RCM","CAM"].includes(slot);
+  }
+
+  function isStriker(slot) {
+    return ["ST","LST","RST","LW","RW"].includes(slot);
+  }
+
   for (const slot of slots) {
 
-    // 1️⃣ Perfekte Positionsübereinstimmung
     let player = sortedPlayers.find(p =>
       !used.has(p._id.toString()) &&
       positionMatches(p.positions, slot)
     );
 
-    // 2️⃣ Wenn keiner passt → besten freien Spieler nehmen
+    // 🔒 Wenn kein exakter Match → nur sinnvolle Ersatzlogik
+
     if (!player) {
-      player = sortedPlayers.find(p =>
-        !used.has(p._id.toString())
-      );
+
+      player = sortedPlayers.find(p => {
+
+        if (used.has(p._id.toString())) return false;
+
+        const pos = p.positions || [];
+
+        // Verteidiger dürfen nur Verteidiger spielen
+        if (isDefender(slot))
+          return pos.some(position =>
+            ["CB","LCB","RCB","LB","RB","LWB","RWB"].includes(position)
+          );
+
+        // Mittelfeld darf flexibel bleiben
+        if (isMidfielder(slot))
+          return pos.some(position =>
+            ["CDM","CM","LCM","RCM","CAM"].includes(position)
+          );
+
+        // Sturm nur Offensivspieler
+        if (isStriker(slot))
+          return pos.some(position =>
+            ["ST","LST","RST","LW","RW"].includes(position)
+          );
+
+        return false;
+      });
+
     }
 
     if (player) {
@@ -70,7 +106,7 @@ function generateSmartLineup(players, formation) {
     }
   }
 
-  // 3️⃣ Rest auf Bank (max 7)
+  // Rest auf Bank
   for (const player of sortedPlayers) {
     if (!used.has(player._id.toString()) && bench.length < 7) {
       bench.push(player._id);
