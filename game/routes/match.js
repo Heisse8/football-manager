@@ -120,8 +120,19 @@ router.get("/has-new", auth, async (req, res) => {
 });
 
 const { simulateMatch } = require("../utils/matchEngine");
+const Player = require("../models/Player");
+const Manager = require("../models/Manager");
 
-const result = simulateMatch(
+// Home Team Daten laden
+const homePlayers = await Player.find({ team: match.homeTeam });
+const homeManager = await Manager.findOne({ team: match.homeTeam });
+
+// Away Team Daten laden
+const awayPlayers = await Player.find({ team: match.awayTeam });
+const awayManager = await Manager.findOne({ team: match.awayTeam });
+
+// Simulation starten
+const simulation = simulateMatch(
   {
     players: homePlayers,
     manager: homeManager
@@ -132,5 +143,11 @@ const result = simulateMatch(
   }
 );
 
-match.homeGoals = result.homeGoals;
-match.awayGoals = result.awayGoals;
+// Ergebnis speichern
+match.homeGoals = simulation.result.homeGoals;
+match.awayGoals = simulation.result.awayGoals;
+
+match.stats = simulation.stats;
+match.events = simulation.events;
+
+await match.save();
