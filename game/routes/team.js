@@ -37,28 +37,40 @@ function positionMatches(playerPositions, slot) {
 ===================================================== */
 
 function generateSmartLineup(players, formation) {
+
   const lineup = {};
   const bench = [];
   const used = new Set();
 
   const slots = formations[formation] || formations["4-3-3"];
 
+  // Beste Spieler zuerst
   const sortedPlayers = [...players].sort(
     (a, b) => b.stars - a.stars
   );
 
   for (const slot of slots) {
-    const bestPlayer = sortedPlayers.find(player =>
-      !used.has(player._id.toString()) &&
-      positionMatches(player.positions, slot)
+
+    // 1️⃣ Perfekte Positionsübereinstimmung
+    let player = sortedPlayers.find(p =>
+      !used.has(p._id.toString()) &&
+      positionMatches(p.positions, slot)
     );
 
-    if (bestPlayer) {
-      lineup[slot] = bestPlayer._id;
-      used.add(bestPlayer._id.toString());
+    // 2️⃣ Wenn keiner passt → besten freien Spieler nehmen
+    if (!player) {
+      player = sortedPlayers.find(p =>
+        !used.has(p._id.toString())
+      );
+    }
+
+    if (player) {
+      lineup[slot] = player._id;
+      used.add(player._id.toString());
     }
   }
 
+  // 3️⃣ Rest auf Bank (max 7)
   for (const player of sortedPlayers) {
     if (!used.has(player._id.toString()) && bench.length < 7) {
       bench.push(player._id);
