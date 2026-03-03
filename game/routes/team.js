@@ -23,6 +23,7 @@ const formations = {
 ===================================================== */
 
 function positionMatches(playerPositions, slot) {
+  if (!playerPositions) return false;
   if (playerPositions.includes(slot)) return true;
 
   const cleanSlot = slot.replace("L","").replace("R","");
@@ -33,7 +34,7 @@ function positionMatches(playerPositions, slot) {
 }
 
 /* =====================================================
- TRAINER-KI
+ TRAINER-KI (DYNAMISCH)
 ===================================================== */
 
 function generateSmartLineup(players, formation) {
@@ -41,7 +42,6 @@ function generateSmartLineup(players, formation) {
   const lineup = {};
   const bench = [];
   const used = new Set();
-
   const slots = formations[formation] || formations["4-3-3"];
 
   const sortedPlayers = [...players].sort(
@@ -67,29 +67,22 @@ function generateSmartLineup(players, formation) {
       positionMatches(p.positions, slot)
     );
 
-    // 🔒 Wenn kein exakter Match → nur sinnvolle Ersatzlogik
-
     if (!player) {
-
       player = sortedPlayers.find(p => {
 
         if (used.has(p._id.toString())) return false;
-
         const pos = p.positions || [];
 
-        // Verteidiger dürfen nur Verteidiger spielen
         if (isDefender(slot))
           return pos.some(position =>
             ["CB","LCB","RCB","LB","RB","LWB","RWB"].includes(position)
           );
 
-        // Mittelfeld darf flexibel bleiben
         if (isMidfielder(slot))
           return pos.some(position =>
             ["CDM","CM","LCM","RCM","CAM"].includes(position)
           );
 
-        // Sturm nur Offensivspieler
         if (isStriker(slot))
           return pos.some(position =>
             ["ST","LST","RST","LW","RW"].includes(position)
@@ -97,7 +90,6 @@ function generateSmartLineup(players, formation) {
 
         return false;
       });
-
     }
 
     if (player) {
@@ -106,7 +98,7 @@ function generateSmartLineup(players, formation) {
     }
   }
 
-  // Rest auf Bank
+  // Bank (max 7)
   for (const player of sortedPlayers) {
     if (!used.has(player._id.toString()) && bench.length < 7) {
       bench.push(player._id);
@@ -122,45 +114,34 @@ function generateSmartLineup(players, formation) {
 ===================================================== */
 
 router.post("/create", auth, async (req, res) => {
+
   try {
 
     const userId = req.user.userId;
     let { name, shortName } = req.body;
 
     if (!name || !shortName) {
-      return res.status(400).json({
-        message: "Name und Kürzel erforderlich."
-      });
+      return res.status(400).json({ message: "Name und Kürzel erforderlich." });
     }
 
     name = name.trim();
     shortName = shortName.trim().toUpperCase();
 
     if (!/^[A-Z]{3}$/.test(shortName)) {
-      return res.status(400).json({
-        message: "Kürzel muss genau 3 Großbuchstaben haben."
-      });
+      return res.status(400).json({ message: "Kürzel muss genau 3 Großbuchstaben haben." });
     }
 
     if (await Team.findOne({ owner: userId })) {
-      return res.status(400).json({
-        message: "Du hast bereits ein Team."
-      });
+      return res.status(400).json({ message: "Du hast bereits ein Team." });
     }
 
     if (await Team.findOne({ name })) {
-      return res.status(400).json({
-        message: "Teamname bereits vergeben."
-      });
+      return res.status(400).json({ message: "Teamname bereits vergeben." });
     }
 
     if (await Team.findOne({ shortName })) {
-      return res.status(400).json({
-        message: "Kürzel bereits vergeben."
-      });
+      return res.status(400).json({ message: "Kürzel bereits vergeben." });
     }
-
-    /* ================= TEAM ================= */
 
     const newTeam = new Team({
       name,
@@ -170,9 +151,6 @@ router.post("/create", auth, async (req, res) => {
       league: "GER_1",
       balance: 5000000,
       currentMatchday: 1,
-      lineupLocked: false,
-      lockedLineup: {},
-      lockedBench: [],
       points: 0,
       wins: 0,
       draws: 0,
@@ -185,44 +163,22 @@ router.post("/create", auth, async (req, res) => {
 
     await newTeam.save();
 
-    /* ================= SPIELER ================= */
-
     await generatePlayersForTeam(newTeam);
-    const players = await Player.find({ team: newTeam._id });
-
-    /* ================= MANAGER ================= */
 
     const firstNames = ["Thomas", "Michael", "Stefan", "Lukas", "Daniel"];
     const lastNames = ["Schmidt", "Müller", "Wagner", "Becker", "Hoffmann"];
     const playstyles = ["Ballbesitz","Kontern","Gegenpressing","Mauern"];
     const formationKeys = Object.keys(formations);
 
-    const randomFormation =
-      formationKeys[Math.floor(Math.random() * formationKeys.length)];
-
-    const manager = await Manager.create({
+    await Manager.create({
       team: newTeam._id,
       firstName: firstNames[Math.floor(Math.random()*firstNames.length)],
       lastName: lastNames[Math.floor(Math.random()*lastNames.length)],
       age: 40 + Math.floor(Math.random()*15),
       rating: 1 + Math.floor(Math.random()*4),
-      formation: randomFormation,
+      formation: formationKeys[Math.floor(Math.random()*formationKeys.length)],
       playstyle: playstyles[Math.floor(Math.random()*playstyles.length)]
     });
-
-    /* ================= 🧠 STARTELF ================= */
-
-    const { lineup, bench } = generateSmartLineup(
-      players,
-      manager.formation
-    );
-
-    newTeam.lockedLineup = lineup;
-    newTeam.lockedBench = bench;
-
-    await newTeam.save();
-
-    /* ================= STADION ================= */
 
     await Stadium.create({
       team: newTeam._id,
@@ -241,21 +197,18 @@ router.post("/create", auth, async (req, res) => {
   }
 });
 
-
 /* =====================================================
- GET MY TEAM  ✅ WICHTIG
+ GET MY TEAM
 ===================================================== */
 
 router.get("/", auth, async (req, res) => {
+
   try {
-    const team = await Team.findOne({
-      owner: req.user.userId,
-    });
+
+    const team = await Team.findOne({ owner: req.user.userId });
 
     if (!team) {
-      return res.status(404).json({
-        message: "Kein Team gefunden",
-      });
+      return res.status(404).json({ message: "Kein Team gefunden" });
     }
 
     res.json(team);
@@ -266,5 +219,33 @@ router.get("/", auth, async (req, res) => {
   }
 });
 
+/* =====================================================
+ AUTO LINEUP (DYNAMISCH)
+===================================================== */
+
+router.get("/auto-lineup", auth, async (req, res) => {
+
+  try {
+
+    const team = await Team.findOne({ owner: req.user.userId });
+    if (!team) return res.status(404).json({ message: "Kein Team" });
+
+    const manager = await Manager.findOne({ team: team._id });
+    const players = await Player.find({ team: team._id });
+
+    if (!manager) return res.status(404).json({ message: "Kein Manager" });
+
+    const { lineup, bench } = generateSmartLineup(
+      players,
+      manager.formation
+    );
+
+    res.json({ lineup, bench });
+
+  } catch (err) {
+    console.error("Auto Lineup Fehler:", err);
+    res.status(500).json({ message: "Serverfehler" });
+  }
+});
 
 module.exports = router;

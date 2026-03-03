@@ -118,3 +118,19 @@ router.get("/has-new", auth, async (req, res) => {
     res.json({ hasNew: false }); // NIEMALS .send()
   }
 });
+
+const { simulateMatch } = require("../utils/matchEngine");
+
+const result = simulateMatch(
+  {
+    players: homePlayers,
+    manager: homeManager
+  },
+  {
+    players: awayPlayers,
+    manager: awayManager
+  }
+);
+
+match.homeGoals = result.homeGoals;
+match.awayGoals = result.awayGoals;

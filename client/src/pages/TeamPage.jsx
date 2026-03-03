@@ -29,9 +29,12 @@ export default function TeamPage() {
   const [team, setTeam] = useState(null);
   const [players, setPlayers] = useState([]);
   const [manager, setManager] = useState(null);
+  const [lineup, setLineup] = useState({});
+  const [bench, setBench] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+
     const load = async () => {
 
       const token = localStorage.getItem("token");
@@ -39,33 +42,39 @@ export default function TeamPage() {
 
       const headers = { Authorization: `Bearer ${token}` };
 
-      const teamRes = await fetch("/api/team", { headers });
-      const playerRes = await fetch("/api/player/my-team", { headers });
-      const managerRes = await fetch("/api/manager/my", { headers });
+      try {
 
-      const teamData = await teamRes.json();
-      const playerData = await playerRes.json();
-      const managerData = await managerRes.json();
+        const teamRes = await fetch("/api/team", { headers });
+        const playerRes = await fetch("/api/player/my-team", { headers });
+        const managerRes = await fetch("/api/manager/my", { headers });
+        const lineupRes = await fetch("/api/team/auto-lineup", { headers });
 
-      setTeam(teamData);
-      setPlayers(playerData);
-      setManager(managerData);
+        const teamData = await teamRes.json();
+        const playerData = await playerRes.json();
+        const managerData = await managerRes.json();
+        const lineupData = await lineupRes.json();
 
-      setLoading(false);
+        setTeam(teamData);
+        setPlayers(playerData);
+        setManager(managerData);
+
+        setLineup(lineupData.lineup || {});
+        setBench(lineupData.bench || []);
+
+        setLoading(false);
+
+      } catch (err) {
+        console.error("TeamPage Fehler:", err);
+        setLoading(false);
+      }
     };
 
     load();
+
   }, []);
 
   if (loading) return <div className="p-10 text-white">Lade Team...</div>;
   if (!team || !manager) return null;
-
-  const lineup = team.lockedLineup || {};
-  const bench = team.lockedBench || [];
-
-  /* =====================================================
-     HILFSFUNKTION → ID MATCH FIX
-  ===================================================== */
 
   const getPlayerById = (id) =>
     players.find(p => p._id.toString() === id.toString());
@@ -98,11 +107,9 @@ export default function TeamPage() {
 
           <div className="relative w-[750px] h-[950px] bg-green-700 rounded-xl border-4 border-white">
 
-            {/* Linien */}
             <div className="absolute top-1/2 left-0 w-full h-[2px] bg-white -translate-y-1/2"></div>
             <div className="absolute top-1/2 left-1/2 w-40 h-40 border-2 border-white rounded-full -translate-x-1/2 -translate-y-1/2"></div>
 
-            {/* STARTELF */}
             {Object.entries(lineup).map(([slot, playerId]) => {
 
               const coords = slotCoordinates[slot];
@@ -161,7 +168,7 @@ export default function TeamPage() {
 
         </div>
 
-        {/* RECHTS LISTE */}
+        {/* RECHTE LISTE */}
         <div className="w-[420px] bg-black/40 p-6 rounded-xl">
 
           <h3 className="font-semibold mb-4">Startelf</h3>
