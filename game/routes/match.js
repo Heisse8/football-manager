@@ -3,19 +3,14 @@ const router = express.Router();
 
 const Match = require("../models/Match");
 const Team = require("../models/Team");
+const Player = require("../models/Player");
+const Manager = require("../models/Manager");
 const auth = require("../middleware/auth");
+const { simulateMatch } = require("../utils/matchEngine");
 
 /* ======================================================
-   GET MATCHES FOR CURRENT USER (MONTH VIEW)
+ GET MATCHES FOR CURRENT USER (MONTH VIEW)
 ====================================================== */
-
-router.get("/has-new", async (req, res) => {
-  try {
-    res.json({ hasNew: false });
-  } catch (err) {
-    res.status(500).json({ hasNew: false });
-  }
-});
 
 router.get("/my-month", auth, async (req, res) => {
   try {
@@ -27,7 +22,6 @@ router.get("/my-month", auth, async (req, res) => {
       });
     }
 
-    // Team des eingeloggten Users finden
     const team = await Team.findOne({ owner: req.user.userId });
 
     if (!team) {
@@ -61,11 +55,12 @@ router.get("/my-month", auth, async (req, res) => {
 });
 
 /* ======================================================
-   GET MATCH BY ID (Match Detail)
+ GET MATCH BY ID (Match Detail)
 ====================================================== */
 
 router.get("/:id", async (req, res) => {
   try {
+
     const match = await Match.findById(req.params.id)
       .populate("homeTeam")
       .populate("awayTeam");
@@ -85,7 +80,70 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-module.exports = router;
+/* ======================================================
+ SIMULATE MATCH
+====================================================== */
+
+router.post("/simulate/:id", auth, async (req, res) => {
+  try {
+
+    const match = await Match.findById(req.params.id);
+
+    if (!match) {
+      return res.status(404).json({
+        error: "Match nicht gefunden"
+      });
+    }
+
+    if (match.played) {
+      return res.status(400).json({
+        error: "Match wurde bereits gespielt"
+      });
+    }
+
+    // 🔥 Spieler & Manager laden
+    const homePlayers = await Player.find({ team: match.homeTeam });
+    const awayPlayers = await Player.find({ team: match.awayTeam });
+
+    const homeManager = await Manager.findOne({ team: match.homeTeam });
+    const awayManager = await Manager.findOne({ team: match.awayTeam });
+
+    if (!homeManager || !awayManager) {
+      return res.status(400).json({
+        error: "Manager fehlt"
+      });
+    }
+
+    // 🔥 Simulation
+    const simulation = simulateMatch(
+      {
+        players: homePlayers,
+        manager: homeManager
+      },
+      {
+        players: awayPlayers,
+        manager: awayManager
+      }
+    );
+
+    // 🔥 Ergebnis speichern
+    match.homeGoals = simulation.result.homeGoals;
+    match.awayGoals = simulation.result.awayGoals;
+    match.stats = simulation.stats;
+    match.events = simulation.events;
+    match.played = true;
+
+    await match.save();
+
+    res.json(match);
+
+  } catch (err) {
+    console.error("Simulation Fehler:", err);
+    res.status(500).json({
+      error: "Simulation fehlgeschlagen"
+    });
+  }
+});
 
 /* ======================================================
  CHECK IF USER HAS NEW MATCH RESULT
@@ -93,15 +151,13 @@ module.exports = router;
 
 router.get("/has-new", auth, async (req, res) => {
   try {
+
     const team = await Team.findOne({ owner: req.user.userId });
 
     if (!team) {
       return res.json({ hasNew: false });
     }
 
-    // Beispiel-Logik:
-    // Prüft, ob es ein bereits gespieltes Match gibt,
-    // das noch nicht angesehen wurde
     const match = await Match.findOne({
       $or: [
         { homeTeam: team._id },
@@ -115,39 +171,8 @@ router.get("/has-new", auth, async (req, res) => {
 
   } catch (err) {
     console.error("Has-New Fehler:", err);
-    res.json({ hasNew: false }); // NIEMALS .send()
+    res.json({ hasNew: false });
   }
 });
 
-const { simulateMatch } = require("../utils/matchEngine");
-const Player = require("../models/Player");
-const Manager = require("../models/Manager");
-
-// Home Team Daten laden
-const homePlayers = await Player.find({ team: match.homeTeam });
-const homeManager = await Manager.findOne({ team: match.homeTeam });
-
-// Away Team Daten laden
-const awayPlayers = await Player.find({ team: match.awayTeam });
-const awayManager = await Manager.findOne({ team: match.awayTeam });
-
-// Simulation starten
-const simulation = simulateMatch(
-  {
-    players: homePlayers,
-    manager: homeManager
-  },
-  {
-    players: awayPlayers,
-    manager: awayManager
-  }
-);
-
-// Ergebnis speichern
-match.homeGoals = simulation.result.homeGoals;
-match.awayGoals = simulation.result.awayGoals;
-
-match.stats = simulation.stats;
-match.events = simulation.events;
-
-await match.save();
+module.exports = router;
