@@ -14,7 +14,6 @@ import StadiumPage from "./pages/StadiumPage";
 import MatchCenter from "./pages/MatchCenter";
 import MatchDetail from "./pages/MatchDetail";
 import Spieltag from "./pages/Spieltag";
-import MatchDetail from "./pages/MatchDetail";
 
 export default function App() {
   return (
