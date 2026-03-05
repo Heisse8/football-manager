@@ -14,6 +14,7 @@ import StadiumPage from "./pages/StadiumPage";
 import MatchCenter from "./pages/MatchCenter";
 import MatchDetail from "./pages/MatchDetail";
 import Spieltag from "./pages/Spieltag";
+import MatchDetail from "./pages/MatchDetail";
 
 export default function App() {
   return (
@@ -44,6 +45,7 @@ export default function App() {
             path="/finanzen"
             element={<div className="p-10">Finanzen</div>}
           />
+          <Route path="/match/:id" element={<MatchDetail />} />
         </Route>
 
         {/* ================= CREATE TEAM (OHNE NAVBAR) ================= */}

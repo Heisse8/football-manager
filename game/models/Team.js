@@ -6,154 +6,153 @@ const teamSchema = new mongoose.Schema({
 BASIS
 ===================================================== */
 
-name: {
-type: String,
-required: true,
-unique: true
+name:{
+type:String,
+required:true,
+unique:true
 },
 
-shortName: {
-type: String,
-required: true,
-unique: true
+shortName:{
+type:String,
+required:true,
+unique:true
 },
 
-country: {
-type: String,
-required: true
+country:{
+type:String,
+required:true
 },
 
-league: {
-type: String,
-required: true
+league:{
+type:String,
+required:true
 },
 
-owner: {
-type: mongoose.Schema.Types.ObjectId,
-ref: "User",
-default: null
+owner:{
+type:mongoose.Schema.Types.ObjectId,
+ref:"User",
+default:null
 },
 
 /* =====================================================
 BOT SYSTEM
 ===================================================== */
 
-isBot: {
-type: Boolean,
-default: false
+isBot:{
+type:Boolean,
+default:false
 },
 
 /* =====================================================
 TRAINER SYSTEM
 ===================================================== */
 
-coach: {
-type: mongoose.Schema.Types.ObjectId,
-ref: "Coach",
-default: null
+coach:{
+type:mongoose.Schema.Types.ObjectId,
+ref:"Coach",
+default:null
 },
 
-/* Optional für spätere Erweiterung */
-
-assistantCoach: {
-type: mongoose.Schema.Types.ObjectId,
-ref: "Coach",
-default: null
+assistantCoach:{
+type:mongoose.Schema.Types.ObjectId,
+ref:"Coach",
+default:null
 },
 
 /* =====================================================
 CLUB IDENTITY
 ===================================================== */
 
-clubIdentity: {
-type: String,
-enum: ["love", "commercial"],
-default: "love"
+clubIdentity:{
+type:String,
+enum:["love","commercial"],
+default:"love"
 },
 
 /* =====================================================
 FANS & HOME ADVANTAGE
 ===================================================== */
 
-fanBase: {
-type: Number,
-default: 1
+fanBase:{
+type:Number,
+default:1
 },
 
-homeBonus: {
-type: Number,
-default: 1
+homeBonus:{
+type:Number,
+default:1
 },
 
 /* =====================================================
-TAKTIK (Trainer beeinflusst diese später)
+TAKTIK
+Trainer kann diese später überschreiben
 ===================================================== */
 
-tactics: {
+tactics:{
 
-playStyle: {
-type: String,
-enum: ["ballbesitz","konter","gegenpressing","mauern"],
-default: "ballbesitz"
+playStyle:{
+type:String,
+enum:["ballbesitz","konter","gegenpressing","mauern"],
+default:"ballbesitz"
 },
 
-pressing: {
-type: String,
-enum: ["sehr_hoch","hoch","mittel","low_block"],
-default: "mittel"
+pressing:{
+type:String,
+enum:["sehr_hoch","hoch","mittel","low_block"],
+default:"mittel"
 },
 
-defensiveLine: {
-type: String,
-enum: ["hoch","mittel","tief"],
-default: "mittel"
+defensiveLine:{
+type:String,
+enum:["hoch","mittel","tief"],
+default:"mittel"
 },
 
-passingStyle: {
-type: String,
-enum: ["kurz","variabel","lang"],
-default: "variabel"
+passingStyle:{
+type:String,
+enum:["kurz","variabel","lang"],
+default:"variabel"
 },
 
-tempo: {
-type: String,
-enum: ["langsam","kontrolliert","hoch","sehr_hoch"],
-default: "kontrolliert"
+tempo:{
+type:String,
+enum:["langsam","kontrolliert","hoch","sehr_hoch"],
+default:"kontrolliert"
 },
 
-width: {
-type: String,
-enum: ["sehr_eng","eng","normal","breit"],
-default: "normal"
+width:{
+type:String,
+enum:["sehr_eng","eng","normal","breit"],
+default:"normal"
 },
 
-transitionAfterWin: {
-type: String,
-enum: ["vertikal","kontrolliert","fluegel"],
-default: "kontrolliert"
+transitionAfterWin:{
+type:String,
+enum:["vertikal","kontrolliert","fluegel"],
+default:"kontrolliert"
 },
 
-transitionAfterLoss: {
-type: String,
-enum: ["gegenpressing","mittelfeldpressing","rueckzug"],
-default: "mittelfeldpressing"
+transitionAfterLoss:{
+type:String,
+enum:["gegenpressing","mittelfeldpressing","rueckzug"],
+default:"mittelfeldpressing"
 },
 
-mentality: {
-type: String,
-enum: ["defensiv","ausgewogen","offensiv","sehr_offensiv"],
-default: "ausgewogen"
+mentality:{
+type:String,
+enum:["defensiv","ausgewogen","offensiv","sehr_offensiv"],
+default:"ausgewogen"
 }
 
 },
 
 /* =====================================================
-FORMATION SYSTEM
+FORMATION
 ===================================================== */
 
-formation: {
-type: String,
-enum: [
+formation:{
+type:String,
+enum:[
 "442",
 "4231",
 "433",
@@ -166,98 +165,128 @@ enum: [
 "541",
 "5212"
 ],
-default: "442"
+default:"442"
 },
 
 /* =====================================================
-LINEUP (Trainer erstellt automatisch)
+LINEUP (vom Trainer generiert)
 ===================================================== */
 
-lineup: {
-type: Object,
-default: {}
+lineup:{
+type:Object,
+default:{}
 },
 
-bench: {
-type: [mongoose.Schema.Types.ObjectId],
-ref: "Player",
-default: []
+bench:{
+type:[mongoose.Schema.Types.ObjectId],
+ref:"Player",
+default:[]
+},
+
+benchLimit:{
+type:Number,
+default:7
 },
 
 /* =====================================================
 LINEUP LOCK SYSTEM
 ===================================================== */
 
-lineupLocked: {
-type: Boolean,
-default: false
+lineupLocked:{
+type:Boolean,
+default:false
 },
 
-lockedLineup: {
-type: Object,
-default: {}
+lockedLineup:{
+type:Object,
+default:{}
 },
 
-lockedBench: {
-type: [mongoose.Schema.Types.ObjectId],
-ref: "Player",
-default: []
+lockedBench:{
+type:[mongoose.Schema.Types.ObjectId],
+ref:"Player",
+default:[]
 },
 
 /* =====================================================
 MATCHDAY SYSTEM
 ===================================================== */
 
-currentMatchday: {
-type: Number,
-default: 1
+currentMatchday:{
+type:Number,
+default:1
+},
+
+lastMatch:{
+type:Date,
+default:null
 },
 
 /* =====================================================
-TEAM STRENGTH (MatchEngine Basis)
+TEAM STRENGTH
+MatchEngine Basis
 ===================================================== */
 
-attackStrength: {
-type: Number,
-default: 50
+attackStrength:{
+type:Number,
+default:50
 },
 
-defenseStrength: {
-type: Number,
-default: 50
+defenseStrength:{
+type:Number,
+default:50
 },
 
-possessionSkill: {
-type: Number,
-default: 50
+possessionSkill:{
+type:Number,
+default:50
+},
+
+/* =====================================================
+TEAM DYNAMICS (für spätere Features)
+===================================================== */
+
+teamChemistry:{
+type:Number,
+default:70
+},
+
+clubReputation:{
+type:Number,
+default:50
 },
 
 /* =====================================================
 TABELLE
 ===================================================== */
 
-points: { type: Number, default: 0 },
+points:{ type:Number, default:0 },
 
-wins: { type: Number, default: 0 },
-draws: { type: Number, default: 0 },
-losses: { type: Number, default: 0 },
+wins:{ type:Number, default:0 },
+draws:{ type:Number, default:0 },
+losses:{ type:Number, default:0 },
 
-goalsFor: { type: Number, default: 0 },
-goalsAgainst: { type: Number, default: 0 },
+goalsFor:{ type:Number, default:0 },
+goalsAgainst:{ type:Number, default:0 },
 
-goalDifference: { type: Number, default: 0 },
+goalDifference:{ type:Number, default:0 },
 
-tablePosition: { type: Number, default: 0 },
+tablePosition:{ type:Number, default:0 },
 
 /* =====================================================
 FINANZEN
 ===================================================== */
 
-balance: {
-type: Number,
-default: 1000000
+balance:{
+type:Number,
+default:1000000
+},
+
+lastMatchRevenue:{
+type:Number,
+default:0
 }
 
-},{ timestamps:true });
+},{timestamps:true});
 
-module.exports = mongoose.model("Team", teamSchema);
+module.exports = mongoose.model("Team",teamSchema);

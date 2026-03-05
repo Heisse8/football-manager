@@ -39,16 +39,17 @@ playStyle: {
 type: String,
 enum: [
 "finisher",
+"targetman",
+"poacher",
 "playmaker",
 "winger",
-"targetman",
 "box_to_box",
 "ball_winner",
-"defensive_wall",
+"deep_playmaker",
 "sweeper_keeper",
-"balanced"
+"defensive_wall"
 ],
-default: "balanced"
+default: null
 },
 
 /* ================= RATING ================= */
@@ -216,3 +217,4 @@ default: null
 }, { timestamps: true });
 
 module.exports = mongoose.model("Player", playerSchema);
+

@@ -1,9 +1,11 @@
 // ======================================================
-// MATCH ENGINE – COMPLETE VERSION
-// Goals, Assists, Ratings, Cards, Injuries,
-// Goalkeeper System, Fitness, Stadium Revenue
-// + PLAYSTYLE SYSTEM
-// + FORMATION SYSTEM
+// MATCH ENGINE V11 – FULL FOOTBALL SIMULATION
+// Tactical Phase Engine
+// Match Story Engine
+// Momentum System
+// Coach AI
+// Possession Engine
+// Goalkeeper Saves
 // ======================================================
 
 const { generateMatchNews } = require("../utils/newsGenerator");
@@ -11,67 +13,64 @@ const { generateMatchRevenue } = require("../utils/matchRevenue");
 
 async function simulateRealisticMatch({ homeTeam, awayTeam, match }) {
 
-const homeCtx = buildTeamContext(homeTeam, true);
-const awayCtx = buildTeamContext(awayTeam, false);
+const homeCtx = buildTeamContext(homeTeam,true);
+const awayCtx = buildTeamContext(awayTeam,false);
 
-const state = createInitialState(homeCtx.players, awayCtx.players);
+const state = createInitialState(homeCtx.players,awayCtx.players);
 
-for (let minute = 1; minute <= 90; minute++) {
+for(let minute=1; minute<=90; minute++){
 
 state.minute = minute;
 
-simulateMinute(state, homeCtx, awayCtx);
+applyCoachAdaptation(state,homeCtx,awayCtx);
+applyMatchStory(state,homeCtx,awayCtx);
+
+simulateMinute(state,homeCtx,awayCtx);
+
+state.momentum.home *= 0.98;
+state.momentum.away *= 0.98;
 
 }
 
 const possession = calculatePossession(state);
-
-/* ================= RATINGS ================= */
-
 const ratings = calculateRatings(state);
-
-/* ================= FITNESS ================= */
 
 applyFitnessLoss(homeCtx.players);
 applyFitnessLoss(awayCtx.players);
 
-/* ================= NEWS ================= */
-
-if (match) {
+if(match){
 
 await generateMatchNews({
 homeTeam,
 awayTeam,
-homeGoals: state.home.goals,
-awayGoals: state.away.goals,
-league: match.league
+homeGoals:state.home.goals,
+awayGoals:state.away.goals,
+league:match.league
 });
 
 }
 
-/* ================= STADIUM REVENUE ================= */
-
-if (homeTeam && homeTeam._id) {
+if(homeTeam && homeTeam._id){
 await generateMatchRevenue(homeTeam._id);
 }
 
-return {
+return{
 
-result: {
-homeGoals: state.home.goals,
-awayGoals: state.away.goals
+result:{
+homeGoals:state.home.goals,
+awayGoals:state.away.goals
 },
 
-xG: {
-home: round(state.home.xG),
-away: round(state.away.xG)
+xG:{
+home:round(state.home.xG),
+away:round(state.away.xG)
 },
 
 possession,
 
-stats: buildStats(state),
+stats:buildStats(state),
 
-events: state.events,
+events:state.events,
 
 ratings
 
@@ -82,153 +81,111 @@ ratings
 module.exports = { simulateRealisticMatch };
 
 
+// ======================================================
+// MATCH STORY ENGINE
+// ======================================================
 
-/* ====================================================== */
-/* TEAM CONTEXT */
-/* ====================================================== */
+function applyMatchStory(state,homeCtx,awayCtx){
 
-function buildTeamContext(team, isHome){
+const diff = state.home.goals - state.away.goals;
+
+if(diff < 0){
+
+homeCtx.attackStrength *= 1.05;
+state.momentum.home += 0.02;
+
+}
+
+if(diff > 0){
+
+awayCtx.attackStrength *= 1.05;
+state.momentum.away += 0.02;
+
+}
+
+if(diff > 0 && state.minute > 70){
+
+homeCtx.defenseStrength *= 1.05;
+homeCtx.attackStrength *= 0.96;
+
+}
+
+if(diff < 0 && state.minute > 70){
+
+awayCtx.defenseStrength *= 1.05;
+awayCtx.attackStrength *= 0.96;
+
+}
+
+if(state.minute > 85){
+
+homeCtx.attackStrength *= 1.08;
+awayCtx.attackStrength *= 1.08;
+
+}
+
+}
+
+
+// ======================================================
+// TEAM CONTEXT
+// ======================================================
+
+function buildTeamContext(team,isHome){
 
 const players = team.players || [];
 
-let attack = team.attackStrength || 50;
-let defense = team.defenseStrength || 50;
-let possession = team.possessionSkill || 50;
-
-const goalkeeper = players.find(p => p.positions?.includes("GK"));
-
-const ctx = {
+const ctx={
 players,
-goalkeeper,
-attackStrength: attack,
-defenseStrength: defense,
-possessionSkill: possession
+goalkeeper: players.find(p=>p.positions?.includes("GK")),
+coach:team.coach || null,
+attackStrength:team.attackStrength || 50,
+defenseStrength:team.defenseStrength || 50,
+possessionSkill:team.possessionSkill || 50,
+tactics:team.tactics || {}
 };
 
 if(isHome && team.homeBonus){
-ctx.attackStrength *= team.homeBonus;
-ctx.defenseStrength *= team.homeBonus;
+
+ctx.attackStrength*=team.homeBonus;
+ctx.defenseStrength*=team.homeBonus;
+
 }
 
-/* FORMATION BONUS */
-
-applyFormationBonus(ctx, team.formation);
+applyFormationBonus(ctx,team.formation);
+applyTacticInfluence(ctx,team.tactics);
+applyCoachInfluence(ctx);
+applyCoachStyle(ctx);
 
 return ctx;
 
 }
 
 
+// ======================================================
+// STATE
+// ======================================================
 
-/* ====================================================== */
-/* FORMATION SYSTEM */
-/* ====================================================== */
+function createInitialState(homePlayers,awayPlayers){
 
-function applyFormationBonus(ctx, formation){
+return{
 
-if(!formation) return;
+minute:0,
 
-switch(formation){
+events:[],
 
-case "433":
+playerStats:{},
 
-ctx.attackStrength *= 1.08;
-ctx.possessionSkill *= 1.05;
+momentum:{
+home:0,
+away:0
+},
 
-break;
+home:baseTeamState(),
+away:baseTeamState(),
 
-case "4231":
-
-ctx.attackStrength *= 1.05;
-ctx.defenseStrength *= 1.05;
-
-break;
-
-case "442":
-
-ctx.attackStrength *= 1.04;
-ctx.defenseStrength *= 1.04;
-
-break;
-
-case "41212":
-
-ctx.attackStrength *= 1.06;
-ctx.possessionSkill *= 1.04;
-
-break;
-
-case "4141":
-
-ctx.defenseStrength *= 1.10;
-
-break;
-
-case "352":
-
-ctx.possessionSkill *= 1.08;
-
-break;
-
-case "343":
-
-ctx.attackStrength *= 1.10;
-ctx.defenseStrength *= 0.95;
-
-break;
-
-case "3421":
-
-ctx.attackStrength *= 1.08;
-
-break;
-
-case "532":
-
-ctx.defenseStrength *= 1.12;
-ctx.attackStrength *= 0.92;
-
-break;
-
-case "541":
-
-ctx.defenseStrength *= 1.15;
-ctx.attackStrength *= 0.88;
-
-break;
-
-case "5212":
-
-ctx.defenseStrength *= 1.08;
-ctx.attackStrength *= 1.04;
-
-break;
-
-}
-
-}
-
-
-
-/* ====================================================== */
-/* STATE */
-/* ====================================================== */
-
-function createInitialState(homePlayers, awayPlayers){
-
-return {
-
-minute: 0,
-
-events: [],
-
-playerStats: {},
-
-home: baseTeamState(),
-away: baseTeamState(),
-
-homePlayers,
-awayPlayers
+homePlayers:[...homePlayers],
+awayPlayers:[...awayPlayers]
 
 };
 
@@ -236,246 +193,240 @@ awayPlayers
 
 function baseTeamState(){
 
-return {
-goals: 0,
-xG: 0,
-control: 0,
-shots: 0,
-saves: 0,
-yellows: 0,
-reds: 0,
-corners: 0,
-freeKicks: 0,
-penalties: 0
+return{
+
+goals:0,
+xG:0,
+control:0,
+shots:0,
+bigChances:0,
+keyPasses:0,
+dribbles:0,
+crosses:0,
+longShots:0,
+blocks:0,
+turnovers:0,
+saves:0,
+yellows:0,
+reds:0
+
 };
 
 }
 
 
+// ======================================================
+// MINUTE SIMULATION
+// ======================================================
 
-/* ====================================================== */
-/* PLAYER PICK */
-/* ====================================================== */
+function simulateMinute(state,homeCtx,awayCtx){
 
-function pickRandomPlayer(players){
+state.home.control += homeCtx.possessionSkill/1100;
+state.away.control += awayCtx.possessionSkill/1100;
 
-if(!players || players.length === 0) return null;
+const homeMomentum = 1 + clampMomentum(state.momentum.home);
+const awayMomentum = 1 + clampMomentum(state.momentum.away);
 
-return players[Math.floor(Math.random()*players.length)];
+let homeAttack = homeCtx.attackStrength * homeMomentum;
+let awayAttack = awayCtx.attackStrength * awayMomentum;
 
-}
+if(state.home.reds>0) homeAttack*=0.9;
+if(state.away.reds>0) awayAttack*=0.9;
 
+const homeAttackChance =
+homeAttack /
+(homeAttack + awayCtx.defenseStrength);
 
+const isHomeAttack = Math.random() < homeAttackChance;
 
-/* ====================================================== */
-/* SCORER WEIGHT */
-/* ====================================================== */
+const attacking = isHomeAttack ? state.home : state.away;
+const defending = isHomeAttack ? state.away : state.home;
 
-function pickScorer(players){
+const attackCtx = isHomeAttack ? homeCtx : awayCtx;
+const defendCtx = isHomeAttack ? awayCtx : homeCtx;
 
-if(!players) return null;
+buildUpPhase(state,attacking,defending,attackCtx,defendCtx);
 
-const weighted = [];
-
-players.forEach(p=>{
-
-const pos = p.positions?.[0] || "CM";
-
-let weight = 1;
-
-switch(pos){
-
-case "ST":
-case "LST":
-case "RST":
-weight = 10;
-break;
-
-case "LW":
-case "RW":
-weight = 8;
-break;
-
-case "CAM":
-weight = 6;
-break;
-
-case "CM":
-case "LCM":
-case "RCM":
-weight = 4;
-break;
-
-case "CDM":
-weight = 2;
-break;
-
-case "LB":
-case "RB":
-weight = 1.5;
-break;
-
-case "CB":
-weight = 1;
-break;
-
-case "GK":
-weight = 0.05;
-break;
-
-}
-
-/* Playstyle Bonus */
-
-if(p.playStyle === "finisher") weight *= 1.4;
-if(p.playStyle === "targetman") weight *= 1.2;
-
-for(let i=0;i<weight;i++){
-weighted.push(p);
-}
-
-});
-
-return weighted[Math.floor(Math.random()*weighted.length)];
+maybeYellow(state,attacking);
+maybeRed(state,attacking);
+maybeInjury(state,attacking);
 
 }
 
 
+// ======================================================
+// TACTICAL PHASE ENGINE
+// ======================================================
 
-/* ====================================================== */
-/* PLAYER ATTRIBUTES */
-/* ====================================================== */
+function buildUpPhase(state,attacking,defending,attackCtx,defendCtx){
 
-function getPlayerAttackValue(player){
+if(Math.random()<0.15){
 
-if(!player) return 50;
-
-let value = (
-(player.shooting || 50) * 0.5 +
-(player.pace || 50) * 0.2 +
-(player.mentality || 50) * 0.3
-);
-
-if(player.playStyle === "finisher") value *= 1.15;
-if(player.playStyle === "targetman") value *= 1.10;
-if(player.playStyle === "box_to_box") value *= 1.05;
-
-return value;
+attacking.turnovers++;
+return;
 
 }
 
-function getGoalkeeperValue(player){
-
-if(!player) return 50;
-
-let value = (
-(player.defending || 50) * 0.5 +
-(player.mentality || 50) * 0.3 +
-(player.physical || 50) * 0.2
-);
-
-if(player.playStyle === "sweeper_keeper") value *= 1.15;
-
-return value;
+midfieldPhase(state,attacking,defending,attackCtx,defendCtx);
 
 }
 
+function midfieldPhase(state,attacking,defending,attackCtx,defendCtx){
 
+if(Math.random()<0.20){
 
-/* ====================================================== */
-/* MINUTE SIMULATION */
-/* ====================================================== */
-
-function simulateMinute(state, homeCtx, awayCtx){
-
-state.home.control += homeCtx.possessionSkill / 1100;
-state.away.control += awayCtx.possessionSkill / 1100;
-
-const homeAttacks = Math.random() < 0.5;
-
-const attacking = homeAttacks ? state.home : state.away;
-const defending = homeAttacks ? state.away : state.home;
-
-const attackCtx = homeAttacks ? homeCtx : awayCtx;
-const defendCtx = homeAttacks ? awayCtx : homeCtx;
-
-runAttack(state, attacking, defending, attackCtx, defendCtx);
-
-maybeYellow(state, attacking);
-maybeRed(state, attacking);
-maybeInjury(state, attacking);
+attacking.turnovers++;
+return;
 
 }
 
+const creator = pickCreator(attackCtx.players);
 
+if(!creator) return;
 
-/* ====================================================== */
-/* ATTACK */
-/* ====================================================== */
+attacking.keyPasses++;
 
-function runAttack(state, attacking, defending, attackCtx, defendCtx){
+finalThirdPhase(state,attacking,defending,attackCtx,defendCtx,creator);
+
+}
+
+function finalThirdPhase(state,attacking,defending,attackCtx,defendCtx,creator){
+
+if(Math.random()<0.25) attacking.dribbles++;
+if(Math.random()<0.22) attacking.crosses++;
+if(Math.random()<0.18) attacking.longShots++;
+
+finishPhase(state,attacking,defending,attackCtx,defendCtx,creator);
+
+}
+
+function finishPhase(state,attacking,defending,attackCtx,defendCtx,creator){
 
 const attacker = pickScorer(attackCtx.players);
 const goalkeeper = defendCtx.goalkeeper;
 
-const attackValue = getPlayerAttackValue(attacker);
-const keeperValue = getGoalkeeperValue(goalkeeper);
+let xG = calculateShotQuality(attacker,goalkeeper);
 
-const duel = attackValue / (attackValue + keeperValue);
+if(Math.random()<0.25){
 
-const xG = 0.05 + duel * 0.35;
+attacking.bigChances++;
+xG*=1.4;
 
-attacking.xG += xG;
+}
+
 attacking.shots++;
+attacking.xG+=xG;
 
-if(Math.random() < xG){
+if(Math.random()<0.15){
+
+defending.blocks++;
+return;
+
+}
+
+if(Math.random()<xG){
 
 attacking.goals++;
 
-const assist = pickAssist(attackCtx.players, attacker);
+updateMomentum(state,attacking);
 
 state.events.push({
-minute: state.minute,
-type: "goal",
-scorer: attacker ? `${attacker.firstName} ${attacker.lastName}` : null,
-assist: assist ? `${assist.firstName} ${assist.lastName}` : null
+minute:state.minute,
+type:"goal",
+scorer:`${attacker.firstName} ${attacker.lastName}`,
+assist:`${creator.firstName} ${creator.lastName}`
 });
 
-if(attacker) addStat(state, attacker._id, "goals");
-if(assist) addStat(state, assist._id, "assists");
+addStat(state,attacker._id,"goals");
+addStat(state,creator._id,"assists");
 
 }else{
 
 defending.saves++;
 
+state.events.push({
+minute:state.minute,
+type:"save",
+goalkeeper:`${goalkeeper?.firstName || "GK"}`
+});
+
+}
+
+}
+
+
+// ======================================================
+// MOMENTUM
+// ======================================================
+
+function updateMomentum(state,team){
+
+if(team === state.home){
+
+state.momentum.home += 0.15;
+state.momentum.away -= 0.1;
+
+}else{
+
+state.momentum.away += 0.15;
+state.momentum.home -= 0.1;
+
 }
 
 }
 
-
-
-/* ====================================================== */
-/* ASSIST PICK */
-/* ====================================================== */
-
-function pickAssist(players, scorer){
-
-const candidates = players.filter(p => p !== scorer);
-
-if(candidates.length === 0) return null;
-
-const weighted = [];
-
-candidates.forEach(p=>{
-
-let weight = 1;
-
-if(p.playStyle === "playmaker") weight *= 2;
-if(p.playStyle === "winger") weight *= 1.6;
-
-for(let i=0;i<weight;i++){
-weighted.push(p);
+function clampMomentum(v){
+return Math.max(-0.4,Math.min(0.4,v));
 }
+
+
+// ======================================================
+// PLAYER PICK
+// ======================================================
+
+function pickCreator(players){
+
+const weighted=[];
+
+players.forEach(p=>{
+
+let w=1;
+
+if(p.playStyle==="playmaker") w=3;
+if(p.playStyle==="winger") w=2;
+
+for(let i=0;i<w;i++) weighted.push(p);
+
+});
+
+return weighted[Math.floor(Math.random()*weighted.length)];
+
+}
+
+function pickScorer(players){
+
+const weighted=[];
+
+players.forEach(p=>{
+
+let w=1;
+
+const pos=p.positions?.[0]||"CM";
+
+switch(pos){
+
+case "ST": w=10; break;
+case "LW":
+case "RW": w=7; break;
+case "CAM": w=6; break;
+case "CM": w=4; break;
+case "CDM": w=2; break;
+case "CB": w=1; break;
+case "GK": w=0.02; break;
+
+}
+
+for(let i=0;i<w;i++) weighted.push(p);
 
 });
 
@@ -484,36 +435,51 @@ return weighted[Math.floor(Math.random()*weighted.length)];
 }
 
 
+// ======================================================
+// SHOT QUALITY
+// ======================================================
 
-/* ====================================================== */
-/* EVENTS */
-/* ====================================================== */
+function calculateShotQuality(attacker,goalkeeper){
 
-function maybeYellow(state, team){
+const atk =
+(attacker.shooting||50)*0.6 +
+(attacker.pace||50)*0.2 +
+(attacker.mentality||50)*0.2;
 
-if (Math.random() > 0.0025) return;
+const def =
+(goalkeeper?.defending||50)*0.7 +
+(goalkeeper?.mentality||50)*0.3;
 
-team.yellows++;
+const duel = atk/(atk+def);
+
+return 0.05 + duel*0.30;
 
 }
 
-function maybeRed(state, team){
 
-if (Math.random() > 0.00025) return;
+// ======================================================
+// EVENTS
+// ======================================================
 
-team.reds++;
-
+function maybeYellow(state,team){
+if(Math.random()<0.0025) team.yellows++;
 }
 
-function maybeInjury(state, team){
+function maybeRed(state,team){
+if(Math.random()<0.00025) team.reds++;
+}
 
-if(Math.random() > 0.0006) return;
 
-const player = pickRandomPlayer(
-team === state.home ? state.homePlayers : state.awayPlayers
-);
+// ======================================================
+// INJURY
+// ======================================================
 
-if(!player) return;
+function maybeInjury(state,team){
+
+if(Math.random()>0.0006) return;
+
+const players = team===state.home ? state.homePlayers : state.awayPlayers;
+const player = players[Math.floor(Math.random()*players.length)];
 
 const days = 3 + Math.floor(Math.random()*25);
 
@@ -525,19 +491,15 @@ player.injuredUntil = until;
 }
 
 
-
-/* ====================================================== */
-/* FITNESS */
-/* ====================================================== */
+// ======================================================
+// FITNESS
+// ======================================================
 
 function applyFitnessLoss(players){
-
-if(!players) return;
 
 players.forEach(p=>{
 
 const loss = 6 + Math.random()*4;
-
 p.fitness = Math.max(0,(p.fitness||100)-loss);
 
 });
@@ -545,37 +507,34 @@ p.fitness = Math.max(0,(p.fitness||100)-loss);
 }
 
 
+// ======================================================
+// STATS
+// ======================================================
 
-/* ====================================================== */
-/* STATS */
-/* ====================================================== */
+function addStat(state,id,stat){
 
-function addStat(state, playerId, stat){
-
-if(!state.playerStats[playerId]){
-state.playerStats[playerId] = {goals:0,assists:0};
+if(!state.playerStats[id]){
+state.playerStats[id]={goals:0,assists:0};
 }
 
-state.playerStats[playerId][stat]++;
+state.playerStats[id][stat]++;
 
 }
 
 function calculateRatings(state){
 
-const ratings = {};
+const ratings={};
 
-for(const playerId in state.playerStats){
+for(const id in state.playerStats){
 
-const stats = state.playerStats[playerId];
+const stats=state.playerStats[id];
 
-let rating = 6.0;
+let rating=6;
 
-rating += stats.goals * 1.5;
-rating += stats.assists * 1;
+rating+=stats.goals*1.5;
+rating+=stats.assists*1;
 
-ratings[playerId] = round(
-Math.min(10, rating + Math.random()*0.8)
-);
+ratings[id]=round(Math.min(10,rating+Math.random()*0.8));
 
 }
 
@@ -584,31 +543,74 @@ return ratings;
 }
 
 
-
-/* ====================================================== */
-/* POSSESSION */
-/* ====================================================== */
+// ======================================================
+// POSSESSION
+// ======================================================
 
 function calculatePossession(state){
 
 const total = state.home.control + state.away.control;
+const home = (state.home.control/total)*100;
 
-const home = total > 0
-? (state.home.control / total) * 100
-: 50;
-
-return {
-home: Math.round(home),
-away: Math.round(100-home)
+return{
+home:Math.round(home),
+away:Math.round(100-home)
 };
 
 }
 
 
+// ======================================================
+// BUILD STATS
+// ======================================================
 
-/* ====================================================== */
-/* UTILS */
-/* ====================================================== */
+function buildStats(state){
+
+return{
+
+shots:{
+home:state.home.shots,
+away:state.away.shots
+},
+
+dribbles:{
+home:state.home.dribbles,
+away:state.away.dribbles
+},
+
+crosses:{
+home:state.home.crosses,
+away:state.away.crosses
+},
+
+longShots:{
+home:state.home.longShots,
+away:state.away.longShots
+},
+
+blocks:{
+home:state.home.blocks,
+away:state.away.blocks
+},
+
+turnovers:{
+home:state.home.turnovers,
+away:state.away.turnovers
+},
+
+cards:{
+home:{yellow:state.home.yellows,red:state.home.reds},
+away:{yellow:state.away.yellows,red:state.away.reds}
+}
+
+};
+
+}
+
+
+// ======================================================
+// UTILS
+// ======================================================
 
 function round(n){
 return Number(n.toFixed(2));

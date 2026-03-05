@@ -1,151 +1,247 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
-export default function MatchDetail() {
-  const { id } = useParams();
+export default function MatchDetail(){
 
-  const [match, setMatch] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+const { id } = useParams();
 
-  useEffect(() => {
-    const loadMatch = async () => {
-      try {
-        const res = await fetch(`/api/match/${id}`);
-        if (!res.ok) throw new Error("Match konnte nicht geladen werden");
+const [match,setMatch] = useState(null);
+const [loading,setLoading] = useState(true);
 
-        const data = await res.json();
-        setMatch(data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
+useEffect(()=>{
 
-    loadMatch();
-  }, [id]);
+const loadMatch = async()=>{
 
-  if (loading)
-    return (
-      <div className="text-center text-white mt-20">
-        Spiel wird geladen...
-      </div>
-    );
+try{
 
-  if (error)
-    return (
-      <div className="text-center text-red-500 mt-20">
-        {error}
-      </div>
-    );
+const res = await fetch(`/api/match/${id}`);
+const data = await res.json();
 
-  if (!match)
-    return (
-      <div className="text-center text-white mt-20">
-        Kein Spiel gefunden
-      </div>
-    );
+setMatch(data);
 
-  return (
-    <div className="max-w-5xl mx-auto p-8 text-white">
+}catch(err){
 
-      {/* ================= HEADER ================= */}
+console.error("Match laden Fehler",err);
 
-      <div className="text-center mb-10">
-        <h1 className="text-3xl font-bold">
-          {match.homeTeam?.name} {match.homeGoals} : {match.awayGoals} {match.awayTeam?.name}
-        </h1>
-
-        <p className="text-gray-400 mt-2">
-          Zuschauer: {match.attendance?.toLocaleString() || 0}
-        </p>
-      </div>
-
-      {/* ================= POSSESSION ================= */}
-
-      <div className="bg-black/40 p-6 rounded-xl mb-8">
-        <h2 className="text-xl font-semibold mb-4">Ballbesitz</h2>
-        <div className="flex justify-between text-lg">
-          <span>{match.possession?.home || 0}%</span>
-          <span>{match.possession?.away || 0}%</span>
-        </div>
-      </div>
-
-      {/* ================= xG ================= */}
-
-      <div className="bg-black/40 p-6 rounded-xl mb-8">
-        <h2 className="text-xl font-semibold mb-4">Expected Goals (xG)</h2>
-        <div className="flex justify-between text-lg">
-          <span>{match.xG?.home?.toFixed(2) || "0.00"}</span>
-          <span>{match.xG?.away?.toFixed(2) || "0.00"}</span>
-        </div>
-      </div>
-
-      {/* ================= STATS ================= */}
-
-      <div className="bg-black/40 p-6 rounded-xl mb-8">
-        <h2 className="text-xl font-semibold mb-4">Statistik</h2>
-
-        <StatRow
-          label="Schüsse"
-          home={match.stats?.shots?.home}
-          away={match.stats?.shots?.away}
-        />
-
-        <StatRow
-          label="Ecken"
-          home={match.stats?.corners?.home}
-          away={match.stats?.corners?.away}
-        />
-
-        <StatRow
-          label="Freistöße"
-          home={match.stats?.freeKicks?.home}
-          away={match.stats?.freeKicks?.away}
-        />
-
-        <StatRow
-          label="Elfmeter"
-          home={match.stats?.penalties?.home}
-          away={match.stats?.penalties?.away}
-        />
-
-        <StatRow
-          label="Gelbe Karten"
-          home={match.stats?.cards?.home?.yellows}
-          away={match.stats?.cards?.away?.yellows}
-        />
-
-        <StatRow
-          label="Rote Karten"
-          home={match.stats?.cards?.home?.reds}
-          away={match.stats?.cards?.away?.reds}
-        />
-      </div>
-
-      {/* ================= MATCH REPORT ================= */}
-
-      {match.summary && (
-        <div className="bg-black/40 p-6 rounded-xl">
-          <h2 className="text-xl font-semibold mb-4">Spielbericht</h2>
-          <p className="text-gray-300 leading-relaxed">
-            {match.summary}
-          </p>
-        </div>
-      )}
-    </div>
-  );
 }
 
-/* ================= STAT ROW COMPONENT ================= */
+setLoading(false);
 
-function StatRow({ label, home, away }) {
-  return (
-    <div className="flex justify-between py-2 border-b border-white/10">
-      <span className="w-1/4 text-left">{home ?? 0}</span>
-      <span className="w-1/2 text-center text-gray-300">{label}</span>
-      <span className="w-1/4 text-right">{away ?? 0}</span>
-    </div>
-  );
+};
+
+loadMatch();
+
+},[id]);
+
+if(loading){
+
+return (
+<div className="p-10 text-white bg-gray-900 min-h-screen">
+Spiel wird geladen...
+</div>
+);
+
+}
+
+if(!match){
+
+return (
+<div className="p-10 text-white bg-gray-900 min-h-screen">
+Spiel nicht gefunden
+</div>
+);
+
+}
+
+const stats = match.stats || {};
+const events = match.events || {};
+
+return(
+
+<div className="min-h-screen bg-gray-900 text-white p-10">
+
+{/* HEADER */}
+
+<div className="text-center mb-10">
+
+<h1 className="text-3xl font-bold mb-2">
+
+{match.homeTeam?.name} 
+
+<span className="mx-4 text-yellow-400 text-4xl font-bold">
+
+{match.homeGoals} : {match.awayGoals}
+
+</span>
+
+{match.awayTeam?.name}
+
+</h1>
+
+<div className="text-gray-400">
+
+xG {match.xG?.home || 0} : {match.xG?.away || 0}
+
+</div>
+
+</div>
+
+{/* STATS */}
+
+<div className="grid grid-cols-3 gap-8 mb-10">
+
+<div className="text-right">
+
+<div>Shots</div>
+<div>Dribbles</div>
+<div>Crosses</div>
+<div>Long Shots</div>
+<div>Blocks</div>
+
+</div>
+
+<div className="text-center font-bold text-yellow-400">
+
+<div>
+{stats.shots?.home || 0} - {stats.shots?.away || 0}
+</div>
+
+<div>
+{stats.dribbles?.home || 0} - {stats.dribbles?.away || 0}
+</div>
+
+<div>
+{stats.crosses?.home || 0} - {stats.crosses?.away || 0}
+</div>
+
+<div>
+{stats.longShots?.home || 0} - {stats.longShots?.away || 0}
+</div>
+
+<div>
+{stats.blocks?.home || 0} - {stats.blocks?.away || 0}
+</div>
+
+</div>
+
+<div className="text-left">
+
+<div>Shots</div>
+<div>Dribbles</div>
+<div>Crosses</div>
+<div>Long Shots</div>
+<div>Blocks</div>
+
+</div>
+
+</div>
+
+{/* TIMELINE */}
+
+<div className="bg-gray-800 rounded-xl p-6">
+
+<h2 className="text-xl font-bold mb-4">
+Match Events
+</h2>
+
+{events.length === 0 && (
+<div className="text-gray-400">
+Keine Events vorhanden
+</div>
+)}
+
+<div className="space-y-2">
+
+{events.map((event,index)=>{
+
+let icon="";
+
+if(event.type === "goal") icon="⚽";
+if(event.type === "save") icon="🧤";
+if(event.type === "yellow_card") icon="🟨";
+if(event.type === "red_card") icon="🟥";
+if(event.type === "injury") icon="🚑";
+
+return(
+
+<div
+key={index}
+className="flex items-center gap-3 border-b border-gray-700 py-2"
+>
+
+<div className="w-10 text-gray-400">
+
+{event.minute}'
+
+</div>
+
+<div>
+
+{icon}
+
+</div>
+
+<div>
+
+{event.scorer || event.player || ""}
+
+</div>
+
+</div>
+
+);
+
+})}
+
+</div>
+
+</div>
+
+{/* PLAYER RATINGS */}
+
+{match.ratings && (
+
+<div className="mt-10 bg-gray-800 p-6 rounded-xl">
+
+<h2 className="text-xl font-bold mb-4">
+
+Player Ratings
+
+</h2>
+
+<div className="grid grid-cols-2 gap-2">
+
+{Object.entries(match.ratings).map(([playerId,rating])=>{
+
+return(
+
+<div
+key={playerId}
+className="flex justify-between border-b border-gray-700 py-1"
+>
+
+<div className="text-gray-300">
+{playerId}
+</div>
+
+<div className="font-bold text-yellow-400">
+{rating}
+</div>
+
+</div>
+
+);
+
+})}
+
+</div>
+
+</div>
+
+)}
+
+</div>
+
+);
+
 }

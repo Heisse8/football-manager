@@ -2,8 +2,6 @@ const mongoose = require("mongoose");
 
 const coachSchema = new mongoose.Schema({
 
-/* ================= BASIS ================= */
-
 firstName:{
 type:String,
 required:true
@@ -15,40 +13,34 @@ required:true
 },
 
 nationality:{
-type:String,
-required:true
+type:String
 },
-
-age:{
-type:Number,
-min:30,
-max:75,
-required:true
-},
-
-/* ================= QUALITÄT ================= */
 
 stars:{
 type:Number,
-min:1,
+min:0.5,
 max:5,
-required:true
+default:2
 },
 
-/* ================= TRAINER PHILOSOPHIE ================= */
-
-philosophy:{
-type:String,
-enum:["ballbesitz","gegenpressing","konter","defensiv"],
-default:"ballbesitz"
-},
-
-preferredFormation:{
+style:{
 type:String,
 enum:[
-"442",
-"4231",
+"possession",
+"gegenpress",
+"counter",
+"defensive",
+"balanced"
+],
+default:"balanced"
+},
+
+favoriteFormation:{
+type:String,
+enum:[
 "433",
+"4231",
+"442",
 "41212",
 "4141",
 "352",
@@ -61,28 +53,34 @@ enum:[
 default:"433"
 },
 
-/* ================= TAKTIK ================= */
-
-tempo:{
-type:String,
-enum:["langsam","kontrolliert","hoch"],
-default:"kontrolliert"
+adaptability:{
+type:Number,
+min:0,
+max:100,
+default:50
 },
 
-pressing:{
-type:String,
-enum:["hoch","mittel","tief"],
-default:"mittel"
+attackBias:{
+type:Number,
+min:0,
+max:100,
+default:50
 },
 
-/* ================= TEAM ================= */
+defenseBias:{
+type:Number,
+min:0,
+max:100,
+default:50
+},
 
-team:{
-type:mongoose.Schema.Types.ObjectId,
-ref:"Team",
-default:null
+substitutionAggression:{
+type:Number,
+min:0,
+max:100,
+default:50
 }
 
 },{timestamps:true});
 
-module.exports = mongoose.model("Coach", coachSchema);
+module.exports = mongoose.model("Coach",coachSchema);
