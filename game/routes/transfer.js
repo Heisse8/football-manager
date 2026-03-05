@@ -1,118 +1,205 @@
 const express = require("express");
-const Team = require("../models/Team");
-const Transfer = require("../models/TransferMarket");
-const { isTransferWindowOpen } = require("../utils/transferWindow");
-const authMiddleware = require("../middleware/authMiddleware");
-
 const router = express.Router();
 
-/* =========================
-   SPIELER AUKTION STARTEN
-========================= */
+const Transfer = require("../models/Transfer");
+const Player = require("../models/Player");
+const Manager = require("../models/Manager");
+const Scout = require("../models/Scout");
+const Team = require("../models/Team");
 
-router.post("/list", authMiddleware, async (req, res) => {
+const auth = require("../middleware/auth");
 
-  if (!isTransferWindowOpen())
-    return res.status(400).json({ message: "Transfermarkt geschlossen" });
+/* =====================================================
+ ITEM AUF TRANSFERMARKT SETZEN
+===================================================== */
 
-  const { playerName, durationHours, startPrice, buyNowPrice } = req.body;
+router.post("/list", auth, async (req,res)=>{
 
-  if (!startPrice)
-    return res.status(400).json({ message: "Startgebot ist Pflicht" });
+try{
 
-  const team = await Team.findById(req.user.team);
-  const player = team.players.find(p => p.name === playerName);
+const { itemId, type, price } = req.body;
 
-  if (!player)
-    return res.status(404).json({ message: "Spieler nicht gefunden" });
-
-  const expiresAt = new Date(Date.now() + durationHours * 60 * 60 * 1000);
-
-  const transfer = await Transfer.create({
-    playerId: player._id.toString(),
-    playerName: player.name,
-    fromTeam: team._id,
-    startPrice,
-    buyNowPrice,
-    highestBid: startPrice,
-    expiresAt
-  });
-
-  res.json({ message: "Auktion gestartet", transfer });
+const team = await Team.findOne({
+owner:req.user.userId
 });
 
-/* =========================
-   ALLE OFFENEN AUKTIONEN
-========================= */
+if(!team){
+return res.status(404).json({
+message:"Team nicht gefunden"
+});
+}
 
-router.get("/", async (req, res) => {
+let item;
 
-  const transfers = await Transfer.find({ status: "open" })
-    .populate("fromTeam highestBidder");
+/* ITEM LADEN */
 
-  const formatted = transfers.map(t => ({
-    id: t._id,
-    player: t.playerName,
-    fromTeam: t.fromTeam.name,
-    startPrice: t.startPrice,
-    highestBid: t.highestBid,
-    highestBidder: t.highestBidder ? t.highestBidder.name : null,
-    expiresAt: t.expiresAt,
-    status: t.status
-  }));
+if(type === "player"){
+item = await Player.findById(itemId);
+}
 
-  res.json(formatted);
+if(type === "manager"){
+item = await Manager.findById(itemId);
+}
+
+if(type === "scout"){
+item = await Scout.findById(itemId);
+}
+
+if(!item){
+return res.status(404).json({
+message:"Item nicht gefunden"
+});
+}
+
+/* BESITZ PRÜFEN */
+
+if(item.team && item.team.toString() !== team._id.toString()){
+
+return res.status(400).json({
+message:"Gehört nicht deinem Team"
 });
 
-/* =========================
-   GEBOT ABGEBEN
-========================= */
+}
 
-router.post("/bid/:id", authMiddleware, async (req, res) => {
+/* AUKTIONSENDE */
 
-  if (!isTransferWindowOpen())
-    return res.status(400).json({ message: "Transfermarkt geschlossen" });
+const end = new Date();
+end.setHours(end.getHours() + 24);
 
-  const { amount } = req.body;
+/* TRANSFER ERSTELLEN */
 
-  const transfer = await Transfer.findById(req.params.id);
+const transfer = await Transfer.create({
 
-  if (!transfer || transfer.status !== "open")
-    return res.status(400).json({ message: "Auktion nicht verfügbar" });
+type,
+item:item._id,
 
-  if (new Date() > transfer.expiresAt)
-    return res.status(400).json({ message: "Auktion abgelaufen" });
+seller:team._id,
 
-  if (amount <= transfer.highestBid)
-    return res.status(400).json({ message: "Gebot muss höher als aktuelles Höchstgebot sein" });
+startPrice:price,
+currentBid:price,
 
-  const bidder = await Team.findById(req.user.team);
+status:"active",
 
-  if (bidder.budget < amount)
-    return res.status(400).json({ message: "Nicht genug Budget" });
+expiresAt:end
 
-  transfer.highestBid = amount;
-  transfer.highestBidder = bidder._id;
+});
 
-  transfer.bids.push({
-    team: bidder._id,
-    amount
-  });
+res.json(transfer);
 
-  // 🔥 Verlängerung bei Gebot < 60 Sekunden vor Ende
-  const timeLeft = transfer.expiresAt - new Date();
-  if (timeLeft < 60000) {
-    transfer.expiresAt = new Date(Date.now() + 60000);
-  }
+}catch(err){
 
-  // Sofortkauf
-  if (transfer.buyNowPrice && amount >= transfer.buyNowPrice) {
-    transfer.expiresAt = new Date();
-  }
+console.error(err);
 
-  await transfer.save();
+res.status(500).json({
+message:"Serverfehler"
+});
 
-  res.json({ message: "Gebot erfolgreich", highestBid: transfer.highestBid });
+}
+
+});
+
+/* =====================================================
+ GEBOT ABGEBEN
+===================================================== */
+
+router.post("/bid", auth, async (req,res)=>{
+
+try{
+
+const { transferId, amount } = req.body;
+
+const team = await Team.findOne({
+owner:req.user.userId
+});
+
+if(!team){
+return res.status(404).json({
+message:"Team nicht gefunden"
+});
+}
+
+const transfer = await Transfer.findById(transferId);
+
+if(!transfer || transfer.status !== "active"){
+
+return res.status(400).json({
+message:"Transfer beendet"
+});
+
+}
+
+/* MINDESTGEBOT */
+
+if(amount <= transfer.currentBid){
+
+return res.status(400).json({
+message:"Gebot zu niedrig"
+});
+
+}
+
+/* GELD PRÜFEN */
+
+if(team.balance < amount){
+
+return res.status(400).json({
+message:"Nicht genug Geld"
+});
+
+}
+
+/* GEBOT SETZEN */
+
+transfer.currentBid = amount;
+transfer.highestBidder = team._id;
+
+await transfer.save();
+
+res.json({
+success:true
+});
+
+}catch(err){
+
+console.error(err);
+
+res.status(500).json({
+message:"Serverfehler"
+});
+
+}
+
+});
+
+/* =====================================================
+ TRANSFERS NACH KATEGORIE
+===================================================== */
+
+router.get("/:type", async (req,res)=>{
+
+try{
+
+const { type } = req.params;
+
+const transfers = await Transfer.find({
+
+type,
+status:"active"
+
+}).populate("item");
+
+res.json(transfers);
+
+}catch(err){
+
+console.error(err);
+
+res.status(500).json({
+message:"Serverfehler"
+});
+
+}
+
 });
 
 module.exports = router;

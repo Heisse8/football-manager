@@ -1,36 +1,95 @@
+require("dotenv").config();
+
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const path = require("path");
-require("dotenv").config();
+
+/* ================= ROUTES ================= */
+
+const authRoutes = require("./routes/auth");
+const teamRoutes = require("./routes/team");
+const playerRoutes = require("./routes/player");
+const managerRoutes = require("./routes/manager");
+const matchRoutes = require("./routes/match");
+const leagueRoutes = require("./routes/league");
+const newsRoutes = require("./routes/news");
+const transferRoutes = require("./routes/transfer");
+
+/* ================= SYSTEM ================= */
+
+const { initializeSeason } = require("./utils/seasonInitializer");
+const { startScheduler } = require("./utils/scheduler");
+
+/* ================= APP ================= */
 
 const app = express();
 
+/* ================= MIDDLEWARE ================= */
+
 app.use(cors());
+
 app.use(express.json());
 
-/* ===== API ROUTES ===== */
-app.use("/api/auth", require("./routes/auth"));   // ✅ FEHLTE
-app.use("/api/team", require("./routes/team"));
-app.use("/api/match", require("./routes/match"));
-app.use("/api/player", require("./routes/player"));
-app.use("/api/season", require("./routes/season"));
-app.use("/api/news", require("./routes/news"));
-app.use("/api/manager", require("./routes/manager"));
+app.use(express.urlencoded({ extended: true }));
 
-/* ===== React Build ===== */
-app.use(express.static(path.join(__dirname, "../client/dist")));
+/* ================= API ROUTES ================= */
 
-app.use((req, res) => {
-  res.sendFile(path.join(__dirname, "../client/dist/index.html"));
+app.use("/api/auth", authRoutes);
+app.use("/api/team", teamRoutes);
+app.use("/api/player", playerRoutes);
+app.use("/api/manager", managerRoutes);
+app.use("/api/match", matchRoutes);
+app.use("/api/league", leagueRoutes);
+app.use("/api/news", newsRoutes);
+app.use("/api/transfer", transferRoutes);
+
+/* ================= FRONTEND BUILD ================= */
+
+const clientBuildPath = path.join(__dirname, "../client/dist");
+
+app.use(express.static(clientBuildPath));
+
+app.get("*", (req, res) => {
+res.sendFile(path.join(clientBuildPath, "index.html"));
 });
 
-// MongoDB
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("MongoDB verbunden"))
-  .catch(err => console.error("MongoDB Fehler:", err));
+/* ================= DATABASE ================= */
+
+async function startServer() {
+
+try {
+
+await mongoose.connect(process.env.MONGO_URI);
+
+console.log("MongoDB verbunden");
+
+/* ================= SEASON INIT ================= */
+
+await initializeSeason();
+
+/* ================= SCHEDULER ================= */
+
+startScheduler();
+
+console.log("Scheduler gestartet");
+
+/* ================= SERVER START ================= */
 
 const PORT = process.env.PORT || 5000;
+
 app.listen(PORT, () => {
-  console.log(`Server läuft auf Port ${PORT}`);
+
+console.log("Server läuft auf Port", PORT);
+
 });
+
+} catch (err) {
+
+console.error("Server Start Fehler:", err);
+
+}
+
+}
+
+startServer();

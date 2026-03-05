@@ -2,7 +2,9 @@ const mongoose = require("mongoose");
 
 const teamSchema = new mongoose.Schema({
 
-/* ================= BASIS ================= */
+/* =====================================================
+BASIS
+===================================================== */
 
 name: {
 type: String,
@@ -29,9 +31,39 @@ required: true
 owner: {
 type: mongoose.Schema.Types.ObjectId,
 ref: "User",
-required: true,
-unique: true
+default: null
 },
+
+/* =====================================================
+BOT SYSTEM
+===================================================== */
+
+isBot: {
+type: Boolean,
+default: false
+},
+
+/* =====================================================
+TRAINER SYSTEM
+===================================================== */
+
+coach: {
+type: mongoose.Schema.Types.ObjectId,
+ref: "Coach",
+default: null
+},
+
+/* Optional für spätere Erweiterung */
+
+assistantCoach: {
+type: mongoose.Schema.Types.ObjectId,
+ref: "Coach",
+default: null
+},
+
+/* =====================================================
+CLUB IDENTITY
+===================================================== */
 
 clubIdentity: {
 type: String,
@@ -39,7 +71,9 @@ enum: ["love", "commercial"],
 default: "love"
 },
 
-/* ================= FAN SYSTEM ================= */
+/* =====================================================
+FANS & HOME ADVANTAGE
+===================================================== */
 
 fanBase: {
 type: Number,
@@ -51,67 +85,93 @@ type: Number,
 default: 1
 },
 
-/* ================= TAKTIK ================= */
+/* =====================================================
+TAKTIK (Trainer beeinflusst diese später)
+===================================================== */
 
 tactics: {
 
 playStyle: {
 type: String,
-enum: ["ballbesitz", "konter", "gegenpressing", "mauern"],
+enum: ["ballbesitz","konter","gegenpressing","mauern"],
 default: "ballbesitz"
 },
 
 pressing: {
 type: String,
-enum: ["sehr_hoch", "hoch", "mittel", "low_block"],
+enum: ["sehr_hoch","hoch","mittel","low_block"],
 default: "mittel"
 },
 
 defensiveLine: {
 type: String,
-enum: ["hoch", "mittel", "tief"],
+enum: ["hoch","mittel","tief"],
 default: "mittel"
 },
 
 passingStyle: {
 type: String,
-enum: ["kurz", "variabel", "lang"],
+enum: ["kurz","variabel","lang"],
 default: "variabel"
 },
 
 tempo: {
 type: String,
-enum: ["langsam", "kontrolliert", "hoch", "sehr_hoch"],
+enum: ["langsam","kontrolliert","hoch","sehr_hoch"],
 default: "kontrolliert"
 },
 
 width: {
 type: String,
-enum: ["sehr_eng", "eng", "normal", "breit"],
+enum: ["sehr_eng","eng","normal","breit"],
 default: "normal"
 },
 
 transitionAfterWin: {
 type: String,
-enum: ["vertikal", "kontrolliert", "fluegel"],
+enum: ["vertikal","kontrolliert","fluegel"],
 default: "kontrolliert"
 },
 
 transitionAfterLoss: {
 type: String,
-enum: ["gegenpressing", "mittelfeldpressing", "rueckzug"],
+enum: ["gegenpressing","mittelfeldpressing","rueckzug"],
 default: "mittelfeldpressing"
 },
 
 mentality: {
 type: String,
-enum: ["defensiv", "ausgewogen", "offensiv", "sehr_offensiv"],
+enum: ["defensiv","ausgewogen","offensiv","sehr_offensiv"],
 default: "ausgewogen"
 }
 
 },
 
-/* ================= AUFSTELLUNG ================= */
+/* =====================================================
+FORMATION SYSTEM
+===================================================== */
+
+formation: {
+type: String,
+enum: [
+"442",
+"4231",
+"433",
+"41212",
+"4141",
+"352",
+"343",
+"3421",
+"532",
+"541",
+"5212"
+],
+default: "442"
+},
+
+/* =====================================================
+LINEUP (Trainer erstellt automatisch)
+===================================================== */
 
 lineup: {
 type: Object,
@@ -124,12 +184,9 @@ ref: "Player",
 default: []
 },
 
-formation: {
-type: String,
-default: "4-4-2"
-},
-
-/* ================= LINEUP LOCK SYSTEM ================= */
+/* =====================================================
+LINEUP LOCK SYSTEM
+===================================================== */
 
 lineupLocked: {
 type: Boolean,
@@ -147,26 +204,60 @@ ref: "Player",
 default: []
 },
 
-/* ================= TABELLENWERTE ================= */
+/* =====================================================
+MATCHDAY SYSTEM
+===================================================== */
+
+currentMatchday: {
+type: Number,
+default: 1
+},
+
+/* =====================================================
+TEAM STRENGTH (MatchEngine Basis)
+===================================================== */
+
+attackStrength: {
+type: Number,
+default: 50
+},
+
+defenseStrength: {
+type: Number,
+default: 50
+},
+
+possessionSkill: {
+type: Number,
+default: 50
+},
+
+/* =====================================================
+TABELLE
+===================================================== */
 
 points: { type: Number, default: 0 },
+
 wins: { type: Number, default: 0 },
 draws: { type: Number, default: 0 },
 losses: { type: Number, default: 0 },
 
 goalsFor: { type: Number, default: 0 },
 goalsAgainst: { type: Number, default: 0 },
+
 goalDifference: { type: Number, default: 0 },
 
 tablePosition: { type: Number, default: 0 },
 
-/* ================= FINANZEN ================= */
+/* =====================================================
+FINANZEN
+===================================================== */
 
 balance: {
 type: Number,
 default: 1000000
 }
 
-}, { timestamps: true });
+},{ timestamps:true });
 
 module.exports = mongoose.model("Team", teamSchema);

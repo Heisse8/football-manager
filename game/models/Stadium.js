@@ -2,71 +2,32 @@ const mongoose = require("mongoose");
 
 const stadiumSchema = new mongoose.Schema({
 
-  // ================= TEAM =================
-  team: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Team",
-    required: true,
-    unique: true
-  },
+team:{
+type:mongoose.Schema.Types.ObjectId,
+ref:"Team",
+required:true
+},
 
-  // ================= STADIONNAME =================
-  name: {
-    type: String,
-    default: null,
-    maxlength: 30
-  },
+capacity:{
+type:Number,
+default:10000
+},
 
-  nameLocked: {
-    type: Boolean,
-    default: false
-  },
+ticketPrice:{
+type:Number,
+default:15
+},
 
-  // ================= BASISDATEN =================
-  capacity: {
-    type: Number,
-    default: 2000,
-    min: 2000
-  },
+fanComfort:{
+type:Number,
+default:1
+},
 
-  ticketPrice: {
-    type: Number,
-    default: 15,
-    min: 5,
-    max: 100
-  },
+atmosphere:{
+type:Number,
+default:1
+}
 
-  // ================= LETZTES HEIMSPIEL =================
-  lastAttendance: {
-    type: Number,
-    default: 0
-  },
-
-  lastRevenue: {
-    type: Number,
-    default: 0
-  },
-
-  // ================= BAU (ECHTZEIT) =================
-  construction: {
-    inProgress: {
-      type: Boolean,
-      default: false
-    },
-    targetCapacity: {
-      type: Number,
-      default: null
-    },
-    startDate: {
-      type: Date,
-      default: null
-    },
-    finishDate: {
-      type: Date,
-      default: null
-    }
-  }
-
-}, { timestamps: true });
+},{timestamps:true});
 
 module.exports = mongoose.model("Stadium", stadiumSchema);
