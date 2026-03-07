@@ -10,12 +10,9 @@ const [team, setTeam] = useState(null);
 const [league, setLeague] = useState([]);
 const [news, setNews] = useState([]);
 const [nextMatch, setNextMatch] = useState(null);
-
 const [loading, setLoading] = useState(true);
 
-/* =====================================================
-LOAD DATA
-===================================================== */
+/* ================= LOAD DATA ================= */
 
 useEffect(() => {
 
@@ -88,21 +85,19 @@ fetchData();
 
 }, [navigate]);
 
-/* =====================================================
-LOADING
-===================================================== */
+/* ================= LOADING ================= */
 
 if (loading) {
+
 return (
 <div className="p-10 text-white animate-pulse">
 Dashboard lädt...
 </div>
 );
+
 }
 
-/* =====================================================
-TABLE SORT
-===================================================== */
+/* ================= SORT TABLE ================= */
 
 const sortedLeague = [...league].sort((a, b) => {
 
@@ -115,20 +110,14 @@ return diffB - diffA;
 
 });
 
-/* =====================================================
-RENDER
-===================================================== */
+/* ================= RENDER ================= */
 
 return (
 
-<div className="relative min-h-screen text-white">
-
-{/* Background */}
-
 <div
-className="absolute inset-0 bg-cover bg-center"
+className="relative min-h-screen text-white bg-cover bg-center"
 style={{ backgroundImage: `url(${bgImage})` }}
-></div>
+>
 
 <div className="absolute inset-0 bg-black/80"></div>
 
@@ -160,11 +149,11 @@ style={{ backgroundImage: `url(${bgImage})` }}
 Tabelle
 </h2>
 
-{sortedLeague.slice(0, 10).map((club, i) => {
+{sortedLeague.slice(0,10).map((club,i)=>{
 
-const isMine = team ? club._id === team._id : false;
+const isMine = team && club._id === team._id;
 
-return (
+return(
 
 <div
 key={club._id}
@@ -175,8 +164,7 @@ isMine
 }`}
 >
 
-<span>{i + 1}. {club.name}</span>
-
+<span>{i+1}. {club.name}</span>
 <span>{club.points}</span>
 
 </div>
@@ -195,7 +183,7 @@ isMine
 Manager News
 </h2>
 
-{news.slice(0, 5).map((n) => (
+{news.slice(0,5).map((n)=>(
 <div key={n._id} className="bg-black/30 p-4 rounded mb-3">
 
 <div className="font-semibold">
@@ -246,8 +234,6 @@ Kein Spiel geplant
 </div>
 
 )}
-
-</div>
 
 </div>
 
