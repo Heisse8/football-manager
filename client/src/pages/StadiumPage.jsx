@@ -6,7 +6,7 @@ const [stadium,setStadium] = useState(null);
 const [loading,setLoading] = useState(true);
 
 const [newName,setNewName] = useState("");
-const [ticketPrice,setTicketPrice] = useState("");
+const [ticketPrice,setTicketPrice] = useState(15);
 
 /* =====================================================
 LOAD STADIUM
@@ -51,6 +51,8 @@ SET NAME
 
 const setName = async ()=>{
 
+if(!newName.trim()) return;
+
 try{
 
 const token = localStorage.getItem("token");
@@ -63,6 +65,8 @@ Authorization:`Bearer ${token}`
 },
 body:JSON.stringify({name:newName})
 });
+
+setNewName("");
 
 loadStadium();
 
@@ -129,15 +133,43 @@ console.error(err);
 };
 
 /* =====================================================
+ATTENDANCE CALCULATION
+===================================================== */
+
+function calculateAttendance(){
+
+if(!stadium) return 0;
+
+let demand = (stadium.fanBase || 1) * 1000;
+
+let priceFactor = 1 - (ticketPrice / 120);
+
+let attendance = demand * priceFactor;
+
+attendance = Math.max(500, attendance);
+
+return Math.min(stadium.capacity, Math.round(attendance));
+
+}
+
+const attendance = calculateAttendance();
+
+const utilization = stadium
+? Math.round((attendance / stadium.capacity) * 100)
+: 0;
+
+/* =====================================================
 LOADING
 ===================================================== */
 
 if(loading){
+
 return(
 <div className="p-10 text-white">
 Stadion lädt...
 </div>
 );
+
 }
 
 if(!stadium) return null;
@@ -201,7 +233,7 @@ Stadionname ändern
 Der Stadionname wurde bereits geändert.
 </p>
 
-):( 
+):(
 
 <div className="flex gap-2">
 
@@ -233,23 +265,45 @@ className="bg-blue-600 px-4 py-2 rounded hover:bg-blue-500"
 Ticketpreis
 </h2>
 
-<div className="flex gap-2">
-
 <input
-type="number"
+type="range"
+min="5"
+max="100"
 value={ticketPrice}
-onChange={(e)=>setTicketPrice(e.target.value)}
-className="bg-gray-800 px-3 py-2 rounded w-full"
+onChange={(e)=>setTicketPrice(Number(e.target.value))}
+className="w-full"
 />
+
+<div className="flex justify-between text-sm mt-2">
+
+<span>5€</span>
+<span>{ticketPrice} €</span>
+<span>100€</span>
+
+</div>
+
+<div className="mt-3 text-sm space-y-1">
+
+<div className="flex justify-between">
+<span>Geschätzte Zuschauer</span>
+<span>
+{attendance.toLocaleString()} / {stadium.capacity.toLocaleString()}
+</span>
+</div>
+
+<div className="flex justify-between">
+<span>Auslastung</span>
+<span>{utilization}%</span>
+</div>
+
+</div>
 
 <button
 onClick={updateTicketPrice}
-className="bg-green-600 px-4 py-2 rounded hover:bg-green-500"
+className="bg-green-600 px-4 py-2 rounded hover:bg-green-500 mt-4 w-full"
 >
-Speichern
+Ticketpreis speichern
 </button>
-
-</div>
 
 </div>
 
@@ -282,15 +336,17 @@ style={{width:`${stadium.progress}%`}}
 
 Restzeit:
 
-{stadium.remainingTime?.weeks}w  
-{stadium.remainingTime?.days}d  
+{stadium.remainingTime?.weeks}w
+{" "}
+{stadium.remainingTime?.days}d
+{" "}
 {stadium.remainingTime?.hours}h
 
 </div>
 
 </div>
 
-):( 
+):(
 
 <div>
 
@@ -298,7 +354,7 @@ Restzeit:
 
 <>
 
-<div className="text-sm mb-3">
+<div className="text-sm mb-4 space-y-1">
 
 <div>
 Neue Kapazität: {stadium.nextExpansion.next.toLocaleString()}
@@ -316,7 +372,7 @@ Dauer: {stadium.nextExpansion.duration} Spieltage
 
 <button
 onClick={startExpansion}
-className="bg-green-600 hover:bg-green-500 px-4 py-2 rounded"
+className="bg-green-600 hover:bg-green-500 px-4 py-2 rounded w-full"
 >
 Stadion ausbauen
 </button>

@@ -86,16 +86,17 @@ res.json({
 
 ...stadium.toObject(),
 
+fanBase: team.fanBase,
+
 progress,
 remainingTime,
-
 nextExpansion
 
 });
 
 }catch(err){
 
-console.error(err);
+console.error("Get Stadium Fehler:",err);
 
 res.status(500).json({
 message:"Serverfehler"
@@ -115,10 +116,10 @@ try{
 
 const { name } = req.body;
 
-if(!name || name.length>30){
+if(!name || name.trim().length < 3 || name.length>30){
 
 return res.status(400).json({
-message:"Ungültiger Name"
+message:"Ungültiger Stadionname"
 });
 
 }
@@ -130,6 +131,12 @@ owner:req.user.userId
 const stadium = await Stadium.findOne({
 team:team._id
 });
+
+if(!stadium){
+return res.status(404).json({
+message:"Stadion nicht gefunden"
+});
+}
 
 if(stadium.nameLocked){
 
@@ -148,7 +155,7 @@ res.json(stadium);
 
 }catch(err){
 
-console.error(err);
+console.error("Set Stadium Name Fehler:",err);
 
 res.status(500).json({
 message:"Serverfehler"
@@ -184,6 +191,12 @@ const stadium = await Stadium.findOne({
 team:team._id
 });
 
+if(!stadium){
+return res.status(404).json({
+message:"Stadion nicht gefunden"
+});
+}
+
 stadium.ticketPrice = price;
 
 await stadium.save();
@@ -192,7 +205,7 @@ res.json(stadium);
 
 }catch(err){
 
-console.error(err);
+console.error("Ticketpreis Fehler:",err);
 
 res.status(500).json({
 message:"Serverfehler"
@@ -218,7 +231,13 @@ const stadium = await Stadium.findOne({
 team:team._id
 });
 
-if(stadium.construction.inProgress){
+if(!stadium){
+return res.status(404).json({
+message:"Stadion nicht gefunden"
+});
+}
+
+if(stadium.construction?.inProgress){
 
 return res.status(400).json({
 message:"Stadion wird bereits ausgebaut"
@@ -247,7 +266,6 @@ message:"Nicht genug Geld"
 /* ================= GELD ABZIEHEN ================= */
 
 team.balance -= config.cost;
-
 await team.save();
 
 /* ================= BAUZEIT ================= */
@@ -276,13 +294,15 @@ await stadium.save();
 res.json({
 
 success:true,
-stadium
+targetCapacity:config.next,
+cost:config.cost,
+duration:config.duration
 
 });
 
 }catch(err){
 
-console.error(err);
+console.error("Stadium Expand Fehler:",err);
 
 res.status(500).json({
 message:"Serverfehler"
@@ -332,7 +352,7 @@ res.json(stadium);
 
 }catch(err){
 
-console.error(err);
+console.error("Check Construction Fehler:",err);
 
 res.status(500).json({
 message:"Serverfehler"
