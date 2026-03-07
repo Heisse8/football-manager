@@ -169,11 +169,10 @@ const navLinks = [
 
 { path: "/", label: "Dashboard" },
 { path: "/team", label: "Team" },
-{ path: "/kalender", label: "Kalender" },
-{ path: "/training", label: "Training" },
 { path: "/transfermarkt", label: "Transfermarkt" },
-{ path: "/finanzen", label: "Finanzen" },
-{ path: "/stadium", label: "Stadion" }
+{ path: "/kalender", label: "Kalender" },
+{ path: "/stadium", label: "Stadion" },
+{ path: "/finanzen", label: "Finanzen" }
 
 ];
 
@@ -196,9 +195,7 @@ return (
 <div className="text-xs text-gray-400 flex gap-4">
 
 <span>💰 € {formatMoney(team?.balance)}</span>
-
 <span>👥 Fans: {team?.fanBase || 0}</span>
-
 <span>🏆 {team?.league}</span>
 
 </div>
