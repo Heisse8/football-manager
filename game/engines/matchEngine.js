@@ -50,8 +50,18 @@ league:match.league
 
 }
 
-if(homeTeam && homeTeam._id){
-await generateMatchRevenue(homeTeam._id);
+if (homeTeam) {
+
+const { attendance, revenue } = generateMatchRevenue(homeTeam);
+
+homeTeam.balance += revenue;
+homeTeam.lastMatchRevenue = revenue;
+homeTeam.lastAttendance = attendance;
+
+if (homeTeam.save) {
+await homeTeam.save();
+}
+
 }
 
 return{

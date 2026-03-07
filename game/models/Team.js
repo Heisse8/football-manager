@@ -70,6 +70,30 @@ default:"love"
 },
 
 /* =====================================================
+STADIUM SYSTEM
+===================================================== */
+
+stadiumName:{
+type:String,
+default:"Vereinsstadion"
+},
+
+stadiumCapacity:{
+type:Number,
+default:12000
+},
+
+ticketPrice:{
+type:Number,
+default:8
+},
+
+stadiumLevel:{
+type:Number,
+default:1
+},
+
+/* =====================================================
 FANS & HOME ADVANTAGE
 ===================================================== */
 
@@ -243,7 +267,7 @@ default:50
 },
 
 /* =====================================================
-TEAM DYNAMICS (für spätere Features)
+TEAM DYNAMICS
 ===================================================== */
 
 teamChemistry:{

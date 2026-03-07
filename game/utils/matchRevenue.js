@@ -1,27 +1,16 @@
-const Stadium = require("../models/Stadium");
-const Team = require("../models/Team");
-const { calculateAttendance } = require("./stadiumAttendance");
+const { calculateAttendance } = require("./attendanceCalculator");
 
-async function generateMatchRevenue(homeTeamId){
+function calculateMatchRevenue(team, importance = "normal") {
 
-const stadium = await Stadium.findOne({ team:homeTeamId });
-const team = await Team.findById(homeTeamId);
+const attendance = calculateAttendance(team, importance);
 
-if(!stadium || !team) return;
+const revenue = attendance * team.ticketPrice;
 
-const attendance = await calculateAttendance(homeTeamId);
-
-const revenue = attendance * stadium.ticketPrice;
-
-team.balance += revenue;
-
-await team.save();
-
-console.log(
-"🏟 Zuschauer:", attendance,
-"| Einnahmen:", revenue
-);
+return {
+attendance,
+revenue
+};
 
 }
 
-module.exports = { generateMatchRevenue };
+module.exports = { calculateMatchRevenue };
