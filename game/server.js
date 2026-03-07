@@ -34,6 +34,7 @@ const managerRoutes = require("./routes/manager");
 const stadiumRoutes = require("./routes/stadium");
 const newsRoutes = require("./routes/news");
 const leagueRoutes = require("./routes/league");
+const notificationRoutes = require("./routes/notifications");
 
 /* =====================================================
 API ROUTES
@@ -48,6 +49,7 @@ app.use("/api/manager", managerRoutes);
 app.use("/api/stadium", stadiumRoutes);
 app.use("/api/news", newsRoutes);
 app.use("/api/league", leagueRoutes); 
+app.use("/api/notifications", notificationRoutes);
 
 /* =====================================================
 FRONTEND (VITE BUILD)
@@ -57,7 +59,7 @@ const clientPath = path.join(__dirname, "../client/dist");
 
 app.use(express.static(clientPath));
 
-app.get("*", (req,res)=>{
+app.use((req,res)=>{
 res.sendFile(path.join(clientPath,"index.html"));
 });
 
