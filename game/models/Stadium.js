@@ -13,6 +13,16 @@ type:Number,
 default:10000
 },
 
+name:{
+type:String,
+default:"Vereinsstadion"
+},
+
+nameChanged:{
+type:Boolean,
+default:false
+},
+
 ticketPrice:{
 type:Number,
 default:15
@@ -27,6 +37,8 @@ atmosphere:{
 type:Number,
 default:1
 }
+
+
 
 },{timestamps:true});
 

@@ -1,19 +1,30 @@
 import { useEffect, useState } from "react";
 
-export default function Stadium() {
+export default function Stadium(){
 
-const [team,setTeam] = useState(null);
+const [stadium,setStadium] = useState(null);
 const [loading,setLoading] = useState(true);
+
+const [newName,setNewName] = useState("");
+const [ticketPrice,setTicketPrice] = useState("");
+
+/* =====================================================
+LOAD STADIUM
+===================================================== */
 
 useEffect(()=>{
 
-const load = async ()=>{
+loadStadium();
+
+},[]);
+
+const loadStadium = async ()=>{
 
 try{
 
 const token = localStorage.getItem("token");
 
-const res = await fetch("/api/team",{
+const res = await fetch("/api/stadium",{
 headers:{Authorization:`Bearer ${token}`}
 });
 
@@ -21,19 +32,105 @@ if(!res.ok) return;
 
 const data = await res.json();
 
-setTeam(data);
+setStadium(data);
+setTicketPrice(data.ticketPrice);
 
 }catch(err){
+
 console.error(err);
+
 }
 
 setLoading(false);
 
 };
 
-load();
+/* =====================================================
+SET NAME
+===================================================== */
 
-},[]);
+const setName = async ()=>{
+
+try{
+
+const token = localStorage.getItem("token");
+
+await fetch("/api/stadium/set-name",{
+method:"PUT",
+headers:{
+"Content-Type":"application/json",
+Authorization:`Bearer ${token}`
+},
+body:JSON.stringify({name:newName})
+});
+
+loadStadium();
+
+}catch(err){
+
+console.error(err);
+
+}
+
+};
+
+/* =====================================================
+SET TICKET PRICE
+===================================================== */
+
+const updateTicketPrice = async ()=>{
+
+try{
+
+const token = localStorage.getItem("token");
+
+await fetch("/api/stadium/ticket-price",{
+method:"PUT",
+headers:{
+"Content-Type":"application/json",
+Authorization:`Bearer ${token}`
+},
+body:JSON.stringify({price:Number(ticketPrice)})
+});
+
+loadStadium();
+
+}catch(err){
+
+console.error(err);
+
+}
+
+};
+
+/* =====================================================
+START EXPANSION
+===================================================== */
+
+const startExpansion = async ()=>{
+
+try{
+
+const token = localStorage.getItem("token");
+
+await fetch("/api/stadium/expand",{
+method:"POST",
+headers:{Authorization:`Bearer ${token}`}
+});
+
+loadStadium();
+
+}catch(err){
+
+console.error(err);
+
+}
+
+};
+
+/* =====================================================
+LOADING
+===================================================== */
 
 if(loading){
 return(
@@ -43,7 +140,11 @@ Stadion lädt...
 );
 }
 
-if(!team) return null;
+if(!stadium) return null;
+
+/* =====================================================
+RENDER
+===================================================== */
 
 return(
 
@@ -55,40 +156,30 @@ return(
 
 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-{/* STADIUM INFO */}
+{/* ================= STADIUM INFO ================= */}
 
 <div className="bg-black/50 p-6 rounded-xl">
 
 <h2 className="text-xl font-semibold mb-4">
-{team.stadiumName}
+{stadium.name}
 </h2>
 
 <div className="space-y-2 text-sm">
 
 <div className="flex justify-between">
-<span>Stadionlevel</span>
-<span>{team.stadiumLevel}</span>
-</div>
-
-<div className="flex justify-between">
 <span>Kapazität</span>
-<span>{team.stadiumCapacity?.toLocaleString()}</span>
+<span>{stadium.capacity?.toLocaleString()}</span>
 </div>
 
 <div className="flex justify-between">
 <span>Ticketpreis</span>
-<span>{team.ticketPrice} €</span>
-</div>
-
-<div className="flex justify-between">
-<span>Fans</span>
-<span>{team.fanBase?.toLocaleString()}</span>
+<span>{stadium.ticketPrice} €</span>
 </div>
 
 <div className="flex justify-between">
 <span>Einnahmen letztes Spiel</span>
 <span className="text-yellow-400">
-€ {team.lastMatchRevenue?.toLocaleString()}
+€ {stadium.lastMatchRevenue?.toLocaleString()}
 </span>
 </div>
 
@@ -96,7 +187,73 @@ return(
 
 </div>
 
-{/* STADIUM UPGRADE */}
+{/* ================= NAME CHANGE ================= */}
+
+<div className="bg-black/50 p-6 rounded-xl">
+
+<h2 className="text-xl font-semibold mb-4">
+Stadionname ändern
+</h2>
+
+{stadium.nameLocked ? (
+
+<p className="text-gray-400 text-sm">
+Der Stadionname wurde bereits geändert.
+</p>
+
+):( 
+
+<div className="flex gap-2">
+
+<input
+value={newName}
+onChange={(e)=>setNewName(e.target.value)}
+placeholder="Neuer Stadionname"
+className="bg-gray-800 px-3 py-2 rounded w-full"
+/>
+
+<button
+onClick={setName}
+className="bg-blue-600 px-4 py-2 rounded hover:bg-blue-500"
+>
+Ändern
+</button>
+
+</div>
+
+)}
+
+</div>
+
+{/* ================= TICKET PRICE ================= */}
+
+<div className="bg-black/50 p-6 rounded-xl">
+
+<h2 className="text-xl font-semibold mb-4">
+Ticketpreis
+</h2>
+
+<div className="flex gap-2">
+
+<input
+type="number"
+value={ticketPrice}
+onChange={(e)=>setTicketPrice(e.target.value)}
+className="bg-gray-800 px-3 py-2 rounded w-full"
+/>
+
+<button
+onClick={updateTicketPrice}
+className="bg-green-600 px-4 py-2 rounded hover:bg-green-500"
+>
+Speichern
+</button>
+
+</div>
+
+</div>
+
+{/* ================= STADIUM EXPANSION ================= */}
 
 <div className="bg-black/50 p-6 rounded-xl">
 
@@ -104,15 +261,79 @@ return(
 Stadion Ausbau
 </h2>
 
-<p className="text-sm text-gray-400 mb-4">
-Baue dein Stadion aus um mehr Zuschauer und Einnahmen zu erhalten.
-</p>
+{stadium.construction?.inProgress ? (
+
+<div>
+
+<div className="mb-3">
+Ausbau läuft...
+</div>
+
+<div className="w-full bg-gray-700 h-4 rounded">
+
+<div
+className="bg-green-500 h-4 rounded"
+style={{width:`${stadium.progress}%`}}
+></div>
+
+</div>
+
+<div className="text-sm text-gray-400 mt-2">
+
+Restzeit:
+
+{stadium.remainingTime?.weeks}w  
+{stadium.remainingTime?.days}d  
+{stadium.remainingTime?.hours}h
+
+</div>
+
+</div>
+
+):( 
+
+<div>
+
+{stadium.nextExpansion ? (
+
+<>
+
+<div className="text-sm mb-3">
+
+<div>
+Neue Kapazität: {stadium.nextExpansion.next.toLocaleString()}
+</div>
+
+<div>
+Kosten: € {stadium.nextExpansion.cost.toLocaleString()}
+</div>
+
+<div>
+Dauer: {stadium.nextExpansion.duration} Spieltage
+</div>
+
+</div>
 
 <button
+onClick={startExpansion}
 className="bg-green-600 hover:bg-green-500 px-4 py-2 rounded"
 >
 Stadion ausbauen
 </button>
+
+</>
+
+):(
+
+<div className="text-gray-400">
+Maximale Stadiongröße erreicht
+</div>
+
+)}
+
+</div>
+
+)}
 
 </div>
 
