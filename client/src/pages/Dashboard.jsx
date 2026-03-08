@@ -30,9 +30,7 @@ return;
 }
 
 const res = await fetch("/api/dashboard",{
-headers:{
-Authorization:`Bearer ${token}`
-}
+headers:{ Authorization:`Bearer ${token}` }
 });
 
 if(res.status === 404){
@@ -50,9 +48,7 @@ setNextMatch2(data.nextMatch2 || null);
 setTopScorers(data.topScorers || []);
 
 }catch(err){
-
 console.error("Dashboard Fehler:",err);
-
 }
 
 setLoading(false);
@@ -66,13 +62,11 @@ fetchDashboard();
 /* ================= LOADING ================= */
 
 if(loading){
-
 return(
 <div className="p-10 text-white animate-pulse">
 Dashboard lädt...
 </div>
 );
-
 }
 
 /* ================= SORT TABLE ================= */
@@ -97,6 +91,7 @@ className="relative min-h-screen text-white bg-cover bg-center"
 style={{backgroundImage:`url(${bgImage})`}}
 >
 
+{/* Background Overlay */}
 <div className="absolute inset-0 bg-black/80"></div>
 
 <div className="relative z-10 p-8 max-w-[1800px] mx-auto">
@@ -123,9 +118,7 @@ style={{backgroundImage:`url(${bgImage})`}}
 
 <div className="bg-black/50 p-6 rounded-xl">
 
-<h2 className="font-bold mb-4">
-Tabelle
-</h2>
+<h2 className="font-bold mb-4">Tabelle</h2>
 
 <div className="grid grid-cols-5 text-xs opacity-70 mb-2 px-2">
 <span>#</span>
@@ -135,7 +128,7 @@ Tabelle
 <span>Pkt</span>
 </div>
 
-<div className="space-y-1 text-sm max-h-[650px] overflow-y-auto">
+<div className="space-y-1 text-sm">
 
 {sortedLeague.map((club,i)=>{
 
@@ -209,7 +202,7 @@ Keine News verfügbar
 
 </div>
 
-{/* ================= NÄCHSTES SPIEL ================= */}
+{/* ================= MATCHES + TORJÄGER ================= */}
 
 <div className="bg-black/50 p-6 rounded-xl">
 
@@ -280,6 +273,12 @@ Kein Spiel geplant
 <h3 className="font-semibold mb-3 text-center">
 Top Torjäger
 </h3>
+
+{topScorers && topScorers.length === 0 && (
+<div className="opacity-60 text-center">
+Keine Daten
+</div>
+)}
 
 {topScorers && topScorers.map((p,i)=>(
 <div key={p._id} className="flex justify-between py-1 text-sm">
