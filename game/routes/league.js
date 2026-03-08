@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Team = require("../models/Team");
 const Season = require("../models/Season");
-const generateSchedule = require("../utils/generateSchedule");
+const generateSchedule = require("../utils/scheduleGenerator");
 
 // POST /api/league/:league/generate
 router.post("/:league/generate", async (req, res) => {
