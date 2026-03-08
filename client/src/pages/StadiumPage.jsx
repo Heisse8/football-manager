@@ -140,15 +140,34 @@ function calculateAttendance(){
 
 if(!stadium) return 0;
 
-let demand = (stadium.fanBase || 1) * 1000;
+const fanBase = stadium.fanBase || 1;
 
-let priceFactor = 1 - (ticketPrice / 120);
+/* Grundnachfrage */
+let demand = fanBase * 4500;
 
-let attendance = demand * priceFactor;
+/* Ticketpreis Einfluss */
+const priceImpact = Math.max(0.2, 1 - (ticketPrice / 80));
 
+/* Komfortbonus */
+const comfortBonus = stadium.fanComfort || 1;
+
+/* Atmosphärenbonus */
+const atmosphereBonus = stadium.atmosphere || 1;
+
+/* Zuschauer berechnen */
+let attendance =
+demand *
+priceImpact *
+comfortBonus *
+atmosphereBonus;
+
+/* Mindestinteresse */
 attendance = Math.max(500, attendance);
 
-return Math.min(stadium.capacity, Math.round(attendance));
+/* Stadionlimit */
+attendance = Math.min(stadium.capacity, attendance);
+
+return Math.round(attendance);
 
 }
 
