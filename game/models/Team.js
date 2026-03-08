@@ -31,7 +31,8 @@ required:true
 owner:{
 type:mongoose.Schema.Types.ObjectId,
 ref:"User",
-default:null
+default:null,
+index:true
 },
 
 createdAtLeague:{
