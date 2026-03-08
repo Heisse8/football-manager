@@ -13,6 +13,8 @@ const { getNextLeague } = require("../utils/leagueManager");
 const { generateLeagueSchedule } = require("../utils/scheduleGenerator");
 const { createBotTeam } = require("../utils/botGenerator");
 const { replaceBotTeam } = require("../utils/replaceBotTeam");
+const { chooseFormationByPhilosophy } = require("../utils/trainerPhilosophy");
+const { selectTrainerFormation } = require("../utils/selectTrainerFormation");
 
 /* =====================================================
  FORMATIONEN
@@ -34,15 +36,15 @@ const formations = {
  POSITION MATCH
 ===================================================== */
 
-function positionMatches(playerPositions, slot) {
+function positionMatches(playerPositions, slot){
 
-if (!playerPositions) return false;
+if(!playerPositions) return false;
 
-if (playerPositions.includes(slot)) return true;
+if(playerPositions.includes(slot)) return true;
 
 const cleanSlot = slot.replace("L","").replace("R","");
 
-return playerPositions.some(pos => {
+return playerPositions.some(pos=>{
 
 const cleanPos = pos.replace("L","").replace("R","");
 
@@ -56,7 +58,7 @@ return cleanPos === cleanSlot;
  TRAINER KI LINEUP
 ===================================================== */
 
-function generateSmartLineup(players, formation) {
+function generateSmartLineup(players, formation){
 
 const lineup = {};
 const bench = [];
@@ -65,47 +67,51 @@ const used = new Set();
 const slots = formations[formation] || formations["4-3-3"];
 
 const sortedPlayers = [...players].sort(
-(a,b) => b.stars - a.stars
+(a,b)=> (b.stars || 0) - (a.stars || 0)
 );
 
-function isDefender(slot) {
+function isDefender(slot){
 return ["LCB","CCB","RCB","LB","RB","LWB","RWB"].includes(slot);
 }
 
-function isMidfielder(slot) {
+function isMidfielder(slot){
 return ["CDM","LCDM","RCDM","LCM","RCM","CAM"].includes(slot);
 }
 
-function isStriker(slot) {
+function isStriker(slot){
 return ["ST","LST","RST","LW","RW"].includes(slot);
 }
 
-for (const slot of slots) {
+/* ================= STARTELF ================= */
+
+for(const slot of slots){
 
 let player = sortedPlayers.find(p =>
 !used.has(p._id.toString()) &&
-positionMatches(p.positions, slot)
+positionMatches(p.positions,slot)
 );
 
-if (!player) {
+/* ================= POSITION GRUPPE ================= */
 
-player = sortedPlayers.find(p => {
+if(!player){
 
-if (used.has(p._id.toString())) return false;
+player = sortedPlayers.find(p=>{
+
+if(used.has(p._id.toString())) return false;
 
 const pos = p.positions || [];
 
-if (isDefender(slot))
+if(isDefender(slot))
 return pos.some(position =>
 ["CB","LCB","RCB","LB","RB","LWB","RWB"].includes(position)
 );
 
-if (isMidfielder(slot))
+if(isMidfielder(slot))
 return pos.some(position =>
 ["CDM","CM","LCM","RCM","CAM"].includes(position)
 );
 
-if (isStriker(slot))
+if(isStriker(slot))
 return pos.some(position =>
 ["ST","LST","RST","LW","RW"].includes(position)
 );
@@ -116,7 +122,19 @@ return false;
 
 }
 
-if (player) {
+/* ================= NOTFALL ================= */
+
+if(!player){
+
+player = sortedPlayers.find(p =>
+!used.has(p._id.toString())
+);
+
+}
+
+/* ================= SETZEN ================= */
+
+if(player){
 
 lineup[slot] = player._id;
 used.add(player._id.toString());
@@ -127,9 +145,9 @@ used.add(player._id.toString());
 
 /* ================= BANK ================= */
 
-for (const player of sortedPlayers) {
+for(const player of sortedPlayers){
 
-if (!used.has(player._id.toString()) && bench.length < 7) {
+if(!used.has(player._id.toString()) && bench.length < 7){
 
 bench.push(player._id);
 used.add(player._id.toString());
@@ -146,17 +164,17 @@ return { lineup, bench };
  CREATE TEAM
 ===================================================== */
 
-router.post("/create", auth, async (req,res) => {
+router.post("/create", auth, async (req,res)=>{
 
-try {
+try{
 
 const userId = req.user.userId;
 
 let { name, shortName, clubIdentity } = req.body;
 
-/* ================= VALIDATION ================= */
+/* VALIDATION */
 
-if (!name || !shortName) {
+if(!name || !shortName){
 
 return res.status(400).json({
 message:"Name und Kürzel erforderlich."
@@ -164,7 +182,7 @@ message:"Name und Kürzel erforderlich."
 
 }
 
-if (!clubIdentity || !["love","commercial"].includes(clubIdentity)) {
+if(!clubIdentity || !["love","commercial"].includes(clubIdentity)){
 
 return res.status(400).json({
 message:"Ungültiges Vereinsimage."
@@ -175,7 +193,7 @@ message:"Ungültiges Vereinsimage."
 name = name.trim();
 shortName = shortName.trim().toUpperCase();
 
-if (!/^[A-Z]{3}$/.test(shortName)) {
+if(!/^[A-Z]{3}$/.test(shortName)){
 
 return res.status(400).json({
 message:"Kürzel muss genau 3 Großbuchstaben haben."
@@ -183,7 +201,7 @@ message:"Kürzel muss genau 3 Großbuchstaben haben."
 
 }
 
-if (await Team.findOne({ owner:userId })) {
+if(await Team.findOne({ owner:userId })){
 
 return res.status(400).json({
 message:"Du hast bereits ein Team."
@@ -191,7 +209,7 @@ message:"Du hast bereits ein Team."
 
 }
 
-if (await Team.findOne({ name })) {
+if(await Team.findOne({ name })){
 
 return res.status(400).json({
 message:"Teamname bereits vergeben."
@@ -199,7 +217,7 @@ message:"Teamname bereits vergeben."
 
 }
 
-if (await Team.findOne({ shortName })) {
+if(await Team.findOne({ shortName })){
 
 return res.status(400).json({
 message:"Kürzel bereits vergeben."
@@ -207,21 +225,21 @@ message:"Kürzel bereits vergeben."
 
 }
 
-/* ================= CLUB IDENTITY EFFECT ================= */
+/* CLUB IDENTITY */
 
 let balance;
 let stadiumCapacity;
 let homeBonus;
 let fanBase;
 
-if (clubIdentity === "love") {
+if(clubIdentity === "love"){
 
 balance = 4000000;
 stadiumCapacity = 12000;
 homeBonus = 1.15;
 fanBase = 1.2;
 
-} else {
+}else{
 
 balance = 7000000;
 stadiumCapacity = 8000;
@@ -230,11 +248,11 @@ fanBase = 0.9;
 
 }
 
-/* ================= LIGA ================= */
+/* LIGA */
 
 const league = await getNextLeague();
 
-/* ================= TEAM ================= */
+/* TEAM */
 
 const newTeam = new Team({
 
@@ -259,14 +277,15 @@ currentMatchday:1
 
 await newTeam.save();
 
-/* Bot Team ersetzen */
+/* BOT ERSETZEN */
+
 await replaceBotTeam(newTeam);
 
-/* ================= SPIELER ================= */
+/* SPIELER */
 
 await generatePlayersForTeam(newTeam);
 
-/* ================= MANAGER ================= */
+/* MANAGER */
 
 const firstNames = ["Thomas","Michael","Stefan","Lukas","Daniel"];
 const lastNames = ["Schmidt","Müller","Wagner","Becker","Hoffmann"];
@@ -292,7 +311,7 @@ playstyle:playstyles[Math.floor(Math.random()*playstyles.length)]
 
 });
 
-/* ================= STADION ================= */
+/* STADION */
 
 await Stadium.create({
 
@@ -307,31 +326,30 @@ atmosphere:1
 
 });
 
-/* ================= LIGA FÜLLEN ================= */
+/* LIGA FÜLLEN */
 
 let teamsInLeague = await Team.find({ league });
 
-if (teamsInLeague.length >= 6 && teamsInLeague.length < 18) {
+if(teamsInLeague.length >= 6 && teamsInLeague.length < 18){
 
-while (teamsInLeague.length < 18) {
+while(teamsInLeague.length < 18){
 
 const bot = await createBotTeam(league);
-
 teamsInLeague.push(bot);
 
 }
 
 }
 
-/* ================= SPIELPLAN ================= */
+/* SPIELPLAN */
 
 teamsInLeague = await Team.find({ league });
 
-if (teamsInLeague.length === 18) {
+if(teamsInLeague.length === 18){
 
 const existingMatches = await require("../models/Match").findOne({ league });
 
-if (!existingMatches) {
+if(!existingMatches){
 
 await generateLeagueSchedule(teamsInLeague, league);
 
@@ -339,16 +357,12 @@ await generateLeagueSchedule(teamsInLeague, league);
 
 }
 
-/* ================= RESPONSE ================= */
-
 res.status(201).json({
-
 message:"Team erfolgreich erstellt.",
 team:newTeam
-
 });
 
-} catch(err) {
+}catch(err){
 
 console.error("Create Team Fehler:",err);
 
@@ -364,15 +378,15 @@ message:"Serverfehler"
  GET MY TEAM
 ===================================================== */
 
-router.get("/", auth, async (req,res) => {
+router.get("/", auth, async (req,res)=>{
 
-try {
+try{
 
 const team = await Team.findOne({
 owner:req.user.userId
 });
 
-if (!team) {
+if(!team){
 
 return res.status(404).json({
 message:"Kein Team gefunden"
@@ -382,7 +396,7 @@ message:"Kein Team gefunden"
 
 res.json(team);
 
-} catch(err) {
+}catch(err){
 
 console.error("Get Team Fehler:",err);
 
@@ -398,34 +412,40 @@ message:"Serverfehler"
  AUTO LINEUP
 ===================================================== */
 
-router.get("/auto-lineup", auth, async (req,res) => {
+router.get("/auto-lineup", auth, async (req,res)=>{
 
-try {
+try{
 
 const team = await Team.findOne({
 owner:req.user.userId
 });
 
-if (!team) return res.status(404).json({ message:"Kein Team" });
+if(!team) return res.status(404).json({ message:"Kein Team" });
 
 const manager = await Manager.findOne({
 team:team._id
 });
 
 const players = await Player.find({
-team:team._id
+team:team._id,
+injuredUntil: { $exists:false }
 });
 
-if (!manager) return res.status(404).json({ message:"Kein Manager" });
+if(!manager) return res.status(404).json({ message:"Kein Manager" });
+
+const formation = selectTrainerFormation(
+players,
+manager.playstyle
+);
 
 const { lineup, bench } = generateSmartLineup(
 players,
-manager.formation
+formation
 );
 
 res.json({ lineup, bench });
 
-} catch(err) {
+}catch(err){
 
 console.error("Auto Lineup Fehler:",err);
 
