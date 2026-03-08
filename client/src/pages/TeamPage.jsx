@@ -24,7 +24,27 @@ ST:{x:50,y:16},
 LST:{x:38,y:18}, RST:{x:62,y:18}
 };
 
-export default function TeamPage() {
+/* =====================================================
+ FORMATION ERKENNEN
+===================================================== */
+
+function detectFormation(lineup){
+
+const slots = Object.keys(lineup);
+
+const defenders =
+slots.filter(s=>["LB","RB","LCB","CCB","RCB"].includes(s)).length;
+
+const midfielders =
+slots.filter(s=>["CDM","LCDM","RCDM","LCM","RCM","CAM"].includes(s)).length;
+
+const strikers =
+slots.filter(s=>["ST","LST","RST","LW","RW"].includes(s)).length;
+
+return `${defenders}-${midfielders}-${strikers}`;
+}
+
+export default function TeamPage(){
 
 const [team,setTeam] = useState(null);
 const [players,setPlayers] = useState([]);
@@ -79,6 +99,12 @@ load();
 if(loading) return <div className="p-10 text-white">Lade Team...</div>;
 if(!team || !manager) return null;
 
+/* =====================================================
+ FORMATION BERECHNEN
+===================================================== */
+
+const formation = detectFormation(lineup);
+
 const getPlayerById = (id)=>
 players.find(p=>p._id.toString()===id.toString());
 
@@ -99,7 +125,7 @@ Trainer: {manager.firstName} {manager.lastName} • {manager.age} Jahre
 
 <div className="text-right">
 <p className="font-semibold">Formation</p>
-<p className="text-xl">{manager.formation}</p>
+<p className="text-xl">{formation}</p>
 <p className="text-sm text-gray-400 mt-1">
 Stil: {manager.playstyle}
 </p>

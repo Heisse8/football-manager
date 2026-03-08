@@ -309,15 +309,29 @@ owner:req.user.userId
 });
 
 if(!team){
-return res.status(404).json({ message:"Kein Team gefunden" });
+return res.status(404).json({
+message:"Kein Team gefunden"
+});
 }
 
-res.json(team);
+/* TRAINER LADEN */
+
+const manager = await Manager.findOne({
+team:team._id
+});
+
+res.json({
+team,
+manager
+});
 
 }catch(err){
 
 console.error("Get Team Fehler:",err);
-res.status(500).json({ message:"Serverfehler" });
+
+res.status(500).json({
+message:"Serverfehler"
+});
 
 }
 
