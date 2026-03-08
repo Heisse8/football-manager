@@ -70,59 +70,12 @@ const sortedPlayers = [...players].sort(
 (a,b)=> (b.stars || 0) - (a.stars || 0)
 );
 
-function isDefender(slot){
-return ["LCB","CCB","RCB","LB","RB","LWB","RWB"].includes(slot);
-}
-
-function isMidfielder(slot){
-return ["CDM","LCDM","RCDM","LCM","RCM","CAM"].includes(slot);
-}
-
-function isStriker(slot){
-return ["ST","LST","RST","LW","RW"].includes(slot);
-}
-
-/* STARTELF */
-
 for(const slot of slots){
 
 let player = sortedPlayers.find(p =>
 !used.has(p._id.toString()) &&
 positionMatches(p.positions,slot)
 );
-
-/* POSITION GRUPPE */
-
-if(!player){
-
-player = sortedPlayers.find(p=>{
-
-if(used.has(p._id.toString())) return false;
-
-const pos = p.positions || [];
-
-if(isDefender(slot))
-return pos.some(position =>
-["CB","LCB","RCB","LB","RB","LWB","RWB"].includes(position)
-);
-
-if(isMidfielder(slot))
-return pos.some(position =>
-["CDM","CM","LCM","RCM","CAM"].includes(position)
-);
-
-if(isStriker(slot))
-return pos.some(position =>
-["ST","LST","RST","LW","RW"].includes(position)
-);
-
-return false;
-
-});
-
-}
-
-/* NOTFALL */
 
 if(!player){
 
@@ -131,8 +84,6 @@ player = sortedPlayers.find(p =>
 );
 
 }
-
-/* SETZEN */
 
 if(player){
 
@@ -175,54 +126,30 @@ let { name, shortName, clubIdentity } = req.body;
 /* VALIDATION */
 
 if(!name || !shortName){
-
-return res.status(400).json({
-message:"Name und Kürzel erforderlich."
-});
-
+return res.status(400).json({ message:"Name und Kürzel erforderlich." });
 }
 
 if(!clubIdentity || !["love","commercial"].includes(clubIdentity)){
-
-return res.status(400).json({
-message:"Ungültiges Vereinsimage."
-});
-
+return res.status(400).json({ message:"Ungültiges Vereinsimage." });
 }
 
 name = name.trim();
 shortName = shortName.trim().toUpperCase();
 
 if(!/^[A-Z]{3}$/.test(shortName)){
-
-return res.status(400).json({
-message:"Kürzel muss genau 3 Großbuchstaben haben."
-});
-
+return res.status(400).json({ message:"Kürzel muss genau 3 Großbuchstaben haben." });
 }
 
 if(await Team.findOne({ owner:userId })){
-
-return res.status(400).json({
-message:"Du hast bereits ein Team."
-});
-
+return res.status(400).json({ message:"Du hast bereits ein Team." });
 }
 
 if(await Team.findOne({ name })){
-
-return res.status(400).json({
-message:"Teamname bereits vergeben."
-});
-
+return res.status(400).json({ message:"Teamname bereits vergeben." });
 }
 
 if(await Team.findOne({ shortName })){
-
-return res.status(400).json({
-message:"Kürzel bereits vergeben."
-});
-
+return res.status(400).json({ message:"Kürzel bereits vergeben." });
 }
 
 /* CLUB IDENTITY */
@@ -259,18 +186,12 @@ const newTeam = new Team({
 name,
 shortName,
 owner:userId,
-
 clubIdentity,
-
 country:"Deutschland",
-
 league,
-
 balance,
-
 fanBase,
 homeBonus,
-
 currentMatchday:1
 
 });
@@ -281,7 +202,7 @@ await newTeam.save();
 
 await replaceBotTeam(newTeam);
 
-/* SPIELER GENERIEREN */
+/* SPIELER */
 
 await generatePlayersForTeam(newTeam);
 
@@ -296,17 +217,11 @@ const formationKeys = Object.keys(formations);
 await Manager.create({
 
 team:newTeam._id,
-
 firstName:firstNames[Math.floor(Math.random()*firstNames.length)],
-
 lastName:lastNames[Math.floor(Math.random()*lastNames.length)],
-
 age:40 + Math.floor(Math.random()*15),
-
 rating:2,
-
 formation:formationKeys[Math.floor(Math.random()*formationKeys.length)],
-
 playstyle:playstyles[Math.floor(Math.random()*playstyles.length)]
 
 });
@@ -316,39 +231,46 @@ playstyle:playstyles[Math.floor(Math.random()*playstyles.length)]
 await Stadium.create({
 
 team:newTeam._id,
-
 capacity:stadiumCapacity,
-
 ticketPrice:15,
-
 fanComfort:1,
 atmosphere:1
 
 });
 
 /* =====================================================
-LIGA FÜLLEN
+LIGA FÜLLEN MIT BOTS
 ===================================================== */
 
 let teamsInLeague = await Team.find({ league });
 
-while (teamsInLeague.length < 18) {
+while (teamsInLeague.length < 18){
+
+console.log("Erstelle Bot Team...");
 
 const bot = await createBotTeam(league);
 
 teamsInLeague.push(bot);
 
+console.log("Teams aktuell:", teamsInLeague.length);
+
 }
 
-/* SPIELPLAN */
+/* =====================================================
+SPIELPLAN GENERIEREN
+===================================================== */
 
 teamsInLeague = await Team.find({ league });
 
 if(teamsInLeague.length === 18){
 
-const existingMatches = await Match.findOne({ league });
+const existingMatches = await Match.findOne({
+competition:"league"
+});
 
 if(!existingMatches){
+
+console.log("Generiere Liga Spielplan");
 
 await generateLeagueSchedule(teamsInLeague, league);
 
@@ -365,9 +287,7 @@ team:newTeam
 
 console.error("Create Team Fehler:",err);
 
-res.status(500).json({
-message:"Serverfehler"
-});
+res.status(500).json({ message:"Serverfehler" });
 
 }
 
@@ -386,11 +306,7 @@ owner:req.user.userId
 });
 
 if(!team){
-
-return res.status(404).json({
-message:"Kein Team gefunden"
-});
-
+return res.status(404).json({ message:"Kein Team gefunden" });
 }
 
 res.json(team);
@@ -398,10 +314,7 @@ res.json(team);
 }catch(err){
 
 console.error("Get Team Fehler:",err);
-
-res.status(500).json({
-message:"Serverfehler"
-});
+res.status(500).json({ message:"Serverfehler" });
 
 }
 
@@ -450,10 +363,7 @@ res.json({ lineup, bench });
 }catch(err){
 
 console.error("Auto Lineup Fehler:",err);
-
-res.status(500).json({
-message:"Serverfehler"
-});
+res.status(500).json({ message:"Serverfehler" });
 
 }
 
