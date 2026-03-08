@@ -1,70 +1,34 @@
 const Team = require("../models/Team");
-const Player = require("../models/Player");
-const Manager = require("../models/Manager");
-const Stadium = require("../models/Stadium");
 
-const { generatePlayersForTeam } = require("./playerGenerator");
+function randomNumber(){
+return Math.floor(Math.random()*900)+100;
+}
 
-async function createBotTeam(league) {
+async function createBotTeam(league){
 
-const random = Math.floor(Math.random() * 100000);
+const short = `BOT${randomNumber()}`;
 
-const team = new Team({
+const bot = new Team({
 
-name: "FC Bot " + random,
-shortName: "BOT",
+name:`Bot Team ${short}`,
+shortName:short,
 
-country: "Deutschland",
-
+country:"GER",
 league,
 
-isBot: true,
+isBot:true,
 
-balance: 3000000
+balance:5000000,
 
-});
-
-await team.save();
-
-/* Spieler */
-
-await generatePlayersForTeam(team);
-
-/* Manager */
-
-await Manager.create({
-
-team: team._id,
-
-firstName: "Bot",
-lastName: "Trainer",
-
-age: 45,
-
-rating: 2,
-
-formation: "4-4-2",
-
-playstyle: "Kontern"
+fanBase:1,
+homeBonus:1
 
 });
 
-/* Stadion */
+await bot.save();
 
-await Stadium.create({
-
-team: team._id,
-
-capacity: 8000,
-
-ticketPrice: 15
-
-});
-
-return team;
+return bot;
 
 }
 
-module.exports = {
-createBotTeam
-};
+module.exports = { createBotTeam };
