@@ -12,7 +12,7 @@ team:teamId
 
 if(!team || !stadium) return;
 
-/* ================= GEGNER FINDEN ================= */
+/* ================= MATCH LADEN ================= */
 
 const match = await Match.findOne({
 $or:[
@@ -23,13 +23,26 @@ played:true
 }).sort({ date:-1 });
 
 let opponent = null;
+let teamWon = false;
 
 if(match){
 
 if(match.homeTeam.toString() === teamId.toString()){
+
 opponent = await Team.findById(match.awayTeam);
+
+if(match.homeGoals > match.awayGoals){
+teamWon = true;
+}
+
 }else{
+
 opponent = await Team.findById(match.homeTeam);
+
+if(match.awayGoals > match.homeGoals){
+teamWon = true;
+}
+
 }
 
 }
@@ -88,20 +101,35 @@ attendance = Math.max(500, attendance);
 
 attendance = Math.round(attendance);
 
-/* ================= EINNAHMEN ================= */
+/* ================= TICKET EINNAHMEN ================= */
 
-const revenue =
+let revenue =
 attendance *
 stadium.ticketPrice *
 1.05;
+
+/* ================= SPONSOR ZAHLUNG ================= */
+
+if(team.sponsorPayment){
+
+revenue += team.sponsorPayment;
+
+}
+
+/* ================= SPONSOR SIEG BONUS ================= */
+
+if(team.sponsorWinBonus && teamWon){
+
+revenue += team.sponsorWinBonus;
+
+}
 
 /* ================= SPEICHERN ================= */
 
 team.balance += revenue;
 
 team.lastMatchRevenue = revenue;
-
-await team.save();
+team.lastAttendance = attendance;
 
 /* ================= HEIMBONUS ================= */
 

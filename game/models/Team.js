@@ -323,6 +323,16 @@ type:Number,
 default:0
 },
 
+sponsorWinBonus:{
+type:Number,
+default:0
+},
+
+sponsorSeasonBonus:{
+type:Object,
+default:null
+},
+
 sponsorGamesLeft:{
 type:Number,
 default:0
