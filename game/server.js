@@ -43,6 +43,9 @@ WICHTIG: Diese müssen vor dem Frontend kommen
 
 app.use("/api/auth", authRoutes);
 app.use("/api/team", teamRoutes);
+const sponsorRoutes = require("./routes/sponsor");
+
+app.use("/api/sponsor", sponsorRoutes);
 app.use("/api/player", playerRoutes);
 app.use("/api/match", matchRoutes);
 app.use("/api/manager", managerRoutes);

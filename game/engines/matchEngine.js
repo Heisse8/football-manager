@@ -38,6 +38,8 @@ const ratings = calculateRatings(state);
 applyFitnessLoss(homeCtx.players);
 applyFitnessLoss(awayCtx.players);
 
+/* ================= MATCH NEWS ================= */
+
 if(match){
 
 await generateMatchNews({
@@ -50,7 +52,7 @@ league:match.league
 
 }
 
-/* ================= STADIUM REVENUE ================= */
+/* ================= STADIUM + SPONSOR REVENUE ================= */
 
 if(homeTeam && homeTeam._id){
 
@@ -58,19 +60,7 @@ await generateMatchRevenue(homeTeam._id);
 
 }
 
-if (homeTeam) {
-
-const { attendance, revenue } = generateMatchRevenue(homeTeam);
-
-homeTeam.balance += revenue;
-homeTeam.lastMatchRevenue = revenue;
-homeTeam.lastAttendance = attendance;
-
-if (homeTeam.save) {
-await homeTeam.save();
-}
-
-}
+/* ================= RETURN RESULT ================= */
 
 return{
 

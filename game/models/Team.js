@@ -309,6 +309,23 @@ default:1000000
 lastMatchRevenue:{
 type:Number,
 default:0
+},
+
+/* ================= SPONSOR ================= */
+
+sponsor:{
+type:String,
+default:null
+},
+
+sponsorPayment:{
+type:Number,
+default:0
+},
+
+sponsorGamesLeft:{
+type:Number,
+default:0
 }
 
 },{timestamps:true});

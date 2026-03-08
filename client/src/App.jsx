@@ -14,6 +14,7 @@ import StadiumPage from "./pages/StadiumPage";
 import MatchCenter from "./pages/MatchCenter";
 import MatchDetail from "./pages/MatchDetail";
 import Spieltag from "./pages/Spieltag";
+import Finances from "./pages/Finances";
 
 export default function App() {
   return (
@@ -40,10 +41,7 @@ export default function App() {
           <Route path="/match/:id" element={<MatchDetail />} />
           <Route path="/spieltag" element={<Spieltag />} />
           <Route path="/matchcenter" element={<MatchCenter />} />
-          <Route
-            path="/finanzen"
-            element={<div className="p-10">Finanzen</div>}
-          />
+          <Route path="/finanzen" element={<Finances />} />
           <Route path="/match/:id" element={<MatchDetail />} />
         </Route>
 

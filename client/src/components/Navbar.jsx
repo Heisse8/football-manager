@@ -10,7 +10,6 @@ const [menuOpen, setMenuOpen] = useState(false);
 
 const [team, setTeam] = useState(null);
 const [hasNewMatch, setHasNewMatch] = useState(false);
-
 const [notifications, setNotifications] = useState(0);
 
 /* =====================================================
@@ -24,7 +23,6 @@ const fetchTeam = async () => {
 try {
 
 const token = localStorage.getItem("token");
-
 if (!token) return;
 
 const res = await fetch("/api/team", {
@@ -34,14 +32,20 @@ headers: { Authorization: `Bearer ${token}` }
 if (!res.ok) return;
 
 const data = await res.json();
-
 setTeam(data);
 
-} catch {}
+} catch (err) {
+console.error(err);
+}
 
 };
 
 fetchTeam();
+
+/* Kontostand automatisch aktualisieren */
+const interval = setInterval(fetchTeam, 60000);
+
+return () => clearInterval(interval);
 
 }, []);
 
@@ -56,6 +60,7 @@ const checkMatch = async () => {
 try {
 
 const token = localStorage.getItem("token");
+if (!token) return;
 
 const res = await fetch("/api/match/has-new", {
 headers: { Authorization: `Bearer ${token}` }
@@ -64,10 +69,11 @@ headers: { Authorization: `Bearer ${token}` }
 if (!res.ok) return;
 
 const data = await res.json();
-
 setHasNewMatch(data.hasNew);
 
-} catch {}
+} catch (err) {
+console.error(err);
+}
 
 };
 
@@ -102,6 +108,7 @@ const checkNotifications = async () => {
 try {
 
 const token = localStorage.getItem("token");
+if (!token) return;
 
 const res = await fetch("/api/notifications/count", {
 headers: { Authorization: `Bearer ${token}` }
@@ -110,10 +117,11 @@ headers: { Authorization: `Bearer ${token}` }
 if (!res.ok) return;
 
 const data = await res.json();
-
 setNotifications(data.count);
 
-} catch {}
+} catch (err) {
+console.error(err);
+}
 
 };
 
@@ -142,9 +150,9 @@ navigate("/login");
 FORMAT MONEY
 ===================================================== */
 
-function formatMoney(value){
+function formatMoney(value) {
 
-if(!value) return "0";
+if (!value) return "0";
 
 return new Intl.NumberFormat("de-DE").format(value);
 
@@ -166,14 +174,12 @@ NAV LINKS
 ===================================================== */
 
 const navLinks = [
-
 { path: "/", label: "Dashboard" },
 { path: "/team", label: "Team" },
 { path: "/transfermarkt", label: "Transfermarkt" },
 { path: "/kalender", label: "Kalender" },
 { path: "/stadium", label: "Stadion" },
 { path: "/finanzen", label: "Finanzen" }
-
 ];
 
 /* =====================================================
@@ -196,7 +202,7 @@ return (
 
 <span>💰 € {formatMoney(team?.balance)}</span>
 <span>👥 Fans: {team?.fanBase || 0}</span>
-<span>🏆 {team?.league}</span>
+<span>🏆 {team?.league || "-"}</span>
 
 </div>
 
