@@ -7,6 +7,7 @@ const { generateLeagueSchedule } = require("../utils/scheduleGenerator");
 const { processPlayerDevelopment } = require("./playerDevelopmentService");
 const { processPlayerRetirements } = require("./playerRetirementService");
 const { updateMarketValues } = require("./marketValueService");
+const { balanceEconomy } = require("./economyBalancerService");
 
 const { generateChampionsLeague } = require("./championsLeagueService");
 const { generateCupFirstRound } = require("./cupService");
@@ -72,6 +73,12 @@ MARKTWERTE UPDATE
 ===================================================== */
 
 await updateMarketValues();
+
+/* =====================================================
+ECONOMY BALANCE
+===================================================== */
+
+await balanceEconomy();
 
 /* =====================================================
 TABELLEN RESET
