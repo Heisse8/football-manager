@@ -1,22 +1,14 @@
 function generateSponsors(team){
 
+const reputation = team.sponsorReputation || 1;
 const fanBase = team.fanBase || 1;
-const lastPosition = team.lastSeasonPosition || 10;
 const leagueLevel = team.leagueLevel || 1;
-
-/* Basiswert */
 
 let base =
 fanBase *
 25000 *
-(1 + (leagueLevel * 0.15));
-
-/* Tabellenplatz Einfluss */
-
-const positionFactor =
-1 + ((18 - lastPosition) * 0.04);
-
-base *= positionFactor;
+reputation *
+(1 + leagueLevel * 0.15);
 
 /* ================= ANGEBOTE ================= */
 
@@ -25,52 +17,43 @@ return [
 /* ================= SICHER ================= */
 
 {
-type:"safe",
-
 name:"Regionaler Sponsor",
 
 payment: Math.round(base * 0.9),
 
-seasonBonus:null,
+winBonus:0,
 
-winBonus:0
-
+seasonBonus:null
 },
 
-/* ================= AUSGEWOGEN ================= */
+/* ================= BALANCED ================= */
 
 {
-type:"balanced",
-
 name:"Nationaler Sponsor",
 
 payment: Math.round(base * 0.7),
 
+winBonus:0,
+
 seasonBonus:{
 top10: Math.round(base * 4),
 top5: Math.round(base * 8)
-},
-
-winBonus:0
-
+}
 },
 
 /* ================= RISIKO ================= */
 
 {
-type:"risky",
-
 name:"Global Brand",
 
 payment: Math.round(base * 0.4),
 
+winBonus: Math.round(base * 0.5),
+
 seasonBonus:{
 top3: Math.round(base * 12),
 champion: Math.round(base * 20)
-},
-
-winBonus: Math.round(base * 0.6)
-
+}
 }
 
 ];

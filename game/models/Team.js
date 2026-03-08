@@ -333,6 +333,16 @@ type:Object,
 default:null
 },
 
+sponsorReputation:{
+type:Number,
+default:1
+},
+
+lastSeasonPosition:{
+type:Number,
+default:10
+},
+
 sponsorGamesLeft:{
 type:Number,
 default:0

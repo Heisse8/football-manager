@@ -19,25 +19,31 @@ const headers = {
 Authorization:`Bearer ${token}`
 };
 
-/* TEAM */
+/* ================= TEAM ================= */
 
 const teamRes = await fetch("/api/team",{headers});
 const teamData = await teamRes.json();
 
 setTeam(teamData);
 
-/* SPONSORS */
+/* ================= SPONSORS ================= */
+
+if(!teamData.sponsor){
 
 const sponsorRes = await fetch("/api/sponsor",{headers});
 const sponsorData = await sponsorRes.json();
 
 setSponsors(sponsorData);
 
+}
+
 };
 
-/* SIGN SPONSOR */
+/* ================= SIGN SPONSOR ================= */
 
 const signSponsor = async (sponsor)=>{
+
+if(team?.sponsor) return;
 
 const token = localStorage.getItem("token");
 
@@ -73,23 +79,17 @@ return(
 <div className="bg-black/50 p-6 rounded-xl mb-6">
 
 <div className="flex justify-between">
-
 <span>Kontostand</span>
-
 <span className="text-green-400">
 € {team.balance.toLocaleString()}
 </span>
-
 </div>
 
 <div className="flex justify-between mt-2">
-
 <span>Letzte Einnahmen</span>
-
 <span className="text-yellow-400">
 € {team.lastMatchRevenue?.toLocaleString()}
 </span>
-
 </div>
 
 </div>
@@ -106,23 +106,53 @@ Aktueller Sponsor
 
 <div>
 
-<div>{team.sponsor}</div>
+<div className="font-semibold">
+{team.sponsor}
+</div>
 
 <div className="text-sm text-gray-400">
-
 € {team.sponsorPayment.toLocaleString()} pro Spiel
+</div>
+
+{/* Siegbonus */}
+
+{team.sponsorWinBonus > 0 && (
+
+<div className="text-xs text-yellow-400">
+Siegbonus: € {team.sponsorWinBonus.toLocaleString()}
+</div>
+
+)}
+
+{/* Saisonbonus */}
+
+{team.sponsorSeasonBonus && (
+
+<div className="text-xs text-green-400 mt-1">
+
+{team.sponsorSeasonBonus.top10 && (
+<div>Top 10: € {team.sponsorSeasonBonus.top10.toLocaleString()}</div>
+)}
+
+{team.sponsorSeasonBonus.top5 && (
+<div>Top 5: € {team.sponsorSeasonBonus.top5.toLocaleString()}</div>
+)}
+
+{team.sponsorSeasonBonus.top3 && (
+<div>Top 3: € {team.sponsorSeasonBonus.top3.toLocaleString()}</div>
+)}
+
+{team.sponsorSeasonBonus.champion && (
+<div>Meister: € {team.sponsorSeasonBonus.champion.toLocaleString()}</div>
+)}
 
 </div>
 
-<div className="text-sm text-gray-400">
-
-Restlaufzeit: {team.sponsorGamesLeft} Spiele
+)}
 
 </div>
 
-</div>
-
-):( 
+):(
 
 <div className="text-gray-400">
 Kein Sponsor aktiv
@@ -133,6 +163,8 @@ Kein Sponsor aktiv
 </div>
 
 {/* ================= SPONSOR AUSWAHL ================= */}
+
+{!team.sponsor && (
 
 <div className="bg-black/50 p-6 rounded-xl">
 
@@ -154,9 +186,41 @@ Sponsorenangebote
 € {s.payment.toLocaleString()} / Spiel
 </div>
 
-<div className="text-sm text-gray-400">
-{s.duration} Spiele
+{/* Siegbonus */}
+
+{s.winBonus > 0 && (
+
+<div className="text-xs text-yellow-400">
+Siegbonus: € {s.winBonus.toLocaleString()}
 </div>
+
+)}
+
+{/* Saisonbonus */}
+
+{s.seasonBonus && (
+
+<div className="text-xs text-green-400 mt-1">
+
+{s.seasonBonus.top10 && (
+<div>Top 10: € {s.seasonBonus.top10.toLocaleString()}</div>
+)}
+
+{s.seasonBonus.top5 && (
+<div>Top 5: € {s.seasonBonus.top5.toLocaleString()}</div>
+)}
+
+{s.seasonBonus.top3 && (
+<div>Top 3: € {s.seasonBonus.top3.toLocaleString()}</div>
+)}
+
+{s.seasonBonus.champion && (
+<div>Meister: € {s.seasonBonus.champion.toLocaleString()}</div>
+)}
+
+</div>
+
+)}
 
 <button
 onClick={()=>signSponsor(s)}
@@ -172,6 +236,8 @@ Vertrag unterschreiben
 </div>
 
 </div>
+
+)}
 
 </div>
 

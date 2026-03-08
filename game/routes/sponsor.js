@@ -50,13 +50,29 @@ const team = await Team.findOne({
 owner:req.user.userId
 });
 
+/* ================= SPONSOR BEREITS GEWÄHLT ================= */
+
+if(team.sponsor){
+
+return res.status(400).json({
+message:"Sponsor bereits gewählt"
+});
+
+}
+
+/* ================= VERTRAG SETZEN ================= */
+
 team.sponsor = sponsor.name;
-team.sponsorPayment = sponsor.payment;
-team.sponsorGamesLeft = sponsor.duration;
+
+team.sponsorPayment = sponsor.payment || 0;
+
+team.sponsorWinBonus = sponsor.winBonus || 0;
+
+team.sponsorSeasonBonus = sponsor.seasonBonus || null;
 
 await team.save();
 
-res.json({success:true});
+res.json({ success:true });
 
 }catch(err){
 

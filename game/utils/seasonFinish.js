@@ -1,16 +1,55 @@
 const Team = require("../models/Team");
-const { applySponsorSeasonBonus } = require("./sponsorSeasonBonus");
 
-async function finishSeason(league){
+async function updateSponsorReputation(team){
 
-const teams = await Team.find({ league });
+let rep = team.sponsorReputation || 1;
 
-for(const team of teams){
+const position = team.tablePosition;
 
-await applySponsorSeasonBonus(team._id);
+/* ================= ERFOLG ================= */
+
+if(position === 1){
+
+rep += 0.4;
 
 }
 
+else if(position <= 3){
+
+rep += 0.25;
+
 }
 
-module.exports = { finishSeason };
+else if(position <= 5){
+
+rep += 0.15;
+
+}
+
+else if(position <= 10){
+
+rep += 0.05;
+
+}
+
+/* ================= SCHLECHTE SAISON ================= */
+
+else if(position >= 16){
+
+rep -= 0.2;
+
+}
+
+/* Begrenzen */
+
+rep = Math.max(0.6, Math.min(3, rep));
+
+team.sponsorReputation = rep;
+
+team.lastSeasonPosition = position;
+
+await team.save();
+
+}
+
+module.exports = { updateSponsorReputation };
