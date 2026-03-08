@@ -11,20 +11,14 @@ const [league,setLeague] = useState([]);
 const [news,setNews] = useState([]);
 const [nextMatch,setNextMatch] = useState(null);
 const [nextMatch2,setNextMatch2] = useState(null);
-
 const [topScorers,setTopScorers] = useState([]);
-const [teamForm,setTeamForm] = useState([]);
-const [stadium,setStadium] = useState(null);
-const [playerOfMonth,setPlayerOfMonth] = useState(null);
-const [finance,setFinance] = useState(null);
-
 const [loading,setLoading] = useState(true);
 
 /* ================= LOAD DASHBOARD ================= */
 
 useEffect(()=>{
 
-const fetchDashboard = async ()=>{
+const fetchDashboard = async()=>{
 
 try{
 
@@ -51,15 +45,9 @@ const data = await res.json();
 setTeam(data.team || null);
 setLeague(data.league || []);
 setNews(data.news || []);
-
 setNextMatch(data.nextMatch || null);
 setNextMatch2(data.nextMatch2 || null);
-
 setTopScorers(data.topScorers || []);
-setTeamForm(data.teamForm || []);
-setStadium(data.stadium || null);
-setPlayerOfMonth(data.playerOfMonth || null);
-setFinance(data.finance || null);
 
 }catch(err){
 
@@ -127,11 +115,11 @@ style={{backgroundImage:`url(${bgImage})`}}
 
 </div>
 
-{/* ================= GRID 1 ================= */}
+{/* GRID */}
 
 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-{/* ================= TABLE ================= */}
+{/* ================= TABELLE ================= */}
 
 <div className="bg-black/50 p-6 rounded-xl">
 
@@ -171,9 +159,7 @@ isMine
 {club.name}
 </span>
 
-<span>
-{club.played||0}
-</span>
+<span>{club.played||0}</span>
 
 <span className={goalDiff>=0?"text-green-400":"text-red-400"}>
 {goalDiff>=0?`+${goalDiff}`:goalDiff}
@@ -223,7 +209,7 @@ Keine News verfügbar
 
 </div>
 
-{/* ================= NEXT MATCH ================= */}
+{/* ================= NÄCHSTES SPIEL ================= */}
 
 <div className="bg-black/50 p-6 rounded-xl">
 
@@ -259,6 +245,8 @@ Kein Spiel geplant
 
 )}
 
+{/* ÜBERNÄCHSTES SPIEL */}
+
 {nextMatch2 &&(
 
 <div className="mt-6 border-t border-white/20 pt-4 text-center">
@@ -285,25 +273,16 @@ Kein Spiel geplant
 
 )}
 
-</div>
+{/* ================= TORJÄGER ================= */}
 
-</div>
+<div className="mt-6 border-t border-white/20 pt-4">
 
-{/* ================= GRID 2 ================= */}
+<h3 className="font-semibold mb-3 text-center">
+Top Torjäger
+</h3>
 
-<div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
-
-{/* ================= TOP SCORERS ================= */}
-
-<div className="bg-black/50 p-6 rounded-xl">
-
-<h2 className="font-bold mb-4">
-Top Scorer
-</h2>
-
-{topScorers.map((p,i)=>(
-
-<div key={p._id} className="flex justify-between py-1">
+{topScorers && topScorers.map((p,i)=>(
+<div key={p._id} className="flex justify-between py-1 text-sm">
 
 <span>
 {i+1}. {p.firstName} {p.lastName}
@@ -314,144 +293,11 @@ Top Scorer
 </span>
 
 </div>
-
 ))}
 
 </div>
 
-{/* ================= TEAM FORM ================= */}
-
-<div className="bg-black/50 p-6 rounded-xl">
-
-<h2 className="font-bold mb-4">
-Form (letzte 5)
-</h2>
-
-<div className="flex gap-2">
-
-{teamForm.map((m,i)=>{
-
-const isHome = m.homeTeam?._id === team._id;
-
-const goalsFor = isHome ? m.homeGoals : m.awayGoals;
-const goalsAgainst = isHome ? m.awayGoals : m.homeGoals;
-
-let color="bg-gray-500";
-
-if(goalsFor>goalsAgainst) color="bg-green-500";
-if(goalsFor<goalsAgainst) color="bg-red-500";
-if(goalsFor===goalsAgainst) color="bg-yellow-500";
-
-return(
-
-<div
-key={i}
-className={`w-10 h-10 rounded ${color} flex items-center justify-center`}
->
-
-{goalsFor}:{goalsAgainst}
-
 </div>
-
-);
-
-})}
-
-</div>
-
-</div>
-
-{/* ================= STADIUM ================= */}
-
-<div className="bg-black/50 p-6 rounded-xl">
-
-<h2 className="font-bold mb-4">
-Stadion
-</h2>
-
-{stadium &&(
-
-<div>
-
-<div>
-Kapazität: {stadium.capacity?.toLocaleString()}
-</div>
-
-<div>
-Ticketpreis: {stadium.ticketPrice} €
-</div>
-
-<div>
-Letzte Einnahmen: {team?.lastMatchRevenue?.toLocaleString()} €
-</div>
-
-</div>
-
-)}
-
-</div>
-
-{/* ================= PLAYER OF MONTH ================= */}
-
-<div className="bg-black/50 p-6 rounded-xl">
-
-<h2 className="font-bold mb-4">
-Spieler des Monats
-</h2>
-
-{playerOfMonth &&(
-
-<div>
-
-<div className="text-lg font-semibold">
-{playerOfMonth.firstName} {playerOfMonth.lastName}
-</div>
-
-<div className="opacity-70">
-Rating: {playerOfMonth.seasonStats?.rating || 0}
-</div>
-
-<div className="opacity-70">
-Tore: {playerOfMonth.seasonStats?.goals || 0}
-</div>
-
-</div>
-
-)}
-
-</div>
-
-{/* ================= FINANCE ================= */}
-
-<div className="bg-black/50 p-6 rounded-xl">
-
-<h2 className="font-bold mb-4">
-Finanzen
-</h2>
-
-{finance &&(
-
-<div>
-
-<div>
-Kontostand
-</div>
-
-<div className="text-yellow-400 text-xl">
-{finance.balance?.toLocaleString()} €
-</div>
-
-<div className="mt-2 opacity-70">
-Letzte Einnahmen
-</div>
-
-<div>
-{finance.lastRevenue?.toLocaleString()} €
-</div>
-
-</div>
-
-)}
 
 </div>
 
