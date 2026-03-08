@@ -14,11 +14,11 @@ const [nextMatch2,setNextMatch2] = useState(null);
 const [topScorers,setTopScorers] = useState([]);
 const [loading,setLoading] = useState(true);
 
-/* ================= LOAD DASHBOARD ================= */
+/* LOAD DASHBOARD */
 
 useEffect(()=>{
 
-const fetchDashboard = async()=>{
+const load = async()=>{
 
 try{
 
@@ -48,32 +48,32 @@ setNextMatch2(data.nextMatch2 || null);
 setTopScorers(data.topScorers || []);
 
 }catch(err){
-console.error("Dashboard Fehler:",err);
+console.error(err);
 }
 
 setLoading(false);
 
 };
 
-fetchDashboard();
+load();
 
 },[navigate]);
 
-/* ================= LOADING ================= */
+/* LOADING */
 
 if(loading){
 return(
-<div className="p-10 text-white animate-pulse">
+<div className="p-10 text-white">
 Dashboard lädt...
 </div>
 );
 }
 
-/* ================= SORT TABLE ================= */
+/* SORT TABLE */
 
 const sortedLeague=[...league].sort((a,b)=>{
 
-if(b.points !== a.points) return b.points-a.points;
+if(b.points!==a.points) return b.points-a.points;
 
 const diffA=(a.goalsFor||0)-(a.goalsAgainst||0);
 const diffB=(b.goalsFor||0)-(b.goalsAgainst||0);
@@ -82,16 +82,15 @@ return diffB-diffA;
 
 });
 
-/* ================= RENDER ================= */
+/* RENDER */
 
 return(
 
 <div
 className="relative min-h-screen text-white bg-cover bg-center"
-style={{backgroundImage:`url(${bgImage})`}}
+style={{ backgroundImage:`url(${bgImage})` }}
 >
 
-{/* Background Overlay */}
 <div className="absolute inset-0 bg-black/80"></div>
 
 <div className="relative z-10 p-8 max-w-[1800px] mx-auto">
@@ -114,7 +113,7 @@ style={{backgroundImage:`url(${bgImage})`}}
 
 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-{/* ================= TABELLE ================= */}
+{/* TABLE */}
 
 <div className="bg-black/50 p-6 rounded-xl">
 
@@ -147,20 +146,14 @@ isMine
 >
 
 <span>{i+1}</span>
-
-<span className="truncate">
-{club.name}
-</span>
-
+<span className="truncate">{club.name}</span>
 <span>{club.played||0}</span>
 
 <span className={goalDiff>=0?"text-green-400":"text-red-400"}>
 {goalDiff>=0?`+${goalDiff}`:goalDiff}
 </span>
 
-<span className="font-semibold">
-{club.points}
-</span>
+<span className="font-semibold">{club.points}</span>
 
 </div>
 
@@ -172,15 +165,13 @@ isMine
 
 </div>
 
-{/* ================= NEWS ================= */}
+{/* NEWS */}
 
 <div className="bg-black/50 p-6 rounded-xl">
 
-<h2 className="font-bold mb-4">
-Manager News
-</h2>
+<h2 className="font-bold mb-4">Manager News</h2>
 
-{news.length===0 &&(
+{news.length===0 && (
 <div className="opacity-60 text-center">
 Keine News verfügbar
 </div>
@@ -189,9 +180,7 @@ Keine News verfügbar
 {news.slice(0,5).map((n)=>(
 <div key={n._id} className="bg-black/30 p-4 rounded mb-3">
 
-<div className="font-semibold">
-{n.title}
-</div>
+<div className="font-semibold">{n.title}</div>
 
 <div className="text-sm opacity-80">
 {n.content}
@@ -202,15 +191,13 @@ Keine News verfügbar
 
 </div>
 
-{/* ================= MATCHES + TORJÄGER ================= */}
+{/* MATCH + SCORERS */}
 
 <div className="bg-black/50 p-6 rounded-xl">
 
-<h2 className="font-bold mb-4">
-Nächstes Spiel
-</h2>
+<h2 className="font-bold mb-4">Nächstes Spiel</h2>
 
-{nextMatch ?(
+{nextMatch ? (
 
 <div className="text-center">
 
@@ -230,7 +217,7 @@ Nächstes Spiel
 
 </div>
 
-):(
+) : (
 
 <div className="opacity-60 text-center">
 Kein Spiel geplant
@@ -238,9 +225,7 @@ Kein Spiel geplant
 
 )}
 
-{/* ÜBERNÄCHSTES SPIEL */}
-
-{nextMatch2 &&(
+{nextMatch2 && (
 
 <div className="mt-6 border-t border-white/20 pt-4 text-center">
 
@@ -266,7 +251,7 @@ Kein Spiel geplant
 
 )}
 
-{/* ================= TORJÄGER ================= */}
+{/* TOP SCORERS */}
 
 <div className="mt-6 border-t border-white/20 pt-4">
 
@@ -274,13 +259,9 @@ Kein Spiel geplant
 Top Torjäger
 </h3>
 
-{topScorers && topScorers.length === 0 && (
-<div className="opacity-60 text-center">
-Keine Daten
-</div>
-)}
+{topScorers && topScorers.map((p,i) => {
 
-{topScorers && topScorers.map((p,i)=>(
+return (
 <div key={p._id} className="flex justify-between py-1 text-sm">
 
 <span>
@@ -292,18 +273,15 @@ Keine Daten
 </span>
 
 </div>
-))}
+);
+
+})}
 
 </div>
 
 </div>
-
 </div>
-
 </div>
-
-</div>
-
 </div>
 
 );
