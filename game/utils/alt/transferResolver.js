@@ -1,8 +1,8 @@
-const Transfer = require("../models/Transfer");
-const Player = require("../models/Player");
-const Manager = require("../models/Manager");
-const Scout = require("../models/Scout");
-const Team = require("../models/Team");
+const Transfer = require("../../models/Transfer");
+const Player = require("../../models/Player");
+const Manager = require("../../models/Manager");
+const Scout = require("../../models/Scout");
+const Team = require("../../models/Team");
 
 async function resolveExpiredTransfers() {
 

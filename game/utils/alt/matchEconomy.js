@@ -1,4 +1,4 @@
-const Stadium = require("../models/Stadium");
+const Stadium = require("../../models/Stadium");
 
 function calculateAttendance({
   capacity,

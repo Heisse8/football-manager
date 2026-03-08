@@ -1,4 +1,4 @@
-const Match = require("../models/Match");
+const Match = require("../../models/Match");
 
 async function generateCup({ leagueId, seasonNumber, teams }) {
 

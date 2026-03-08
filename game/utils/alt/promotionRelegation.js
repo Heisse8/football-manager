@@ -1,4 +1,4 @@
-const Team = require("../models/Team");
+const Team = require("../../models/Team");
 
 async function handlePromotionRelegation() {
   const countries = ["GER", "ENG", "ESP", "FRA", "ITA"];

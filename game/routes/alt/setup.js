@@ -1,6 +1,6 @@
 const express = require("express");
-const Team = require("../models/Team");
-const League = require("../models/League");
+const Team = require("../../models/Team");
+const League = require("../../models/League");
 
 const router = express.Router();
 

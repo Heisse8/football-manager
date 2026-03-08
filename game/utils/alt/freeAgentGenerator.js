@@ -1,5 +1,5 @@
-const Player = require("../models/Player");
-const Transfer = require("../models/Transfer");
+const Player = require("../../models/Player");
+const Transfer = require("../../models/Transfer");
 
 function random(min,max){
 return Math.random()*(max-min)+min;

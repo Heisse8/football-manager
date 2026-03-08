@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const User = require("../models/User");
+const User = require("../../models/User");
 
 // ALLE USER LÖSCHEN (nur für Entwicklung!)
 router.delete("/reset-users", async (req, res) => {

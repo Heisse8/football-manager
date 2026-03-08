@@ -1,4 +1,4 @@
-const Match = require("../models/Match");
+const Match = require("../../models/Match");
 
 /* ======================================================
    ERSTER SPIELTAG (Dienstag 22:00 Lock)

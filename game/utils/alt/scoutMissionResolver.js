@@ -1,4 +1,4 @@
-const Scout = require("../models/Scout");
+const Scout = require("../../models/Scout");
 const ScoutReport = require("../models/ScoutReport");
 
 function random(min,max){

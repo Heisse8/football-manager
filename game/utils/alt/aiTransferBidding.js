@@ -1,5 +1,5 @@
-const Transfer = require("../models/Transfer");
-const Team = require("../models/Team");
+const Transfer = require("../../models/Transfer");
+const Team = require("../../models/Team");
 
 async function runAITransferBidding() {
 

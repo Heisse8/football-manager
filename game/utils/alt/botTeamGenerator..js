@@ -1,9 +1,9 @@
-const Team = require("../models/Team");
-const Player = require("../models/Player");
-const Manager = require("../models/Manager");
-const Stadium = require("../models/Stadium");
+const Team = require("../../models/Team");
+const Player = require("../../models/Player");
+const Manager = require("../../models/Manager");
+const Stadium = require("../../models/Stadium");
 
-const { generatePlayersForTeam } = require("./playerGenerator");
+const { generatePlayersForTeam } = require("../playerGenerator");
 
 async function generateBotTeams(league){
 

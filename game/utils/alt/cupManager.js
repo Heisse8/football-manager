@@ -1,5 +1,5 @@
-const Team = require("../models/Team");
-const Match = require("../models/Match");
+const Team = require("../../models/Team");
+const Match = require("../../models/Match");
 
 function shuffle(array) {
   return array.sort(() => Math.random() - 0.5);

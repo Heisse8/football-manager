@@ -1,5 +1,5 @@
-const Scout = require("../models/Scout");
-const Transfer = require("../models/Transfer");
+const Scout = require("../../models/Scout");
+const Transfer = require("../../models/Transfer");
 
 function randomName(){
 

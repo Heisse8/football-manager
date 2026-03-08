@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { generateLeagueSchedule, generateCup } = require("../utils/scheduleGenerator");
+const { generateLeagueSchedule, generateCup } = require("../../utils/scheduleGenerator");
 
 router.post("/start-season", async (req, res) => {
   try {

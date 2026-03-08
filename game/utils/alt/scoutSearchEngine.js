@@ -1,5 +1,5 @@
-const Scout = require("../models/Scout");
-const Team = require("../models/Team");
+const Scout = require("../../models/Scout");
+const Team = require("../../models/Team");
 const { generateScoutPlayer } = require("./scoutTalentGenerator");
 
 async function runScoutSearch(){
