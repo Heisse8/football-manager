@@ -244,15 +244,18 @@ LIGA FÜLLEN MIT BOTS
 
 let teamsInLeague = await Team.find({ league });
 
-while (teamsInLeague.length < 18){
+const botsNeeded = 18 - teamsInLeague.length;
 
-console.log("Erstelle Bot Team...");
+if(botsNeeded > 0){
+
+console.log(`Erstelle ${botsNeeded} Bot Teams`);
+
+for(let i=0;i<botsNeeded;i++){
 
 const bot = await createBotTeam(league);
-
 teamsInLeague.push(bot);
 
-console.log("Teams aktuell:", teamsInLeague.length);
+}
 
 }
 
