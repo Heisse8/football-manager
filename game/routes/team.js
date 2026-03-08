@@ -326,18 +326,15 @@ atmosphere:1
 
 });
 
-/* LIGA FÜLLEN */
+/* ================= LIGA FÜLLEN ================= */
 
 let teamsInLeague = await Team.find({ league });
 
-if(teamsInLeague.length >= 6 && teamsInLeague.length < 18){
-
-while(teamsInLeague.length < 18){
+while (teamsInLeague.length < 18) {
 
 const bot = await createBotTeam(league);
-teamsInLeague.push(bot);
 
-}
+teamsInLeague.push(bot);
 
 }
 
@@ -427,8 +424,7 @@ team:team._id
 });
 
 const players = await Player.find({
-team:team._id,
-injuredUntil: { $exists:false }
+team:team._id
 });
 
 if(!manager) return res.status(404).json({ message:"Kein Manager" });
