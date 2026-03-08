@@ -34,6 +34,7 @@ startSeasonCron();
 startBotLineupCron();
 startBotTacticCron();
 startCompetitionCron();
+startPlayerPoolCron();
 
 })
 .catch(err=>console.error("Mongo Fehler:",err));
@@ -61,6 +62,7 @@ const { startFreeAgentMarketCron } = require("./cron/freeAgentMarketCron");
 const { startBotLineupCron } = require("./cron/botLineupCron");
 const { startBotTacticCron } = require("./cron/botTacticCron");
 const { startCompetitionCron } = require("./cron/competitionCron");
+const { startPlayerPoolCron } = require("./cron/playerPoolCron");
 
 const transferRoutes = require("./routes/transfer");
 const marketRoutes = require("./routes/market");
