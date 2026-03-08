@@ -211,32 +211,22 @@ message:"Kürzel bereits vergeben."
 
 let balance;
 let stadiumCapacity;
-let ticketPrice;
-let stadiumName;
 let homeBonus;
 let fanBase;
 
 if (clubIdentity === "love") {
 
 balance = 4000000;
-
 stadiumCapacity = 12000;
-ticketPrice = 8;
-stadiumName = "Vereinspark";
-
-homeBonus = 1.2;
-fanBase = 5000;
+homeBonus = 1.15;
+fanBase = 1.2;
 
 } else {
 
 balance = 7000000;
-
 stadiumCapacity = 8000;
-ticketPrice = 20;
-stadiumName = "Business Arena";
-
 homeBonus = 1.05;
-fanBase = 2000;
+fanBase = 0.9;
 
 }
 
@@ -314,13 +304,12 @@ await Stadium.create({
 
 team:newTeam._id,
 
-name:stadiumName,
-
 capacity:stadiumCapacity,
 
-ticketPrice:ticketPrice,
+ticketPrice:15,
 
-level:1
+fanComfort:1,
+atmosphere:1
 
 });
 

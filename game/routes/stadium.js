@@ -11,12 +11,21 @@ EXPANSION CONFIG
 ===================================================== */
 
 const expansionConfig = {
-2000: { next: 4000, cost: 750000, duration: 8 },
-4000: { next: 8000, cost: 1800000, duration: 14 },
-8000: { next: 16000, cost: 4000000, duration: 22 },
-16000: { next: 32000, cost: 9000000, duration: 34 },
-32000: { next: 64000, cost: 22000000, duration: 60 },
-64000: { next: 81365, cost: 45000000, duration: 100 }
+
+8000: { next: 12000, cost: 2500000, duration: 12 },
+
+12000: { next: 16000, cost: 4000000, duration: 16 },
+
+16000: { next: 24000, cost: 7000000, duration: 22 },
+
+24000: { next: 32000, cost: 11000000, duration: 30 },
+
+32000: { next: 48000, cost: 18000000, duration: 40 },
+
+48000: { next: 64000, cost: 28000000, duration: 55 },
+
+64000: { next: 80000, cost: 42000000, duration: 80 }
+
 };
 
 /* =====================================================

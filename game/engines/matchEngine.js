@@ -50,6 +50,14 @@ league:match.league
 
 }
 
+/* ================= STADIUM REVENUE ================= */
+
+if(homeTeam && homeTeam._id){
+
+await generateMatchRevenue(homeTeam._id);
+
+}
+
 if (homeTeam) {
 
 const { attendance, revenue } = generateMatchRevenue(homeTeam);
