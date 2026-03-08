@@ -210,6 +210,12 @@ return Math.round(attendance);
 
 }
 
+const attendance = calculateAttendance();
+
+const utilization = stadium
+? Math.round((attendance / stadium.capacity) * 100)
+: 0;
+
 /* =====================================================
 LOADING
 ===================================================== */
