@@ -253,12 +253,6 @@ balance,
 fanBase,
 homeBonus,
 
-stadiumName,
-stadiumCapacity,
-ticketPrice,
-
-stadiumLevel:1,
-
 currentMatchday:1
 
 });
