@@ -8,6 +8,9 @@ const { processPlayerDevelopment } = require("./playerDevelopmentService");
 const { processPlayerRetirements } = require("./playerRetirementService");
 const { updateMarketValues } = require("./marketValueService");
 
+const { generateChampionsLeague } = require("./championsLeagueService");
+const { generateCupFirstRound } = require("./cupService");
+
 /* =====================================================
 SAISON ENDE
 ===================================================== */
@@ -40,13 +43,17 @@ const relegated = table1.slice(-3);
 /* Liga wechseln */
 
 for(const team of promoted){
+
 team.league = liga1;
 await team.save();
+
 }
 
 for(const team of relegated){
+
 team.league = liga2;
 await team.save();
+
 }
 
 }
@@ -133,6 +140,10 @@ const leagues = await Team.distinct("league");
 
 await Match.deleteMany({});
 
+/* =====================================================
+LIGA SPIELPLAN GENERIEREN
+===================================================== */
+
 for(const league of leagues){
 
 const teams = await Team.find({ league });
@@ -145,7 +156,32 @@ await generateLeagueSchedule(teams, league);
 
 }
 
-/* Teams freigeben */
+/* =====================================================
+POKAL GENERIEREN
+===================================================== */
+
+await generateCupFirstRound("GER");
+await generateCupFirstRound("ENG");
+await generateCupFirstRound("ESP");
+await generateCupFirstRound("ITA");
+await generateCupFirstRound("FRA");
+
+/* =====================================================
+CHAMPIONS LEAGUE STARTEN
+(ab Saison 2)
+===================================================== */
+
+const seasonCount = await Match.countDocuments({ competition:"ucl" });
+
+if(seasonCount > 0){
+
+await generateChampionsLeague();
+
+}
+
+/* =====================================================
+TEAMS FREIGEBEN
+===================================================== */
 
 const teams = await Team.find();
 

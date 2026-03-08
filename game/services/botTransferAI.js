@@ -11,32 +11,50 @@ const bots = await Team.find({ isBot:true });
 
 for(const bot of bots){
 
-/* Kader laden */
-
 const squad = await Player.find({ team:bot._id });
 
+const avgStars =
+squad.reduce((sum,p)=>sum+p.stars,0) / (squad.length || 1);
+
 /* =====================================================
-SPIELER KAUFEN
+POSITION CHECK
 ===================================================== */
 
-if(squad.length < 22){
+const positionsNeeded = [];
 
-const budget = bot.balance;
+if(!squad.some(p=>p.positions.includes("GK"))) positionsNeeded.push("GK");
+if(!squad.some(p=>p.positions.includes("ST"))) positionsNeeded.push("ST");
+if(!squad.some(p=>p.positions.includes("CB"))) positionsNeeded.push("CB");
 
-/* Marktspieler suchen */
+/* =====================================================
+MARKT SPIELER SUCHEN
+===================================================== */
 
 const marketPlayers = await Player.find({
 isListed:true,
 transferType:"auction"
-}).limit(20);
+}).limit(30);
 
 for(const player of marketPlayers){
 
-if(player.highestBid > budget) continue;
+if(bot.balance < player.highestBid) continue;
 
-/* Bot Wahrscheinlichkeit */
+/* Bot kauft nur bessere Spieler */
 
-if(Math.random() > 0.25) continue;
+if(player.stars < avgStars) continue;
+
+/* Position bevorzugen */
+
+if(
+positionsNeeded.length > 0 &&
+!positionsNeeded.some(pos => player.positions.includes(pos))
+){
+continue;
+}
+
+/* Wahrscheinlichkeit */
+
+if(Math.random() > 0.35) continue;
 
 /* Gebot */
 
@@ -47,45 +65,9 @@ player.highestBidder = bot._id;
 
 await player.save();
 
-console.log("Bot bietet auf", player.lastName);
+console.log("Bot bietet auf:", player.lastName);
 
 break;
-
-}
-
-}
-
-/* =====================================================
-FREE AGENTS KAUFEN
-===================================================== */
-
-if(Math.random() < 0.3){
-
-const freeAgents = await Player.find({
-team:null
-}).limit(10);
-
-if(freeAgents.length > 0){
-
-const target =
-freeAgents[Math.floor(Math.random()*freeAgents.length)];
-
-const price = target.marketValue;
-
-if(bot.balance >= price){
-
-bot.balance -= price;
-
-target.team = bot._id;
-
-await target.save();
-await bot.save();
-
-console.log("Bot kaufte Free Agent:", target.lastName);
-
-}
-
-}
 
 }
 
@@ -93,15 +75,16 @@ console.log("Bot kaufte Free Agent:", target.lastName);
 SCHWACHE SPIELER VERKAUFEN
 ===================================================== */
 
-const weakPlayers = squad.filter(p => p.stars <= 1.5);
+const weakPlayers = squad.filter(p => p.stars < avgStars - 0.5);
 
-if(weakPlayers.length > 0 && Math.random() < 0.25){
+if(weakPlayers.length > 0 && Math.random() < 0.3){
 
 const player =
 weakPlayers[Math.floor(Math.random()*weakPlayers.length)];
 
 player.isListed = true;
 player.transferType = "auction";
+
 player.highestBid = Math.floor(player.marketValue * 0.8);
 
 const end = new Date();
@@ -112,7 +95,7 @@ player.sellerTeam = bot._id;
 
 await player.save();
 
-console.log("Bot verkauft Spieler:", player.lastName);
+console.log("Bot verkauft:", player.lastName);
 
 }
 

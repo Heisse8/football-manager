@@ -1,66 +1,215 @@
 const mongoose = require("mongoose");
 
 const matchSchema = new mongoose.Schema({
-  homeTeam: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Team"
-  },
-  awayTeam: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Team"
-  },
 
-  date: Date,
-  matchday: Number,
+/* =====================================================
+TEAMS
+===================================================== */
 
-  competition: {
-    type: String,
-    default: "league"
-  },
+homeTeam:{
+type:mongoose.Schema.Types.ObjectId,
+ref:"Team"
+},
 
-  cupRound: String,
+awayTeam:{
+type:mongoose.Schema.Types.ObjectId,
+ref:"Team"
+},
 
-  homeGoals: Number,
-  awayGoals: Number,
+/* =====================================================
+DATUM
+===================================================== */
 
-  possession: {
-    home: Number,
-    away: Number
-  },
+date:Date,
 
-  xG: {
-    home: Number,
-    away: Number
-  },
+matchday:{
+type:Number,
+default:null
+},
 
-  stats: {
-    shots: { home: Number, away: Number },
-    corners: { home: Number, away: Number },
-    freeKicks: { home: Number, away: Number },
-    penalties: { home: Number, away: Number },
-    cards: {
-      home: { yellows: Number, reds: Number },
-      away: { yellows: Number, reds: Number }
-    }
-  },
+/* =====================================================
+WETTBEWERB
+===================================================== */
 
-  summary: String,
-  attendance: Number,
+competition:{
+type:String,
+enum:["league","cup","ucl"],
+default:"league"
+},
 
-  status: {
-    type: String,
-    default: "scheduled"
-  },
+/* =====================================================
+POKAL RUNDE
+===================================================== */
 
-  played: {
-    type: Boolean,
-    default: false
-  },
+cupRound:{
+type:String,
+enum:[
+"runde1",
+"achtelfinale",
+"viertelfinale",
+"halbfinale",
+"finale"
+],
+default:null
+},
 
-  createdAt: {
-    type: Date,
-    default: Date.now
-  }
+/* =====================================================
+CHAMPIONS LEAGUE
+===================================================== */
+
+group:{
+type:String,
+enum:["A","B","C","D"],
+default:null
+},
+
+leg:{
+type:Number,
+default:1
+},
+
+/* =====================================================
+SPIELERGEBNIS
+===================================================== */
+
+homeGoals:{
+type:Number,
+default:0
+},
+
+awayGoals:{
+type:Number,
+default:0
+},
+
+/* Verlängerung */
+
+extraTime:{
+played:{
+type:Boolean,
+default:false
+},
+homeGoals:{
+type:Number,
+default:0
+},
+awayGoals:{
+type:Number,
+default:0
+}
+},
+
+/* Elfmeterschießen */
+
+penalties:{
+played:{
+type:Boolean,
+default:false
+},
+home:{
+type:Number,
+default:0
+},
+away:{
+type:Number,
+default:0
+}
+},
+
+/* =====================================================
+POSSESSION
+===================================================== */
+
+possession:{
+home:{ type:Number, default:50 },
+away:{ type:Number, default:50 }
+},
+
+/* =====================================================
+EXPECTED GOALS
+===================================================== */
+
+xG:{
+home:{ type:Number, default:0 },
+away:{ type:Number, default:0 }
+},
+
+/* =====================================================
+MATCH STATS
+===================================================== */
+
+stats:{
+
+shots:{
+home:{ type:Number, default:0 },
+away:{ type:Number, default:0 }
+},
+
+corners:{
+home:{ type:Number, default:0 },
+away:{ type:Number, default:0 }
+},
+
+freeKicks:{
+home:{ type:Number, default:0 },
+away:{ type:Number, default:0 }
+},
+
+penalties:{
+home:{ type:Number, default:0 },
+away:{ type:Number, default:0 }
+},
+
+cards:{
+
+home:{
+yellows:{ type:Number, default:0 },
+reds:{ type:Number, default:0 }
+},
+
+away:{
+yellows:{ type:Number, default:0 },
+reds:{ type:Number, default:0 }
+}
+
+}
+
+},
+
+/* =====================================================
+MATCH INFO
+===================================================== */
+
+summary:{
+type:String,
+default:null
+},
+
+attendance:{
+type:Number,
+default:0
+},
+
+/* =====================================================
+MATCH STATUS
+===================================================== */
+
+status:{
+type:String,
+enum:["scheduled","live","finished"],
+default:"scheduled"
+},
+
+played:{
+type:Boolean,
+default:false
+},
+
+createdAt:{
+type:Date,
+default:Date.now
+}
+
 });
 
-module.exports = mongoose.model("Match", matchSchema);
+module.exports = mongoose.model("Match",matchSchema);
