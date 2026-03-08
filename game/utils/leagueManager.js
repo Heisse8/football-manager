@@ -1,44 +1,32 @@
 const Team = require("../models/Team");
 
-/* =====================================================
- LIGAREIHENFOLGE
-===================================================== */
+const leagues = [
 
-const leagueOrder = [
+"GER-1",
+"GER-2",
 
-"GER_1",
-"GER_2",
+"ENG-1",
+"ENG-2",
 
-"ENG_1",
-"ENG_2",
+"ESP-1",
+"ESP-2",
 
-"ESP_1",
-"ESP_2",
+"ITA-1",
+"ITA-2",
 
-"ITA_1",
-"ITA_2",
-
-"FRA_1",
-"FRA_2"
+"FRA-1",
+"FRA-2"
 
 ];
 
-const MAX_TEAMS_PER_LEAGUE = 18;
+async function getNextLeague(){
 
-/* =====================================================
- FINDE NÄCHSTE LIGA
-===================================================== */
+for(const league of leagues){
 
-async function getNextLeague() {
+const teams = await Team.countDocuments({ league });
 
-for (const league of leagueOrder) {
-
-const count = await Team.countDocuments({ league });
-
-if (count < MAX_TEAMS_PER_LEAGUE) {
-
+if(teams < 18){
 return league;
-
 }
 
 }
@@ -47,6 +35,4 @@ throw new Error("Alle Ligen sind voll");
 
 }
 
-module.exports = {
-getNextLeague
-};
+module.exports = { getNextLeague };

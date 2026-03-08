@@ -1,0 +1,61 @@
+const Team = require("../models/Team");
+
+async function updateTable(homeTeamId, awayTeamId, homeGoals, awayGoals){
+
+const home = await Team.findById(homeTeamId);
+const away = await Team.findById(awayTeamId);
+
+/* Spiele */
+
+home.played++;
+away.played++;
+
+/* Tore */
+
+home.goalsFor += homeGoals;
+home.goalsAgainst += awayGoals;
+
+away.goalsFor += awayGoals;
+away.goalsAgainst += homeGoals;
+
+/* Tordifferenz */
+
+home.goalDifference = home.goalsFor - home.goalsAgainst;
+away.goalDifference = away.goalsFor - away.goalsAgainst;
+
+/* Ergebnis */
+
+if(homeGoals > awayGoals){
+
+home.wins++;
+home.points += 3;
+
+away.losses++;
+
+}
+
+else if(homeGoals < awayGoals){
+
+away.wins++;
+away.points += 3;
+
+home.losses++;
+
+}
+
+else{
+
+home.draws++;
+away.draws++;
+
+home.points++;
+away.points++;
+
+}
+
+await home.save();
+await away.save();
+
+}
+
+module.exports = { updateTable };

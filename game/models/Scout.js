@@ -2,7 +2,12 @@ const mongoose = require("mongoose");
 
 const scoutSchema = new mongoose.Schema({
 
-name:{
+firstName:{
+type:String,
+required:true
+},
+
+lastName:{
 type:String,
 required:true
 },
@@ -14,10 +19,38 @@ max:5,
 required:true
 },
 
-region:{
+regionSpecialty:{
 type:String,
-default:"global"
+enum:[
+"europa",
+"suedamerika",
+"afrika",
+"asien",
+"nordamerika",
+"australien"
+],
+default:null
 },
+
+/* ================= TRANSFERMARKT ================= */
+
+isListed:{
+type:Boolean,
+default:true
+},
+
+transferPrice:{
+type:Number,
+required:true
+},
+
+sellerTeam:{
+type:mongoose.Schema.Types.ObjectId,
+ref:"Team",
+default:null
+},
+
+/* ================= TEAM ================= */
 
 team:{
 type:mongoose.Schema.Types.ObjectId,
@@ -25,16 +58,23 @@ ref:"Team",
 default:null
 },
 
-busyUntil:{
+/* ================= MISSION ================= */
+
+isOnMission:{
+type:Boolean,
+default:false
+},
+
+missionEnds:{
 type:Date,
 default:null
 },
 
-mission:{
-region:String,
-duration:Number
+missionRegion:{
+type:String,
+default:null
 }
 
 },{timestamps:true});
 
-module.exports = mongoose.model("Scout", scoutSchema);
+module.exports = mongoose.model("Scout",scoutSchema);

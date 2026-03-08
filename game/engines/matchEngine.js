@@ -1,22 +1,50 @@
 // ======================================================
-// MATCH ENGINE V11 – FULL FOOTBALL SIMULATION
-// Tactical Phase Engine
-// Match Story Engine
-// Momentum System
-// Coach AI
-// Possession Engine
-// Goalkeeper Saves
+// MATCH ENGINE V13 – FULL FOOTBALL SIMULATION
+// Trainer KI + Formation System
 // ======================================================
+
+const Player = require("../models/Player");
 
 const { generateMatchNews } = require("../utils/newsGenerator");
 const { generateMatchRevenue } = require("../utils/matchRevenue");
+const { chooseFormation } = require("../utils/coachAI");
+
+/* ======================================================
+MATCH ENGINE ENTRY
+====================================================== */
 
 async function simulateRealisticMatch({ homeTeam, awayTeam, match }) {
+
+/* ================= FORMATION KI ================= */
+
+homeTeam.formation = chooseFormation(homeTeam,awayTeam);
+awayTeam.formation = chooseFormation(awayTeam,homeTeam);
+
+/* ================= SPIELER LADEN ================= */
+
+const homePlayers = await Player.find({
+team: homeTeam._id,
+injuredUntil: { $exists:false }
+});
+
+const awayPlayers = await Player.find({
+team: awayTeam._id,
+injuredUntil: { $exists:false }
+});
+
+homeTeam.players = homePlayers;
+awayTeam.players = awayPlayers;
+
+/* ================= CONTEXT ================= */
 
 const homeCtx = buildTeamContext(homeTeam,true);
 const awayCtx = buildTeamContext(awayTeam,false);
 
+/* ================= MATCH STATE ================= */
+
 const state = createInitialState(homeCtx.players,awayCtx.players);
+
+/* ================= MATCH LOOP ================= */
 
 for(let minute=1; minute<=90; minute++){
 
@@ -32,13 +60,17 @@ state.momentum.away *= 0.98;
 
 }
 
+/* ================= STATS ================= */
+
 const possession = calculatePossession(state);
 const ratings = calculateRatings(state);
 
-applyFitnessLoss(homeCtx.players);
-applyFitnessLoss(awayCtx.players);
+/* ================= FITNESS ================= */
 
-/* ================= MATCH NEWS ================= */
+await applyFitnessLoss(homeCtx.players);
+await applyFitnessLoss(awayCtx.players);
+
+/* ================= NEWS ================= */
 
 if(match){
 
@@ -52,15 +84,13 @@ league:match.league
 
 }
 
-/* ================= STADIUM + SPONSOR REVENUE ================= */
+/* ================= REVENUE ================= */
 
 if(homeTeam && homeTeam._id){
-
 await generateMatchRevenue(homeTeam._id);
-
 }
 
-/* ================= RETURN RESULT ================= */
+/* ================= RESULT ================= */
 
 return{
 
@@ -90,45 +120,44 @@ module.exports = { simulateRealisticMatch };
 
 
 // ======================================================
-// MATCH STORY ENGINE
+// TRAINER ANPASSUNG
 // ======================================================
 
-function applyMatchStory(state,homeCtx,awayCtx){
+function applyCoachAdaptation(state,homeCtx,awayCtx){
 
 const diff = state.home.goals - state.away.goals;
 
-if(diff < 0){
+/* Heimteam verliert */
 
-homeCtx.attackStrength *= 1.05;
-state.momentum.home += 0.02;
-
-}
-
-if(diff > 0){
-
-awayCtx.attackStrength *= 1.05;
-state.momentum.away += 0.02;
-
-}
-
-if(diff > 0 && state.minute > 70){
-
-homeCtx.defenseStrength *= 1.05;
-homeCtx.attackStrength *= 0.96;
-
-}
-
-if(diff < 0 && state.minute > 70){
-
-awayCtx.defenseStrength *= 1.05;
-awayCtx.attackStrength *= 0.96;
-
-}
-
-if(state.minute > 85){
+if(diff < 0 && state.minute > 60){
 
 homeCtx.attackStrength *= 1.08;
+homeCtx.defenseStrength *= 0.95;
+
+}
+
+/* Auswärtsteam verliert */
+
+if(diff > 0 && state.minute > 60){
+
 awayCtx.attackStrength *= 1.08;
+awayCtx.defenseStrength *= 0.95;
+
+}
+
+/* Führung verteidigen */
+
+if(diff > 0 && state.minute > 75){
+
+homeCtx.attackStrength *= 0.92;
+homeCtx.defenseStrength *= 1.05;
+
+}
+
+if(diff < 0 && state.minute > 75){
+
+awayCtx.attackStrength *= 0.92;
+awayCtx.defenseStrength *= 1.05;
 
 }
 
@@ -146,7 +175,6 @@ const players = team.players || [];
 const ctx={
 players,
 goalkeeper: players.find(p=>p.positions?.includes("GK")),
-coach:team.coach || null,
 attackStrength:team.attackStrength || 50,
 defenseStrength:team.defenseStrength || 50,
 possessionSkill:team.possessionSkill || 50,
@@ -160,18 +188,13 @@ ctx.defenseStrength*=team.homeBonus;
 
 }
 
-applyFormationBonus(ctx,team.formation);
-applyTacticInfluence(ctx,team.tactics);
-applyCoachInfluence(ctx);
-applyCoachStyle(ctx);
-
 return ctx;
 
 }
 
 
 // ======================================================
-// STATE
+// MATCH STATE
 // ======================================================
 
 function createInitialState(homePlayers,awayPlayers){
@@ -224,6 +247,45 @@ reds:0
 
 
 // ======================================================
+// MATCH STORY ENGINE
+// ======================================================
+
+function applyMatchStory(state,homeCtx,awayCtx){
+
+const diff = state.home.goals - state.away.goals;
+
+if(diff < 0){
+
+homeCtx.attackStrength *= 1.05;
+state.momentum.home += 0.02;
+
+}
+
+if(diff > 0){
+
+awayCtx.attackStrength *= 1.05;
+state.momentum.away += 0.02;
+
+}
+
+if(diff > 0 && state.minute > 70){
+
+homeCtx.defenseStrength *= 1.05;
+homeCtx.attackStrength *= 0.96;
+
+}
+
+if(diff < 0 && state.minute > 70){
+
+awayCtx.defenseStrength *= 1.05;
+awayCtx.attackStrength *= 0.96;
+
+}
+
+}
+
+
+// ======================================================
 // MINUTE SIMULATION
 // ======================================================
 
@@ -237,9 +299,6 @@ const awayMomentum = 1 + clampMomentum(state.momentum.away);
 
 let homeAttack = homeCtx.attackStrength * homeMomentum;
 let awayAttack = awayCtx.attackStrength * awayMomentum;
-
-if(state.home.reds>0) homeAttack*=0.9;
-if(state.away.reds>0) awayAttack*=0.9;
 
 const homeAttackChance =
 homeAttack /
@@ -263,7 +322,7 @@ maybeInjury(state,attacking);
 
 
 // ======================================================
-// TACTICAL PHASE ENGINE
+// BUILD UP PHASE
 // ======================================================
 
 function buildUpPhase(state,attacking,defending,attackCtx,defendCtx){
@@ -288,103 +347,51 @@ return;
 
 }
 
-const creator = pickCreator(attackCtx.players);
+const creator = pickRandom(attackCtx.players);
 
 if(!creator) return;
 
 attacking.keyPasses++;
 
-finalThirdPhase(state,attacking,defending,attackCtx,defendCtx,creator);
-
-}
-
-function finalThirdPhase(state,attacking,defending,attackCtx,defendCtx,creator){
-
-if(Math.random()<0.25) attacking.dribbles++;
-if(Math.random()<0.22) attacking.crosses++;
-if(Math.random()<0.18) attacking.longShots++;
-
 finishPhase(state,attacking,defending,attackCtx,defendCtx,creator);
 
 }
 
+
+// ======================================================
+// FINISH PHASE
+// ======================================================
+
 function finishPhase(state,attacking,defending,attackCtx,defendCtx,creator){
 
-const attacker = pickScorer(attackCtx.players);
+const attacker = pickRandom(attackCtx.players);
 const goalkeeper = defendCtx.goalkeeper;
+
+if(!attacker) return;
 
 let xG = calculateShotQuality(attacker,goalkeeper);
 
-if(Math.random()<0.25){
-
-attacking.bigChances++;
-xG*=1.4;
-
-}
-
 attacking.shots++;
 attacking.xG+=xG;
-
-if(Math.random()<0.15){
-
-defending.blocks++;
-return;
-
-}
 
 if(Math.random()<xG){
 
 attacking.goals++;
 
-updateMomentum(state,attacking);
-
 state.events.push({
 minute:state.minute,
 type:"goal",
-scorer:`${attacker.firstName} ${attacker.lastName}`,
-assist:`${creator.firstName} ${creator.lastName}`
+scorer:`${attacker.firstName} ${attacker.lastName}`
 });
 
 addStat(state,attacker._id,"goals");
-addStat(state,creator._id,"assists");
 
 }else{
 
 defending.saves++;
 
-state.events.push({
-minute:state.minute,
-type:"save",
-goalkeeper:`${goalkeeper?.firstName || "GK"}`
-});
-
 }
 
-}
-
-
-// ======================================================
-// MOMENTUM
-// ======================================================
-
-function updateMomentum(state,team){
-
-if(team === state.home){
-
-state.momentum.home += 0.15;
-state.momentum.away -= 0.1;
-
-}else{
-
-state.momentum.away += 0.15;
-state.momentum.home -= 0.1;
-
-}
-
-}
-
-function clampMomentum(v){
-return Math.max(-0.4,Math.min(0.4,v));
 }
 
 
@@ -392,53 +399,11 @@ return Math.max(-0.4,Math.min(0.4,v));
 // PLAYER PICK
 // ======================================================
 
-function pickCreator(players){
+function pickRandom(players){
 
-const weighted=[];
+if(!players || players.length===0) return null;
 
-players.forEach(p=>{
-
-let w=1;
-
-if(p.playStyle==="playmaker") w=3;
-if(p.playStyle==="winger") w=2;
-
-for(let i=0;i<w;i++) weighted.push(p);
-
-});
-
-return weighted[Math.floor(Math.random()*weighted.length)];
-
-}
-
-function pickScorer(players){
-
-const weighted=[];
-
-players.forEach(p=>{
-
-let w=1;
-
-const pos=p.positions?.[0]||"CM";
-
-switch(pos){
-
-case "ST": w=10; break;
-case "LW":
-case "RW": w=7; break;
-case "CAM": w=6; break;
-case "CM": w=4; break;
-case "CDM": w=2; break;
-case "CB": w=1; break;
-case "GK": w=0.02; break;
-
-}
-
-for(let i=0;i<w;i++) weighted.push(p);
-
-});
-
-return weighted[Math.floor(Math.random()*weighted.length)];
+return players[Math.floor(Math.random()*players.length)];
 
 }
 
@@ -466,6 +431,15 @@ return 0.05 + duel*0.30;
 
 
 // ======================================================
+// MOMENTUM
+// ======================================================
+
+function clampMomentum(v){
+return Math.max(-0.4,Math.min(0.4,v));
+}
+
+
+// ======================================================
 // EVENTS
 // ======================================================
 
@@ -489,12 +463,15 @@ if(Math.random()>0.0006) return;
 const players = team===state.home ? state.homePlayers : state.awayPlayers;
 const player = players[Math.floor(Math.random()*players.length)];
 
+if(!player) return;
+
 const days = 3 + Math.floor(Math.random()*25);
 
 const until = new Date();
 until.setDate(until.getDate()+days);
 
 player.injuredUntil = until;
+player.save();
 
 }
 
@@ -503,14 +480,16 @@ player.injuredUntil = until;
 // FITNESS
 // ======================================================
 
-function applyFitnessLoss(players){
+async function applyFitnessLoss(players){
 
-players.forEach(p=>{
+for(const p of players){
 
 const loss = 6 + Math.random()*4;
 p.fitness = Math.max(0,(p.fitness||100)-loss);
 
-});
+await p.save();
+
+}
 
 }
 

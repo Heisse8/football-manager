@@ -34,6 +34,11 @@ ref:"User",
 default:null
 },
 
+createdAtLeague:{
+type:Date,
+default:Date.now
+},
+
 /* =====================================================
 BOT SYSTEM
 ===================================================== */
@@ -57,6 +62,44 @@ assistantCoach:{
 type:mongoose.Schema.Types.ObjectId,
 ref:"Coach",
 default:null
+},
+
+/* =====================================================
+SCOUTING SYSTEM
+===================================================== */
+
+scoutingLevel:{
+type:Number,
+default:1,
+min:1,
+max:5
+},
+
+scoutSlots:{
+type:Number,
+default:3
+},
+
+scouts:{
+type:[{
+type:mongoose.Schema.Types.ObjectId,
+ref:"Scout"
+}],
+default:[]
+},
+
+activeScouting:{
+type:[{
+scout:{
+type:mongoose.Schema.Types.ObjectId,
+ref:"Scout"
+},
+region:String,
+duration:Number,
+startedAt:Date,
+returnAt:Date
+}],
+default:[]
 },
 
 /* =====================================================
@@ -93,6 +136,16 @@ type:Number,
 default:1
 },
 
+trainingLevel:{
+type:Number,
+default:1
+},
+
+medicalLevel:{
+type:Number,
+default:1
+},
+
 /* =====================================================
 FANS & HOME ADVANTAGE
 ===================================================== */
@@ -109,7 +162,6 @@ default:1
 
 /* =====================================================
 TAKTIK
-Trainer kann diese später überschreiben
 ===================================================== */
 
 tactics:{
@@ -177,23 +229,23 @@ FORMATION
 formation:{
 type:String,
 enum:[
-"442",
-"4231",
-"433",
-"41212",
-"4141",
-"352",
-"343",
-"3421",
-"532",
-"541",
-"5212"
+"4-4-2",
+"4-2-3-1",
+"4-3-3",
+"4-1-2-1-2",
+"4-1-4-1",
+"3-5-2",
+"3-4-3",
+"3-4-2-1",
+"5-3-2",
+"5-4-1",
+"5-2-1-2"
 ],
-default:"442"
+default:"4-4-2"
 },
 
 /* =====================================================
-LINEUP (vom Trainer generiert)
+LINEUP
 ===================================================== */
 
 lineup:{
@@ -247,8 +299,26 @@ default:null
 },
 
 /* =====================================================
+SEASON SYSTEM
+===================================================== */
+
+seasonReady:{
+type:Boolean,
+default:false
+},
+
+seasonPaused:{
+type:Boolean,
+default:false
+},
+
+season:{
+type:Number,
+default:1
+},
+
+/* =====================================================
 TEAM STRENGTH
-MatchEngine Basis
 ===================================================== */
 
 attackStrength:{
@@ -284,6 +354,8 @@ default:50
 TABELLE
 ===================================================== */
 
+played:{ type:Number, default:0 },
+
 points:{ type:Number, default:0 },
 
 wins:{ type:Number, default:0 },
@@ -311,7 +383,19 @@ type:Number,
 default:0
 },
 
-/* ================= SPONSOR ================= */
+transferIncome:{
+type:Number,
+default:0
+},
+
+transferSpending:{
+type:Number,
+default:0
+},
+
+/* =====================================================
+SPONSOR SYSTEM
+===================================================== */
 
 sponsor:{
 type:String,
@@ -329,8 +413,12 @@ default:0
 },
 
 sponsorSeasonBonus:{
-type:Object,
-default:null
+
+top10:{ type:Number, default:0 },
+top5:{ type:Number, default:0 },
+top3:{ type:Number, default:0 },
+champion:{ type:Number, default:0 }
+
 },
 
 sponsorReputation:{

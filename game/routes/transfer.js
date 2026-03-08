@@ -1,204 +1,135 @@
 const express = require("express");
 const router = express.Router();
 
-const Transfer = require("../models/Transfer");
 const Player = require("../models/Player");
-const Manager = require("../models/Manager");
-const Scout = require("../models/Scout");
 const Team = require("../models/Team");
+const TransferBid = require("../models/TransferBid");
 
 const auth = require("../middleware/auth");
 
 /* =====================================================
- ITEM AUF TRANSFERMARKT SETZEN
+MARKT LADEN
 ===================================================== */
 
-router.post("/list", auth, async (req,res)=>{
+router.get("/market", async (req,res)=>{
 
-try{
+const players = await Player.find({
+isListed:true
+})
+.populate("team","name")
+.sort({createdAt:-1});
 
-const { itemId, type, price } = req.body;
+res.json(players);
 
-const team = await Team.findOne({
-owner:req.user.userId
 });
 
-if(!team){
-return res.status(404).json({
-message:"Team nicht gefunden"
-});
-}
 
-let item;
+/* =====================================================
+SPIELER LISTEN
+===================================================== */
 
-/* ITEM LADEN */
+router.post("/list/:playerId", auth, async (req,res)=>{
 
-if(type === "player"){
-item = await Player.findById(itemId);
-}
+const { type, price, duration } = req.body;
 
-if(type === "manager"){
-item = await Manager.findById(itemId);
-}
+const player = await Player.findById(req.params.playerId);
 
-if(type === "scout"){
-item = await Scout.findById(itemId);
-}
+if(!player) return res.status(404).json({message:"Spieler nicht gefunden"});
 
-if(!item){
-return res.status(404).json({
-message:"Item nicht gefunden"
-});
-}
+player.isListed = true;
+player.transferType = type;
+player.transferPrice = price;
 
-/* BESITZ PRÜFEN */
-
-if(item.team && item.team.toString() !== team._id.toString()){
-
-return res.status(400).json({
-message:"Gehört nicht deinem Team"
-});
-
-}
-
-/* AUKTIONSENDE */
+if(type === "auction"){
 
 const end = new Date();
-end.setHours(end.getHours() + 24);
 
-/* TRANSFER ERSTELLEN */
+end.setHours(end.getHours() + duration);
 
-const transfer = await Transfer.create({
-
-type,
-item:item._id,
-
-seller:team._id,
-
-startPrice:price,
-currentBid:price,
-
-status:"active",
-
-expiresAt:end
-
-});
-
-res.json(transfer);
-
-}catch(err){
-
-console.error(err);
-
-res.status(500).json({
-message:"Serverfehler"
-});
+player.auctionEnd = end;
 
 }
 
+await player.save();
+
+res.json({message:"Spieler auf Transfermarkt"});
+
 });
+
 
 /* =====================================================
- GEBOT ABGEBEN
+SOFORT KAUF
 ===================================================== */
 
-router.post("/bid", auth, async (req,res)=>{
+router.post("/buy/:playerId", auth, async (req,res)=>{
 
-try{
+const buyerTeam = await Team.findOne({owner:req.user.userId});
 
-const { transferId, amount } = req.body;
+const player = await Player.findById(req.params.playerId);
 
-const team = await Team.findOne({
-owner:req.user.userId
-});
+if(!player || !player.isListed) return res.status(400).json({message:"Nicht verfügbar"});
 
-if(!team){
-return res.status(404).json({
-message:"Team nicht gefunden"
-});
-}
+const sellerTeam = await Team.findById(player.team);
 
-const transfer = await Transfer.findById(transferId);
+if(buyerTeam.balance < player.transferPrice){
 
-if(!transfer || transfer.status !== "active"){
-
-return res.status(400).json({
-message:"Transfer beendet"
-});
+return res.status(400).json({message:"Nicht genug Geld"});
 
 }
 
-/* MINDESTGEBOT */
+buyerTeam.balance -= player.transferPrice;
+sellerTeam.balance += player.transferPrice;
 
-if(amount <= transfer.currentBid){
+player.team = buyerTeam._id;
+player.isListed = false;
 
-return res.status(400).json({
-message:"Gebot zu niedrig"
-});
+await buyerTeam.save();
+await sellerTeam.save();
+await player.save();
 
-}
-
-/* GELD PRÜFEN */
-
-if(team.balance < amount){
-
-return res.status(400).json({
-message:"Nicht genug Geld"
-});
-
-}
-
-/* GEBOT SETZEN */
-
-transfer.currentBid = amount;
-transfer.highestBidder = team._id;
-
-await transfer.save();
-
-res.json({
-success:true
-});
-
-}catch(err){
-
-console.error(err);
-
-res.status(500).json({
-message:"Serverfehler"
-});
-
-}
+res.json({message:"Spieler gekauft"});
 
 });
+
 
 /* =====================================================
- TRANSFERS NACH KATEGORIE
+BID
 ===================================================== */
 
-router.get("/:type", async (req,res)=>{
+router.post("/bid/:playerId", auth, async (req,res)=>{
 
-try{
+const { amount } = req.body;
 
-const { type } = req.params;
+const player = await Player.findById(req.params.playerId);
 
-const transfers = await Transfer.find({
+if(!player || player.transferType !== "auction"){
 
-type,
-status:"active"
-
-}).populate("item");
-
-res.json(transfers);
-
-}catch(err){
-
-console.error(err);
-
-res.status(500).json({
-message:"Serverfehler"
-});
+return res.status(400).json({message:"Keine Auktion"});
 
 }
+
+if(amount <= player.currentBid){
+
+return res.status(400).json({message:"Gebot zu niedrig"});
+
+}
+
+const team = await Team.findOne({owner:req.user.userId});
+
+player.currentBid = amount;
+player.highestBidder = team._id;
+
+await TransferBid.create({
+
+player:player._id,
+bidder:team._id,
+amount
+
+});
+
+await player.save();
+
+res.json({message:"Gebot abgegeben"});
 
 });
 

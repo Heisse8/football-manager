@@ -19,7 +19,20 @@ DATABASE
 ===================================================== */
 
 mongoose.connect(process.env.MONGO_URI)
-.then(()=>console.log("MongoDB verbunden"))
+.then(()=>{
+
+console.log("MongoDB verbunden");
+
+/* Crons starten */
+
+startMatchdayCron();
+startAuctionCron();
+startFreeAgentCron();
+startFreeAgentMarketCron();
+startBotTransferCron();
+startSeasonCron();
+
+})
 .catch(err=>console.error("Mongo Fehler:",err));
 
 /* =====================================================
@@ -35,6 +48,16 @@ const stadiumRoutes = require("./routes/stadium");
 const newsRoutes = require("./routes/news");
 const leagueRoutes = require("./routes/league");
 const notificationRoutes = require("./routes/notifications");
+
+const { startMatchdayCron } = require("./cron/matchdayCron");
+const { startAuctionCron } = require("./cron/auctionCron");
+const { startFreeAgentCron } = require("./cron/freeAgentCron");
+const { startBotTransferCron } = require("./cron/botTransferCron");
+const { startSeasonCron } = require("./cron/seasonCron");
+const { startFreeAgentMarketCron } = require("./cron/freeAgentMarketCron");
+
+const transferRoutes = require("./routes/transfer");
+const marketRoutes = require("./routes/market");
 
 /* =====================================================
 API ROUTES
@@ -53,6 +76,8 @@ app.use("/api/stadium", stadiumRoutes);
 app.use("/api/news", newsRoutes);
 app.use("/api/league", leagueRoutes); 
 app.use("/api/notifications", notificationRoutes);
+app.use("/api/transfer", transferRoutes);
+app.use("/api/market", marketRoutes);
 
 /* =====================================================
 FRONTEND (VITE BUILD)
