@@ -234,7 +234,7 @@ let fanBase;
 
 if(clubIdentity === "love"){
 
-balance = 4000000;
+balance = 5000000;
 stadiumCapacity = 12000;
 homeBonus = 1.15;
 fanBase = 1.2;

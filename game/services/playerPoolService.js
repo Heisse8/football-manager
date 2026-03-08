@@ -87,40 +87,24 @@ const defending = random(40,90);
 const physical = random(40,90);
 const mentality = random(40,90);
 
-/* =====================================================
-MARKTWERT
-===================================================== */
+/* Marktwert */
 
 let marketValue = 0;
 
 if(stars < 2){
-
-marketValue = random(200000,1000000);
-
+marketValue = random(100000,500000);
 }
-
 else if(stars < 3){
-
-marketValue = random(1000000,5000000);
-
+marketValue = random(500000,2000000);
 }
-
 else if(stars < 4){
-
-marketValue = random(5000000,20000000);
-
+marketValue = random(2000000,8000000);
 }
-
 else if(stars < 5){
-
-marketValue = random(20000000,50000000);
-
+marketValue = random(8000000,20000000);
 }
-
 else{
-
-marketValue = random(60000000,80000000);
-
+marketValue = random(20000000,40000000);
 }
 
 /* =====================================================
