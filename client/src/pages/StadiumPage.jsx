@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 export default function Stadium(){
 
 const [stadium,setStadium] = useState(null);
+const [team,setTeam] = useState(null);
 const [loading,setLoading] = useState(true);
 
 const [newName,setNewName] = useState("");
@@ -12,28 +13,37 @@ const [ticketPrice,setTicketPrice] = useState(15);
 LOAD STADIUM
 ===================================================== */
 
-useEffect(()=>{
-
-loadStadium();
-
-},[]);
-
 const loadStadium = async ()=>{
 
 try{
 
 const token = localStorage.getItem("token");
 
-const res = await fetch("/api/stadium",{
-headers:{Authorization:`Bearer ${token}`}
-});
+const headers = {
+Authorization:`Bearer ${token}`
+};
 
-if(!res.ok) return;
+/* ================= STADIUM LADEN ================= */
 
-const data = await res.json();
+const stadiumRes = await fetch("/api/stadium",{headers});
 
-setStadium(data);
-setTicketPrice(data.ticketPrice);
+if(!stadiumRes.ok) return;
+
+const stadiumData = await stadiumRes.json();
+
+setStadium(stadiumData);
+setTicketPrice(stadiumData.ticketPrice);
+
+/* ================= TEAM LADEN ================= */
+
+const teamRes = await fetch("/api/team",{headers});
+
+if(teamRes.ok){
+
+const teamData = await teamRes.json();
+setTeam(teamData);
+
+}
 
 }catch(err){
 
@@ -138,44 +148,57 @@ ATTENDANCE CALCULATION
 
 function calculateAttendance(){
 
-if(!stadium) return 0;
+if(!stadium || !team) return 0;
 
-const fanBase = stadium.fanBase || 1;
+const fanBase = team.fanBase || 1;
 
-/* Grundnachfrage */
+/* Basis Nachfrage */
+
 let demand = fanBase * 4500;
 
+/* Tabellenplatz Heimteam */
+
+let tableFactor = 1;
+
+if(team.tablePosition){
+tableFactor = 1 + ((18 - team.tablePosition) * 0.03);
+}
+
+/* Gegner Faktor (Schätzung im UI) */
+
+let opponentFactor = 1.05;
+
 /* Ticketpreis Einfluss */
-const priceImpact = Math.max(0.2, 1 - (ticketPrice / 80));
 
-/* Komfortbonus */
-const comfortBonus = stadium.fanComfort || 1;
+let priceFactor = 1 - (ticketPrice / 80);
+priceFactor = Math.max(0.2, priceFactor);
 
-/* Atmosphärenbonus */
-const atmosphereBonus = stadium.atmosphere || 1;
+/* Stadion Qualität */
 
-/* Zuschauer berechnen */
+const comfort = stadium.fanComfort || 1;
+const atmosphere = stadium.atmosphere || 1;
+
+/* Zuschauer */
+
 let attendance =
 demand *
-priceImpact *
-comfortBonus *
-atmosphereBonus;
-
-/* Mindestinteresse */
-attendance = Math.max(500, attendance);
+tableFactor *
+opponentFactor *
+priceFactor *
+comfort *
+atmosphere;
 
 /* Stadionlimit */
+
 attendance = Math.min(stadium.capacity, attendance);
+
+/* Mindestwert */
+
+attendance = Math.max(500, attendance);
 
 return Math.round(attendance);
 
 }
-
-const attendance = calculateAttendance();
-
-const utilization = stadium
-? Math.round((attendance / stadium.capacity) * 100)
-: 0;
 
 /* =====================================================
 LOADING

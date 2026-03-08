@@ -1,5 +1,6 @@
 const Stadium = require("../models/Stadium");
 const Team = require("../models/Team");
+const Match = require("../models/Match");
 
 async function generateMatchRevenue(teamId){
 
@@ -11,26 +12,68 @@ team:teamId
 
 if(!team || !stadium) return;
 
-/* ================= ZUSCHAUER ================= */
+/* ================= GEGNER FINDEN ================= */
+
+const match = await Match.findOne({
+$or:[
+{ homeTeam:teamId },
+{ awayTeam:teamId }
+],
+played:true
+}).sort({ date:-1 });
+
+let opponent = null;
+
+if(match){
+
+if(match.homeTeam.toString() === teamId.toString()){
+opponent = await Team.findById(match.awayTeam);
+}else{
+opponent = await Team.findById(match.homeTeam);
+}
+
+}
+
+/* ================= ZUSCHAUER BASIS ================= */
 
 let demand = team.fanBase * 4500;
 
-/* Ticketpreis Einfluss */
+/* ================= TABELLENPLATZ HEIMTEAM ================= */
+
+let tableFactor = 1;
+
+if(team.tablePosition){
+tableFactor = 1 + ((18 - team.tablePosition) * 0.03);
+}
+
+/* ================= TABELLENPLATZ GEGNER ================= */
+
+let opponentFactor = 1;
+
+if(opponent && opponent.tablePosition){
+opponentFactor = 1 + ((18 - opponent.tablePosition) * 0.02);
+}
+
+/* ================= TICKETPREIS ================= */
 
 let priceFactor = 1 - (stadium.ticketPrice / 80);
 
 priceFactor = Math.max(0.2, priceFactor);
 
-/* Stadion Komfort */
+/* ================= STADION KOMFORT ================= */
 
 const comfort = stadium.fanComfort || 1;
 
-/* Atmosphäre */
+/* ================= ATMOSPHÄRE ================= */
 
 const atmosphere = stadium.atmosphere || 1;
 
+/* ================= ZUSCHAUER ================= */
+
 let attendance =
 demand *
+tableFactor *
+opponentFactor *
 priceFactor *
 comfort *
 atmosphere;
@@ -39,7 +82,7 @@ atmosphere;
 
 attendance = Math.min(stadium.capacity, attendance);
 
-/* Mindestwert */
+/* Mindestinteresse */
 
 attendance = Math.max(500, attendance);
 
