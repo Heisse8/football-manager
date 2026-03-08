@@ -12,19 +12,19 @@ EXPANSION CONFIG
 
 const expansionConfig = {
 
-8000: { next: 12000, cost: 2500000, duration: 12 },
+8000: { next: 12000, cost: 6000000, duration: 12 },
 
-12000: { next: 16000, cost: 4000000, duration: 16 },
+12000: { next: 16000, cost: 12000000, duration: 16 },
 
-16000: { next: 24000, cost: 7000000, duration: 22 },
+16000: { next: 24000, cost: 25000000, duration: 22 },
 
-24000: { next: 32000, cost: 11000000, duration: 30 },
+24000: { next: 32000, cost: 45000000, duration: 30 },
 
-32000: { next: 48000, cost: 18000000, duration: 40 },
+32000: { next: 48000, cost: 70000000, duration: 40 },
 
-48000: { next: 64000, cost: 28000000, duration: 55 },
+48000: { next: 64000, cost: 110000000, duration: 55 },
 
-64000: { next: 80000, cost: 42000000, duration: 80 }
+64000: { next: 80000, cost: 180000000, duration: 80 }
 
 };
 
@@ -184,7 +184,7 @@ try{
 
 const { price } = req.body;
 
-if(price<5 || price>100){
+if(price<10 || price>150){
 
 return res.status(400).json({
 message:"Ticketpreis muss zwischen 5€ und 100€ liegen"
@@ -279,7 +279,7 @@ await team.save();
 
 /* ================= BAUZEIT ================= */
 
-const weeks = Math.ceil(config.duration/2);
+const weeks = config.duration;
 
 const startDate = new Date();
 

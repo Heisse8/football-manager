@@ -1,14 +1,20 @@
 const express = require("express");
 const router = express.Router();
 
-const Team = require("../models/Team");
 const auth = require("../middleware/auth");
 
-const { generateSponsors } = require("../utils/sponsorGenerator");
+const Team = require("../models/Team");
 
-/* ================= GET SPONSORS ================= */
+const {
+generateSponsorOffers,
+acceptSponsor
+} = require("../services/sponsorService");
 
-router.get("/", auth, async (req,res)=>{
+/* =====================================================
+SPONSOR ANGEBOTE
+===================================================== */
+
+router.get("/offers", auth, async (req,res)=>{
 
 try{
 
@@ -16,31 +22,23 @@ const team = await Team.findOne({
 owner:req.user.userId
 });
 
-if(!team){
-return res.status(404).json({
-message:"Team nicht gefunden"
-});
-}
+const offers = generateSponsorOffers(team);
 
-const sponsors = generateSponsors(team);
-
-res.json(sponsors);
+res.json(offers);
 
 }catch(err){
 
-console.error(err);
-
-res.status(500).json({
-message:"Serverfehler"
-});
+res.status(500).json({message:"Serverfehler"});
 
 }
 
 });
 
-/* ================= SIGN SPONSOR ================= */
+/* =====================================================
+SPONSOR ANNEHMEN
+===================================================== */
 
-router.post("/sign", auth, async (req,res)=>{
+router.post("/accept", auth, async (req,res)=>{
 
 try{
 
@@ -50,37 +48,13 @@ const team = await Team.findOne({
 owner:req.user.userId
 });
 
-/* ================= SPONSOR BEREITS GEWÄHLT ================= */
+const result = await acceptSponsor(team._id,sponsor);
 
-if(team.sponsor){
-
-return res.status(400).json({
-message:"Sponsor bereits gewählt"
-});
-
-}
-
-/* ================= VERTRAG SETZEN ================= */
-
-team.sponsor = sponsor.name;
-
-team.sponsorPayment = sponsor.payment || 0;
-
-team.sponsorWinBonus = sponsor.winBonus || 0;
-
-team.sponsorSeasonBonus = sponsor.seasonBonus || null;
-
-await team.save();
-
-res.json({ success:true });
+res.json(result);
 
 }catch(err){
 
-console.error(err);
-
-res.status(500).json({
-message:"Serverfehler"
-});
+res.status(400).json({message:err.message});
 
 }
 

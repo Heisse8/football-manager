@@ -136,7 +136,7 @@ default:12000
 
 ticketPrice:{
 type:Number,
-default:8
+default:18
 },
 
 stadiumLevel:{
@@ -383,7 +383,7 @@ FINANZEN
 
 balance:{
 type:Number,
-default:1000000
+default:50000000
 },
 
 lastMatchRevenue:{

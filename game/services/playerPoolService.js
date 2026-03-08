@@ -1,7 +1,7 @@
 const Player = require("../models/Player");
 
 /* =====================================================
-FREE AGENT GENERATOR
+FREE AGENT POOL MAINTENANCE
 ===================================================== */
 
 async function maintainPlayerPool(){
@@ -19,15 +19,13 @@ const needed = targetPlayers - totalPlayers;
 console.log("Generiere neue Free Agents:", needed);
 
 for(let i=0;i<needed;i++){
-
 await createRandomPlayer();
-
 }
 
 }
 
 /* =====================================================
-RANDOM PLAYER
+RANDOM PLAYER GENERATOR
 ===================================================== */
 
 async function createRandomPlayer(){
@@ -58,21 +56,29 @@ const positions = [
 ["ST"]
 ];
 
-/* Alter */
+/* =====================================================
+ALTER
+===================================================== */
 
-const age = random(17,34);
+const age = randomWeightedAge();
 
-/* Sterne */
+/* =====================================================
+STERNE
+===================================================== */
 
 let stars = generateStars();
 
-/* Potential */
+/* =====================================================
+POTENTIAL
+===================================================== */
 
-let potential = stars + random(0,2);
+let potential = stars + Math.random()*1.5;
 
 if(potential > 5) potential = 5;
 
-/* Attribute */
+/* =====================================================
+ATTRIBUTE
+===================================================== */
 
 const pace = random(40,90);
 const shooting = random(40,90);
@@ -81,9 +87,45 @@ const defending = random(40,90);
 const physical = random(40,90);
 const mentality = random(40,90);
 
-/* Marktwert */
+/* =====================================================
+MARKTWERT
+===================================================== */
 
-const marketValue = Math.round(stars * 500000 + random(0,300000));
+let marketValue = 0;
+
+if(stars < 2){
+
+marketValue = random(200000,1000000);
+
+}
+
+else if(stars < 3){
+
+marketValue = random(1000000,5000000);
+
+}
+
+else if(stars < 4){
+
+marketValue = random(5000000,20000000);
+
+}
+
+else if(stars < 5){
+
+marketValue = random(20000000,50000000);
+
+}
+
+else{
+
+marketValue = random(60000000,80000000);
+
+}
+
+/* =====================================================
+SPIELER ERSTELLEN
+===================================================== */
 
 await Player.create({
 
@@ -109,7 +151,10 @@ mentality,
 marketValue,
 
 team:null,
-isListed:true,
+
+/* Free Agents kommen NICHT automatisch auf den Markt */
+
+isListed:false,
 transferType:"auction"
 
 });
@@ -117,19 +162,66 @@ transferType:"auction"
 }
 
 /* =====================================================
-STAR GENERATION
+STERNE GENERIEREN
 ===================================================== */
 
 function generateStars(){
 
 const roll = Math.random();
 
-if(roll < 0.50) return 1 + Math.random();
-if(roll < 0.75) return 2 + Math.random();
-if(roll < 0.90) return 3 + Math.random();
-if(roll < 0.98) return 4 + Math.random();
+/* viele schlechte Spieler */
+
+if(roll < 0.50){
+return 1 + Math.random();
+}
+
+/* durchschnitt */
+
+if(roll < 0.80){
+return 2 + Math.random();
+}
+
+/* gute */
+
+if(roll < 0.93){
+return 3 + Math.random();
+}
+
+/* sehr gute */
+
+if(roll < 0.99){
+return 4 + Math.random();
+}
+
+/* seltene Weltklasse */
 
 return 5;
+
+}
+
+/* =====================================================
+ALTER VERTEILUNG
+===================================================== */
+
+function randomWeightedAge(){
+
+const roll = Math.random();
+
+/* junge Spieler */
+
+if(roll < 0.40){
+return random(17,21);
+}
+
+/* prime */
+
+if(roll < 0.80){
+return random(22,28);
+}
+
+/* ältere */
+
+return random(29,34);
 
 }
 

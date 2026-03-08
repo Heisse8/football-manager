@@ -1,8 +1,10 @@
 const Match = require("../models/Match");
 const Team = require("../models/Team");
+const Stadium = require("../models/Stadium");
 
 const { simulateRealisticMatch } = require("../engines/simulateRealisticMatch");
 const { updateMarketValues } = require("./marketValueService");
+const { paySponsorWinBonus, reduceSponsorGames } = require("./sponsorService");
 
 /* =====================================================
 SIMULATE MATCHDAY
@@ -43,16 +45,16 @@ match.xG = result.xG;
 
 match.played = true;
 
-await match.save();
-
 /* =====================================================
-TABELLE UPDATE
+TEAM LADEN
 ===================================================== */
 
 const home = await Team.findById(match.homeTeam._id);
 const away = await Team.findById(match.awayTeam._id);
 
-/* Spiele */
+/* =====================================================
+TABELLEN UPDATE
+===================================================== */
 
 home.played += 1;
 away.played += 1;
@@ -79,14 +81,24 @@ away.losses += 1;
 
 home.points += 3;
 
-}else if(match.homeGoals < match.awayGoals){
+/* Sponsor Bonus */
+
+await paySponsorWinBonus(home);
+
+}
+else if(match.homeGoals < match.awayGoals){
 
 away.wins += 1;
 home.losses += 1;
 
 away.points += 3;
 
-}else{
+/* Sponsor Bonus */
+
+await paySponsorWinBonus(away);
+
+}
+else{
 
 home.draws += 1;
 away.draws += 1;
@@ -96,10 +108,43 @@ away.points += 1;
 
 }
 
-/* Speichern */
+/* =====================================================
+ZUSCHAUER & STADION EINNAHMEN
+===================================================== */
+
+const stadium = await Stadium.findOne({
+team: home._id
+});
+
+if(stadium){
+
+const attendance = Math.floor(
+stadium.capacity * (0.6 + Math.random()*0.35)
+);
+
+const revenue = attendance * stadium.ticketPrice;
+
+home.balance += revenue;
+home.lastMatchRevenue = revenue;
+
+match.attendance = attendance;
+
+}
+
+/* =====================================================
+SPONSOR SPIELTAG REDUZIEREN
+===================================================== */
+
+await reduceSponsorGames(home);
+await reduceSponsorGames(away);
+
+/* =====================================================
+SPEICHERN
+===================================================== */
 
 await home.save();
 await away.save();
+await match.save();
 
 console.log(
 `${match.homeTeam.name} ${match.homeGoals}:${match.awayGoals} ${match.awayTeam.name}`
@@ -144,6 +189,7 @@ goalsFor:-1
 for(let i=0;i<teams.length;i++){
 
 teams[i].tablePosition = i + 1;
+
 await teams[i].save();
 
 }

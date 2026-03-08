@@ -5,6 +5,7 @@ const Team = require("../models/Team");
 const Stadium = require("../models/Stadium");
 const Player = require("../models/Player");
 const Manager = require("../models/Manager");
+const Match = require("../models/Match");
 
 const auth = require("../middleware/auth");
 
@@ -13,11 +14,10 @@ const { getNextLeague } = require("../utils/leagueManager");
 const { generateLeagueSchedule } = require("../utils/scheduleGenerator");
 const { createBotTeam } = require("../utils/botGenerator");
 const { replaceBotTeam } = require("../utils/replaceBotTeam");
-const { chooseFormationByPhilosophy } = require("../utils/trainerPhilosophy");
 const { selectTrainerFormation } = require("../utils/selectTrainerFormation");
 
 /* =====================================================
- FORMATIONEN
+FORMATIONEN
 ===================================================== */
 
 const formations = {
@@ -33,10 +33,10 @@ const formations = {
 };
 
 /* =====================================================
- POSITION MATCH
+POSITION MATCH
 ===================================================== */
 
-function positionMatches(playerPositions, slot){
+function positionMatches(playerPositions,slot){
 
 if(!playerPositions) return false;
 
@@ -55,10 +55,10 @@ return cleanPos === cleanSlot;
 }
 
 /* =====================================================
- TRAINER KI LINEUP
+TRAINER KI LINEUP
 ===================================================== */
 
-function generateSmartLineup(players, formation){
+function generateSmartLineup(players,formation){
 
 const lineup = {};
 const bench = [];
@@ -82,7 +82,7 @@ function isStriker(slot){
 return ["ST","LST","RST","LW","RW"].includes(slot);
 }
 
-/* ================= STARTELF ================= */
+/* STARTELF */
 
 for(const slot of slots){
 
@@ -91,7 +91,7 @@ let player = sortedPlayers.find(p =>
 positionMatches(p.positions,slot)
 );
 
-/* ================= POSITION GRUPPE ================= */
+/* POSITION GRUPPE */
 
 if(!player){
 
@@ -122,7 +122,7 @@ return false;
 
 }
 
-/* ================= NOTFALL ================= */
+/* NOTFALL */
 
 if(!player){
 
@@ -132,7 +132,7 @@ player = sortedPlayers.find(p =>
 
 }
 
-/* ================= SETZEN ================= */
+/* SETZEN */
 
 if(player){
 
@@ -143,7 +143,7 @@ used.add(player._id.toString());
 
 }
 
-/* ================= BANK ================= */
+/* BANK */
 
 for(const player of sortedPlayers){
 
@@ -161,7 +161,7 @@ return { lineup, bench };
 }
 
 /* =====================================================
- CREATE TEAM
+CREATE TEAM
 ===================================================== */
 
 router.post("/create", auth, async (req,res)=>{
@@ -281,7 +281,7 @@ await newTeam.save();
 
 await replaceBotTeam(newTeam);
 
-/* SPIELER */
+/* SPIELER GENERIEREN */
 
 await generatePlayersForTeam(newTeam);
 
@@ -326,7 +326,9 @@ atmosphere:1
 
 });
 
-/* ================= LIGA FÜLLEN ================= */
+/* =====================================================
+LIGA FÜLLEN
+===================================================== */
 
 let teamsInLeague = await Team.find({ league });
 
@@ -344,7 +346,7 @@ teamsInLeague = await Team.find({ league });
 
 if(teamsInLeague.length === 18){
 
-const existingMatches = await require("../models/Match").findOne({ league });
+const existingMatches = await Match.findOne({ league });
 
 if(!existingMatches){
 
@@ -372,7 +374,7 @@ message:"Serverfehler"
 });
 
 /* =====================================================
- GET MY TEAM
+GET MY TEAM
 ===================================================== */
 
 router.get("/", auth, async (req,res)=>{
@@ -406,7 +408,7 @@ message:"Serverfehler"
 });
 
 /* =====================================================
- AUTO LINEUP
+AUTO LINEUP
 ===================================================== */
 
 router.get("/auto-lineup", auth, async (req,res)=>{
@@ -417,17 +419,21 @@ const team = await Team.findOne({
 owner:req.user.userId
 });
 
-if(!team) return res.status(404).json({ message:"Kein Team" });
+if(!team){
+return res.status(404).json({ message:"Kein Team" });
+}
 
 const manager = await Manager.findOne({
 team:team._id
 });
 
+if(!manager){
+return res.status(404).json({ message:"Kein Manager" });
+}
+
 const players = await Player.find({
 team:team._id
 });
-
-if(!manager) return res.status(404).json({ message:"Kein Manager" });
 
 const formation = selectTrainerFormation(
 players,

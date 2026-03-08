@@ -5,8 +5,17 @@ const Match = require("../models/Match");
 UTIL SHUFFLE
 ===================================================== */
 
-function shuffle(arr){
-return arr.sort(()=>Math.random()-0.5);
+function shuffle(array){
+
+for(let i = array.length - 1; i > 0; i--){
+
+const j = Math.floor(Math.random() * (i + 1));
+[array[i], array[j]] = [array[j], array[i]];
+
+}
+
+return array;
+
 }
 
 /* =====================================================
@@ -19,7 +28,14 @@ async function generateCupFirstRound(country){
 const liga1 = await Team.find({ league:`${country}_1` });
 const liga2 = await Team.find({ league:`${country}_2` });
 
-let teams = [...liga1,...liga2];
+let teams = [...liga1, ...liga2];
+
+/* Sicherheit */
+
+if(teams.length < 36){
+console.log("Zu wenige Teams für Pokal:", teams.length);
+return;
+}
 
 /* Teams mischen */
 
@@ -56,7 +72,7 @@ played:false
 
 }
 
-/* Freilose Teams direkt ins Achtelfinale markieren */
+/* Freilose Teams */
 
 for(const team of byeTeams){
 
@@ -85,8 +101,6 @@ NÄCHSTE RUNDE AUSLOSEN
 
 async function drawNextCupRound(country, round){
 
-/* Gewinner der vorherigen Runde */
-
 const finishedMatches = await Match.find({
 competition:"cup",
 cupRound:round,
@@ -103,20 +117,23 @@ if(!match.awayTeam){
 
 winners.push(match.homeTeam);
 
-}else{
+continue;
+
+}
 
 if(match.homeGoals > match.awayGoals){
-
 winners.push(match.homeTeam);
-
 }else{
-
 winners.push(match.awayTeam);
-
 }
 
 }
 
+/* Finale erreicht */
+
+if(winners.length === 1){
+console.log("Pokal Sieger:", winners[0]);
+return;
 }
 
 /* Teams mischen */
@@ -125,9 +142,13 @@ winners = shuffle(winners);
 
 /* neue Paarungen */
 
+const nextRound = getNextRound(round);
+
 const date = getNextThursday();
 
 for(let i=0;i<winners.length;i+=2){
+
+if(!winners[i+1]) break;
 
 await Match.create({
 
@@ -135,7 +156,7 @@ homeTeam:winners[i],
 awayTeam:winners[i+1],
 
 competition:"cup",
-cupRound:getNextRound(round),
+cupRound:nextRound,
 
 date,
 played:false
@@ -144,7 +165,7 @@ played:false
 
 }
 
-console.log(`Neue Pokalrunde erstellt: ${getNextRound(round)}`);
+console.log(`Neue Pokalrunde erstellt: ${nextRound}`);
 
 }
 
@@ -155,8 +176,11 @@ NÄCHSTE RUNDE
 function getNextRound(round){
 
 if(round === "runde1") return "achtelfinale";
+
 if(round === "achtelfinale") return "viertelfinale";
+
 if(round === "viertelfinale") return "halbfinale";
+
 if(round === "halbfinale") return "finale";
 
 return null;
@@ -173,7 +197,7 @@ const now = new Date();
 
 const day = now.getDay();
 
-const diff = (4 - day + 7) % 7;
+const diff = (4 - day + 7) % 7 || 7;
 
 now.setDate(now.getDate() + diff);
 

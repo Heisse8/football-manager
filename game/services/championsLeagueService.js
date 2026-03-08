@@ -1,6 +1,8 @@
 const Team = require("../models/Team");
 const Match = require("../models/Match");
 
+const { payGroupStage } = require("./championsLeaguePrizeService");
+
 /* =====================================================
 CHAMPIONS LEAGUE STARTEN
 ===================================================== */
@@ -14,7 +16,9 @@ let pot2=[];
 let pot3=[];
 let pot4=[];
 
-/* Top 4 jeder Liga */
+/* =====================================================
+TOP 4 JE LIGA
+===================================================== */
 
 for(const league of leagues){
 
@@ -28,7 +32,9 @@ pot4.push(table[3]);
 
 }
 
-/* Gruppen erstellen */
+/* =====================================================
+GRUPPEN ERSTELLEN
+===================================================== */
 
 const groups={
 A:[],
@@ -37,7 +43,7 @@ C:[],
 D:[]
 };
 
-/* Pot 1 fix verteilen */
+/* Pot1 fix verteilen */
 
 groups.A.push(pot1[0]);
 groups.B.push(pot1[1]);
@@ -48,7 +54,7 @@ shuffle(pot2);
 shuffle(pot3);
 shuffle(pot4);
 
-/* restliche Pots verteilen */
+/* restliche Pots */
 
 for(let i=0;i<4;i++){
 
@@ -58,7 +64,23 @@ addTeamToGroup(groups,i,pot4[i]);
 
 }
 
-/* Gruppenphase Spiele erstellen */
+/* =====================================================
+STARTGELD AUSZAHLEN
+===================================================== */
+
+for(const group of Object.values(groups)){
+
+for(const team of group){
+
+await payGroupStage(team);
+
+}
+
+}
+
+/* =====================================================
+GRUPPENSPIELE ERSTELLEN
+===================================================== */
 
 await generateGroupMatches(groups);
 
@@ -67,18 +89,16 @@ console.log("Champions League Gruppen erstellt");
 }
 
 /* =====================================================
-GRUPPENSPIELE GENERIEREN
+GRUPPENSPIELE
 ===================================================== */
 
 async function generateGroupMatches(groups){
 
-const groupNames = ["A","B","C","D"];
+const groupNames=["A","B","C","D"];
 
 for(const g of groupNames){
 
 const teams = groups[g];
-
-/* jeder gegen jeden hin + rück */
 
 for(let i=0;i<teams.length;i++){
 
@@ -91,21 +111,31 @@ const date1 = getNextThursday();
 const date2 = getNextThursday(7);
 
 await Match.create({
+
 homeTeam:home._id,
 awayTeam:away._id,
+
 competition:"ucl",
 group:g,
 leg:1,
-date:date1
+
+date:date1,
+played:false
+
 });
 
 await Match.create({
+
 homeTeam:away._id,
 awayTeam:home._id,
+
 competition:"ucl",
 group:g,
 leg:2,
-date:date2
+
+date:date2,
+played:false
+
 });
 
 }
@@ -128,7 +158,13 @@ shuffle(second);
 
 for(const team of first){
 
-let opponent = second.find(t => t.group !== team.group);
+let opponent = second.find(
+t => t.group !== team.group
+);
+
+if(!opponent){
+opponent = second[0];
+}
 
 matches.push({
 home:team,
@@ -167,7 +203,8 @@ competition:"ucl",
 cupRound:round,
 leg:1,
 
-date:date1
+date:date1,
+played:false
 
 });
 
@@ -180,7 +217,8 @@ competition:"ucl",
 cupRound:round,
 leg:2,
 
-date:date2
+date:date2,
+played:false
 
 });
 
@@ -196,11 +234,11 @@ function addTeamToGroup(groups,index,team){
 
 const keys=["A","B","C","D"];
 
-let g = keys[index];
+let groupKey = keys[index];
 
 /* gleiche Liga verhindern */
 
-if(groups[g].some(t => t.league === team.league)){
+if(groups[groupKey].some(t => t.league === team.league)){
 
 for(const k of keys){
 
@@ -213,35 +251,53 @@ return;
 
 }
 
-}else{
-
-groups[g].push(team);
-
 }
+
+/* fallback */
+
+groups[groupKey].push(team);
 
 }
 
 /* =====================================================
-UTILS
+UTIL SHUFFLE
 ===================================================== */
 
-function shuffle(arr){
-return arr.sort(()=>Math.random()-0.5);
+function shuffle(array){
+
+for(let i=array.length-1;i>0;i--){
+
+const j=Math.floor(Math.random()*(i+1));
+
+[array[i],array[j]]=[array[j],array[i]];
+
 }
+
+return array;
+
+}
+
+/* =====================================================
+NÄCHSTER DONNERSTAG
+===================================================== */
 
 function getNextThursday(offset=0){
 
-const now = new Date();
+const now=new Date();
 
-const day = now.getDay();
+const day=now.getDay();
 
-const diff = (4 - day + 7) % 7;
+const diff=(4-day+7)%7 || 7;
 
-now.setDate(now.getDate() + diff + offset);
+now.setDate(now.getDate()+diff+offset);
 
 return now;
 
 }
+
+/* =====================================================
+EXPORT
+===================================================== */
 
 module.exports = {
 
