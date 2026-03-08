@@ -12,84 +12,58 @@ const [news, setNews] = useState([]);
 const [nextMatch, setNextMatch] = useState(null);
 const [loading, setLoading] = useState(true);
 
-/* ================= LOAD DATA ================= */
+/* ================= LOAD DASHBOARD ================= */
 
 useEffect(() => {
 
-const fetchData = async () => {
+const fetchDashboard = async () => {
 
-try {
+try{
 
 const token = localStorage.getItem("token");
 
-if (!token) {
+if(!token){
 navigate("/login");
 return;
 }
 
-/* TEAM */
-
-const teamRes = await fetch("/api/team", {
-headers: { Authorization: `Bearer ${token}` }
+const res = await fetch("/api/dashboard",{
+headers:{
+Authorization:`Bearer ${token}`
+}
 });
 
-if (teamRes.status === 404) {
+if(res.status === 404){
 navigate("/create-team");
 return;
 }
 
-const teamData = await teamRes.json();
-setTeam(teamData);
+const data = await res.json();
 
-/* LEAGUE */
+setTeam(data.team || null);
+setLeague(data.league || []);
+setNextMatch(data.nextMatch || null);
+setNews(data.news || []);
 
-const leagueRes = await fetch(`/api/league/${teamData.league}`);
+}catch(err){
 
-if (leagueRes.ok) {
-setLeague(await leagueRes.json());
-}
+console.error("Dashboard Fehler:",err);
 
-/* NEWS */
-
-const newsRes = await fetch(`/api/news/league/${teamData.league}`);
-
-if (newsRes.ok) {
-setNews(await newsRes.json());
-}
-
-/* MATCH */
-
-const matchRes = await fetch(`/api/match/team/${teamData._id}`);
-
-if (matchRes.ok) {
-
-const matches = await matchRes.json();
-
-const upcoming = matches
-.filter(m => !m.played)
-.sort((a, b) => new Date(a.date) - new Date(b.date))[0];
-
-setNextMatch(upcoming);
-
-}
-
-} catch (err) {
-console.error(err);
 }
 
 setLoading(false);
 
 };
 
-fetchData();
+fetchDashboard();
 
-}, [navigate]);
+},[navigate]);
 
 /* ================= LOADING ================= */
 
-if (loading) {
+if(loading){
 
-return (
+return(
 <div className="p-10 text-white animate-pulse">
 Dashboard lädt...
 </div>
@@ -99,9 +73,9 @@ Dashboard lädt...
 
 /* ================= SORT TABLE ================= */
 
-const sortedLeague = [...league].sort((a, b) => {
+const sortedLeague = [...league].sort((a,b)=>{
 
-if (b.points !== a.points) return b.points - a.points;
+if(b.points !== a.points) return b.points - a.points;
 
 const diffA = (a.goalsFor || 0) - (a.goalsAgainst || 0);
 const diffB = (b.goalsFor || 0) - (b.goalsAgainst || 0);
@@ -112,11 +86,11 @@ return diffB - diffA;
 
 /* ================= RENDER ================= */
 
-return (
+return(
 
 <div
 className="relative min-h-screen text-white bg-cover bg-center"
-style={{ backgroundImage: `url(${bgImage})` }}
+style={{ backgroundImage:`url(${bgImage})` }}
 >
 
 <div className="absolute inset-0 bg-black/80"></div>
@@ -141,7 +115,7 @@ style={{ backgroundImage: `url(${bgImage})` }}
 
 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-{/* TABLE */}
+{/* ================= TABLE ================= */}
 
 <div className="bg-black/50 p-6 rounded-xl">
 
@@ -175,13 +149,19 @@ isMine
 
 </div>
 
-{/* NEWS */}
+{/* ================= NEWS ================= */}
 
 <div className="bg-black/50 p-6 rounded-xl">
 
 <h2 className="font-bold mb-4">
 Manager News
 </h2>
+
+{news.length === 0 && (
+<div className="opacity-60 text-center">
+Keine News verfügbar
+</div>
+)}
 
 {news.slice(0,5).map((n)=>(
 <div key={n._id} className="bg-black/30 p-4 rounded mb-3">
@@ -199,7 +179,7 @@ Manager News
 
 </div>
 
-{/* NEXT MATCH */}
+{/* ================= NEXT MATCH ================= */}
 
 <div className="bg-black/50 p-6 rounded-xl">
 

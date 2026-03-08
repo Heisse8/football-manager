@@ -86,6 +86,7 @@ app.use("/api/league", leagueRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/transfer", transferRoutes);
 app.use("/api/market", marketRoutes);
+app.use("/api/dashboard", require("./routes/dashboard"));
 
 /* =====================================================
 FRONTEND (VITE BUILD)
