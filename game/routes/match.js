@@ -8,7 +8,7 @@ const Manager = require("../models/Manager");
 
 const auth = require("../middleware/auth");
 
-const { simulateMatch } = require("../utils/matchEngine");
+const { simulateMatch } = require("../engines/matchEngine");
 
 /* ======================================================
  CHECK IF USER HAS NEW MATCH RESULT
