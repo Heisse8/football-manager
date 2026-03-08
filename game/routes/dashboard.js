@@ -4,6 +4,8 @@ const router = express.Router();
 const Team = require("../models/Team");
 const Match = require("../models/Match");
 const News = require("../models/News");
+const Player = require("../models/Player");
+const Stadium = require("../models/Stadium");
 
 const auth = require("../middleware/auth");
 
@@ -15,7 +17,9 @@ router.get("/", auth, async (req,res)=>{
 
 try{
 
-/* TEAM */
+/* =====================================================
+TEAM
+===================================================== */
 
 const team = await Team.findOne({
 owner:req.user.userId
@@ -41,7 +45,7 @@ goalsFor:-1
 });
 
 /* =====================================================
-NEXT MATCH
+NEXT MATCHES
 ===================================================== */
 
 const matches = await Match.find({
@@ -57,9 +61,10 @@ played:false
 .populate("homeTeam")
 .populate("awayTeam")
 .sort({date:1})
-.limit(1);
+.limit(2);
 
 const nextMatch = matches[0] || null;
+const nextMatch2 = matches[1] || null;
 
 /* =====================================================
 NEWS
@@ -82,6 +87,101 @@ news = [];
 }
 
 /* =====================================================
+TOP SCORERS
+===================================================== */
+
+let topScorers = [];
+
+try{
+
+topScorers = await Player.find({
+league:team.league
+})
+.sort({"seasonStats.goals":-1})
+.limit(5);
+
+}catch{
+topScorers = [];
+}
+
+/* =====================================================
+TEAM FORM (LAST 5 MATCHES)
+===================================================== */
+
+let teamForm = [];
+
+try{
+
+teamForm = await Match.find({
+
+$or:[
+{homeTeam:team._id},
+{awayTeam:team._id}
+],
+
+played:true
+
+})
+.sort({date:-1})
+.limit(5)
+.populate("homeTeam")
+.populate("awayTeam");
+
+}catch{
+
+teamForm = [];
+
+}
+
+/* =====================================================
+STADIUM
+===================================================== */
+
+let stadium = null;
+
+try{
+
+stadium = await Stadium.findOne({
+team:team._id
+});
+
+}catch{
+
+stadium = null;
+
+}
+
+/* =====================================================
+PLAYER OF MONTH
+===================================================== */
+
+let playerOfMonth = null;
+
+try{
+
+playerOfMonth = await Player.findOne({
+team:team._id
+})
+.sort({"seasonStats.rating":-1});
+
+}catch{
+
+playerOfMonth = null;
+
+}
+
+/* =====================================================
+FINANCE
+===================================================== */
+
+const finance = {
+
+balance: team.balance || 0,
+lastRevenue: team.lastMatchRevenue || 0
+
+};
+
+/* =====================================================
 RETURN
 ===================================================== */
 
@@ -89,8 +189,20 @@ res.json({
 
 team,
 league,
+
 nextMatch,
-news
+nextMatch2,
+
+news,
+
+topScorers,
+teamForm,
+
+stadium,
+
+playerOfMonth,
+
+finance
 
 });
 

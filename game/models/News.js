@@ -2,39 +2,45 @@ const mongoose = require("mongoose");
 
 const newsSchema = new mongoose.Schema({
 
-title: {
-type: String,
-required: true
+title:{
+type:String,
+required:true
 },
 
-content: {
-type: String,
-required: true
+content:{
+type:String,
+required:true
 },
 
-type: {
-type: String,
-enum: ["match","transfer","team","league"],
-default: "league"
+league:{
+type:String,
+default:null
 },
 
-team: {
-type: mongoose.Schema.Types.ObjectId,
-ref: "Team",
-default: null
+team:{
+type:mongoose.Schema.Types.ObjectId,
+ref:"Team",
+default:null
 },
 
-player: {
-type: mongoose.Schema.Types.ObjectId,
-ref: "Player",
-default: null
+type:{
+type:String,
+enum:[
+"transfer",
+"match",
+"injury",
+"sack",
+"milestone",
+"league"
+],
+default:"match"
 },
 
-league: {
-type: String,
-default: null
+importance:{
+type:Number,
+default:1
 },
 
-}, { timestamps:true });
+},{timestamps:true});
 
-module.exports = mongoose.model("News", newsSchema);
+module.exports = mongoose.model("News",newsSchema);
