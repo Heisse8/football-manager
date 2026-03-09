@@ -1,11 +1,25 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 
 export default function PrivateRoute({ children }) {
-  const token = localStorage.getItem("token");
 
-  if (!token) {
-    return <Navigate to="/login" />;
-  }
+const location = useLocation();
 
-  return children;
+const token = localStorage.getItem("token");
+
+/* Kein Token → Login */
+
+if (!token) {
+
+return (
+<Navigate
+to="/login"
+replace
+state={{ from: location }}
+/>
+);
+
+}
+
+return children;
+
 }

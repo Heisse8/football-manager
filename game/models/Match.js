@@ -208,11 +208,19 @@ timestamps:true
 });
 
 /* =====================================================
-INDEXES (Performance)
+INDEXES
 ===================================================== */
 
-matchSchema.index({ homeTeam:1, date:1 });
-matchSchema.index({ awayTeam:1, date:1 });
-matchSchema.index({ competition:1, matchday:1 });
+matchSchema.index({ homeTeam: 1 });
+
+matchSchema.index({ awayTeam: 1 });
+
+matchSchema.index({ competition: 1 });
+
+matchSchema.index({ matchday: 1 });
+
+matchSchema.index({ date: 1 });
+
+matchSchema.index({ played: 1 });
 
 module.exports = mongoose.model("Match",matchSchema);

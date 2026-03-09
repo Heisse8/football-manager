@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Stadium(){
+
+const navigate = useNavigate();
 
 const [stadium,setStadium] = useState(null);
 const [team,setTeam] = useState(null);
@@ -15,12 +18,19 @@ INIT LOAD
 
 useEffect(()=>{
 
+const token = localStorage.getItem("token");
+
+if(!token){
+navigate("/login");
+return;
+}
+
 loadStadium();
 
-},[]);
+},[navigate]);
 
 /* =====================================================
-LOAD STADIUM
+LOAD DATA
 ===================================================== */
 
 const loadStadium = async ()=>{
@@ -33,20 +43,20 @@ const headers = {
 Authorization:`Bearer ${token}`
 };
 
-/* ================= STADIUM LADEN ================= */
+const [stadiumRes,teamRes] = await Promise.all([
 
-const stadiumRes = await fetch("/api/stadium",{headers});
+fetch("/api/stadium",{headers}),
+fetch("/api/team",{headers})
 
-if(!stadiumRes.ok) return;
+]);
+
+if(stadiumRes.ok){
 
 const stadiumData = await stadiumRes.json();
-
 setStadium(stadiumData);
 setTicketPrice(stadiumData.ticketPrice);
 
-/* ================= TEAM LADEN ================= */
-
-const teamRes = await fetch("/api/team",{headers});
+}
 
 if(teamRes.ok){
 
@@ -57,7 +67,7 @@ setTeam(teamData);
 
 }catch(err){
 
-console.error(err);
+console.error("Stadium Load Fehler:",err);
 
 }
 
@@ -83,7 +93,7 @@ headers:{
 "Content-Type":"application/json",
 Authorization:`Bearer ${token}`
 },
-body:JSON.stringify({name:newName})
+body:JSON.stringify({name:newName.trim()})
 });
 
 setNewName("");
@@ -139,7 +149,7 @@ const token = localStorage.getItem("token");
 
 await fetch("/api/stadium/expand",{
 method:"POST",
-headers:{Authorization:`Bearer ${token}`}
+headers:{ Authorization:`Bearer ${token}` }
 });
 
 loadStadium();
@@ -153,7 +163,7 @@ console.error(err);
 };
 
 /* =====================================================
-ATTENDANCE CALCULATION
+ATTENDANCE PREVIEW
 ===================================================== */
 
 function calculateAttendance(){
@@ -162,11 +172,7 @@ if(!stadium || !team) return 0;
 
 const fanBase = team.fanBase || 1;
 
-/* Basis Nachfrage */
-
 let demand = fanBase * 4500;
-
-/* Tabellenplatz Heimteam */
 
 let tableFactor = 1;
 
@@ -174,21 +180,13 @@ if(team.tablePosition){
 tableFactor = 1 + ((18 - team.tablePosition) * 0.03);
 }
 
-/* Gegner Faktor (Schätzung im UI) */
-
 let opponentFactor = 1.05;
-
-/* Ticketpreis Einfluss */
 
 let priceFactor = 1 - (ticketPrice / 80);
 priceFactor = Math.max(0.2, priceFactor);
 
-/* Stadion Qualität */
-
 const comfort = stadium.fanComfort || 1;
 const atmosphere = stadium.atmosphere || 1;
-
-/* Zuschauer */
 
 let attendance =
 demand *
@@ -198,12 +196,7 @@ priceFactor *
 comfort *
 atmosphere;
 
-/* Stadionlimit */
-
 attendance = Math.min(stadium.capacity, attendance);
-
-/* Mindestwert */
-
 attendance = Math.max(500, attendance);
 
 return Math.round(attendance);
@@ -246,7 +239,7 @@ return(
 
 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-{/* ================= STADIUM INFO ================= */}
+{/* INFO */}
 
 <div className="bg-black/50 p-6 rounded-xl">
 
@@ -277,7 +270,7 @@ return(
 
 </div>
 
-{/* ================= NAME CHANGE ================= */}
+{/* NAME */}
 
 <div className="bg-black/50 p-6 rounded-xl">
 
@@ -315,7 +308,7 @@ className="bg-blue-600 px-4 py-2 rounded hover:bg-blue-500"
 
 </div>
 
-{/* ================= TICKET PRICE ================= */}
+{/* TICKET PRICE */}
 
 <div className="bg-black/50 p-6 rounded-xl">
 
@@ -365,7 +358,7 @@ Ticketpreis speichern
 
 </div>
 
-{/* ================= STADIUM EXPANSION ================= */}
+{/* EXPANSION */}
 
 <div className="bg-black/50 p-6 rounded-xl">
 
@@ -375,58 +368,11 @@ Stadion Ausbau
 
 {stadium.construction?.inProgress ? (
 
-<div>
-
-<div className="mb-3">
+<div className="text-gray-400">
 Ausbau läuft...
 </div>
 
-<div className="w-full bg-gray-700 h-4 rounded">
-
-<div
-className="bg-green-500 h-4 rounded"
-style={{width:`${stadium.progress}%`}}
-></div>
-
-</div>
-
-<div className="text-sm text-gray-400 mt-2">
-
-Restzeit:
-
-{stadium.remainingTime?.weeks}w
-{" "}
-{stadium.remainingTime?.days}d
-{" "}
-{stadium.remainingTime?.hours}h
-
-</div>
-
-</div>
-
-):(
-
-<div>
-
-{stadium.nextExpansion ? (
-
-<>
-
-<div className="text-sm mb-4 space-y-1">
-
-<div>
-Neue Kapazität: {stadium.nextExpansion.next.toLocaleString()}
-</div>
-
-<div>
-Kosten: € {stadium.nextExpansion.cost.toLocaleString()}
-</div>
-
-<div>
-Dauer: {stadium.nextExpansion.duration} Spieltage
-</div>
-
-</div>
+):( 
 
 <button
 onClick={startExpansion}
@@ -434,18 +380,6 @@ className="bg-green-600 hover:bg-green-500 px-4 py-2 rounded w-full"
 >
 Stadion ausbauen
 </button>
-
-</>
-
-):(
-
-<div className="text-gray-400">
-Maximale Stadiongröße erreicht
-</div>
-
-)}
-
-</div>
 
 )}
 

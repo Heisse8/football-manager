@@ -441,8 +441,12 @@ default:0
 INDEXES
 ===================================================== */
 
-teamSchema.index({ league:1 });
-teamSchema.index({ owner:1 });
-teamSchema.index({ isBot:1 });
+teamSchema.index({ owner: 1 });
+
+teamSchema.index({ league: 1 });
+
+teamSchema.index({ points: -1 });
+
+teamSchema.index({ tablePosition: 1 });
 
 module.exports = mongoose.model("Team",teamSchema);

@@ -42,53 +42,75 @@ const strikers =
 slots.filter(s=>["ST","LST","RST","LW","RW"].includes(s)).length;
 
 return `${defenders}-${midfielders}-${strikers}`;
+
 }
+
+/* =====================================================
+ MAIN COMPONENT
+===================================================== */
 
 export default function TeamPage(){
 
 const [team,setTeam] = useState(null);
-const [players,setPlayers] = useState([]);
+const [players,setPlayers] = useState({});
 const [manager,setManager] = useState(null);
+
 const [lineup,setLineup] = useState({});
 const [bench,setBench] = useState([]);
+
 const [loading,setLoading] = useState(true);
+
+/* =====================================================
+ LOAD DATA
+===================================================== */
 
 useEffect(()=>{
 
 const load = async()=>{
 
+try{
+
 const token = localStorage.getItem("token");
 if(!token) return;
 
-const headers = { Authorization:`Bearer ${token}` };
+const headers = {
+Authorization:`Bearer ${token}`
+};
 
-try{
-
-const teamRes = await fetch("/api/team",{headers});
-const playerRes = await fetch("/api/player/my-team",{headers});
-const managerRes = await fetch("/api/manager/my",{headers});
-const lineupRes = await fetch("/api/team/auto-lineup",{headers});
+const [teamRes,playerRes,managerRes,lineupRes] = await Promise.all([
+fetch("/api/team",{headers}),
+fetch("/api/player/my-team",{headers}),
+fetch("/api/manager/my",{headers}),
+fetch("/api/team/auto-lineup",{headers})
+]);
 
 const teamData = await teamRes.json();
 const playerData = await playerRes.json();
 const managerData = await managerRes.json();
 const lineupData = await lineupRes.json();
 
+/* PLAYER MAP */
+
+const playerMap = {};
+
+playerData.forEach(p=>{
+playerMap[p._id] = p;
+});
+
 setTeam(teamData);
-setPlayers(playerData);
+setPlayers(playerMap);
 setManager(managerData);
 
 setLineup(lineupData.lineup || {});
 setBench(lineupData.bench || []);
 
-setLoading(false);
-
 }catch(err){
 
 console.error("TeamPage Fehler:",err);
-setLoading(false);
 
 }
+
+setLoading(false);
 
 };
 
@@ -96,17 +118,33 @@ load();
 
 },[]);
 
-if(loading) return <div className="p-10 text-white">Lade Team...</div>;
-if(!team || !manager) return null;
+/* =====================================================
+ LOADING
+===================================================== */
+
+if(loading){
+return(
+<div className="p-10 text-white">
+Lade Team...
+</div>
+);
+}
+
+if(!team || !manager){
+return null;
+}
 
 /* =====================================================
- FORMATION BERECHNEN
+ FORMATION
 ===================================================== */
 
 const formation = detectFormation(lineup);
 
-const getPlayerById = (id)=>
-players.find(p=>p._id.toString()===id.toString());
+const getPlayerById = (id)=>players[id];
+
+/* =====================================================
+ RENDER
+===================================================== */
 
 return(
 
@@ -117,21 +155,44 @@ return(
 <div className="flex justify-between mb-8">
 
 <div>
-<h2 className="text-2xl font-bold">{team.name}</h2>
+
+<h2 className="text-2xl font-bold">
+{team.name}
+</h2>
+
 <p className="text-gray-400">
 Trainer: {manager.firstName} {manager.lastName} • {manager.age} Jahre
 </p>
+
 </div>
 
 <div className="text-right">
-<p className="font-semibold">Formation</p>
-<p className="text-xl">{formation}</p>
-<p className="text-sm text-gray-400 mt-1">
-Stil: {manager.playstyle}
+
+<p className="font-semibold">
+Formation
 </p>
+
+<p className="text-xl">
+{formation}
+</p>
+
+<p className="text-sm text-gray-400 mt-1">
+Stil: {manager.playStyle}
+</p>
+
 </div>
 
 </div>
+
+{/* EMPTY LINEUP */}
+
+{Object.keys(lineup).length === 0 && (
+
+<div className="text-gray-400 mb-8">
+Startelf wird automatisch generiert...
+</div>
+
+)}
 
 <div className="flex gap-12">
 
@@ -144,28 +205,18 @@ Stil: {manager.playstyle}
 <div className="relative w-[720px] h-[960px] bg-green-700 rounded-xl border-4 border-white overflow-hidden">
 
 {/* Mittellinie */}
+
 <div className="absolute top-1/2 left-0 w-full h-[2px] bg-white -translate-y-1/2"></div>
 
 {/* Mittelkreis */}
+
 <div className="absolute top-1/2 left-1/2 w-44 h-44 border-2 border-white rounded-full -translate-x-1/2 -translate-y-1/2"></div>
 
-{/* Strafraum oben */}
+{/* Strafräume */}
+
 <div className="absolute top-0 left-1/2 w-[320px] h-[150px] border-2 border-white -translate-x-1/2"></div>
 
-{/* 5m Raum oben */}
-<div className="absolute top-0 left-1/2 w-[150px] h-[70px] border-2 border-white -translate-x-1/2"></div>
-
-{/* Tor oben */}
-<div className="absolute top-0 left-1/2 w-[80px] h-[10px] border-2 border-white -translate-x-1/2"></div>
-
-{/* Strafraum unten */}
 <div className="absolute bottom-0 left-1/2 w-[320px] h-[150px] border-2 border-white -translate-x-1/2"></div>
-
-{/* 5m Raum unten */}
-<div className="absolute bottom-0 left-1/2 w-[150px] h-[70px] border-2 border-white -translate-x-1/2"></div>
-
-{/* Tor unten */}
-<div className="absolute bottom-0 left-1/2 w-[80px] h-[10px] border-2 border-white -translate-x-1/2"></div>
 
 {/* SPIELER */}
 
@@ -214,7 +265,9 @@ className="flex flex-col items-center"
 
 <div className="mt-6 bg-black/40 p-4 rounded-xl w-[720px]">
 
-<h3 className="mb-3 font-semibold">Auswechselbank</h3>
+<h3 className="mb-3 font-semibold">
+Auswechselbank
+</h3>
 
 <div className="flex justify-between">
 
@@ -255,7 +308,9 @@ return(
 
 <div className="w-[420px] bg-black/40 p-6 rounded-xl">
 
-<h3 className="font-semibold mb-4">Startelf</h3>
+<h3 className="font-semibold mb-4">
+Startelf
+</h3>
 
 {Object.values(lineup).map(id=>{
 
@@ -266,7 +321,9 @@ return <PlayerCard key={p._id} player={p}/>;
 
 })}
 
-<h3 className="mt-6 font-semibold">Auswechselbank</h3>
+<h3 className="mt-6 font-semibold">
+Auswechselbank
+</h3>
 
 {bench.map(id=>{
 
@@ -288,7 +345,7 @@ return <PlayerCard key={p._id} player={p}/>;
 }
 
 /* =====================================================
- COMPONENTS
+ PLAYER CARD
 ===================================================== */
 
 function PlayerCard({player}){
@@ -314,6 +371,10 @@ return(
 );
 
 }
+
+/* =====================================================
+ PLAYER CIRCLE
+===================================================== */
 
 function Circle({player}){
 

@@ -55,6 +55,9 @@ const { startBotLineupCron } = require("./cron/botLineupCron");
 const { startBotTacticCron } = require("./cron/botTacticCron");
 const { startCompetitionCron } = require("./cron/competitionCron");
 const { startPlayerPoolCron } = require("./cron/playerPoolCron");
+const { startAuctionResolverCron } = require("./cron/auctionResolverCron");
+const { startMatchdaySimulatorCron } = require("./cron/matchdaySimulatorCron");
+const { startPlayerRecoveryCron } = require("./cron/playerRecoveryCron");
 
 /* =====================================================
 ROUTES IMPORT
@@ -155,6 +158,9 @@ startBotLineupCron();
 startBotTacticCron();
 startCompetitionCron();
 startPlayerPoolCron();
+startAuctionResolverCron();
+startMatchdaySimulatorCron();
+startPlayerRecoveryCron();
 
 console.log("Cron Jobs gestartet");
 

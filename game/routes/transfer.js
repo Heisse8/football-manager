@@ -7,6 +7,8 @@ const TransferBid = require("../models/TransferBid");
 
 const auth = require("../middleware/auth");
 
+const { executeTransfer } = require("../services/transferService");
+
 /* =====================================================
 MARKT LADEN
 ===================================================== */
@@ -18,6 +20,7 @@ try{
 const players = await Player.find({
 isListed:true
 })
+.select("firstName lastName stars team transferPrice transferType auctionEnd currentBid")
 .populate("team","name shortName")
 .sort({ createdAt:-1 })
 .lean();
@@ -35,6 +38,7 @@ message:"Serverfehler"
 }
 
 });
+
 
 /* =====================================================
 SPIELER LISTEN
@@ -60,7 +64,7 @@ if(!player){
 return res.status(404).json({message:"Spieler nicht gefunden"});
 }
 
-/* Spieler gehört Team? */
+/* Spieler gehört Team */
 
 if(player.team.toString() !== team._id.toString()){
 return res.status(403).json({message:"Nicht dein Spieler"});
@@ -71,6 +75,8 @@ return res.status(403).json({message:"Nicht dein Spieler"});
 if(player.isListed){
 return res.status(400).json({message:"Spieler bereits auf Markt"});
 }
+
+/* Markt setzen */
 
 player.isListed = true;
 player.transferType = type;
@@ -84,7 +90,11 @@ const end = new Date();
 end.setHours(end.getHours() + (duration || 24));
 
 player.auctionEnd = end;
-player.currentBid = price;
+
+/* Startgebot */
+
+player.currentBid = 0;
+player.highestBidder = null;
 
 }
 
@@ -105,6 +115,7 @@ message:"Serverfehler"
 }
 
 });
+
 
 /* =====================================================
 SOFORT KAUF
@@ -137,8 +148,12 @@ const sellerTeam = await Team.findById(player.team);
 /* Eigenen Spieler kaufen verhindern */
 
 if(buyerTeam._id.toString() === sellerTeam._id.toString()){
-return res.status(400).json({message:"Eigene Spieler können nicht gekauft werden"});
+return res.status(400).json({
+message:"Eigene Spieler können nicht gekauft werden"
+});
 }
+
+/* Geld prüfen */
 
 if(buyerTeam.balance < player.transferPrice){
 
@@ -148,26 +163,13 @@ message:"Nicht genug Geld"
 
 }
 
-/* Geld transfer */
+/* Transfer sicher durchführen */
 
-buyerTeam.balance -= player.transferPrice;
-sellerTeam.balance += player.transferPrice;
-
-/* Spieler transfer */
-
-player.team = buyerTeam._id;
-player.isListed = false;
-player.transferType = null;
-player.transferPrice = null;
-player.auctionEnd = null;
-player.currentBid = null;
-player.highestBidder = null;
-
-await Promise.all([
-buyerTeam.save(),
-sellerTeam.save(),
-player.save()
-]);
+await executeTransfer(
+player._id,
+buyerTeam._id,
+player.transferPrice
+);
 
 res.json({
 message:"Spieler gekauft"
@@ -184,6 +186,7 @@ message:"Serverfehler"
 }
 
 });
+
 
 /* =====================================================
 BID
@@ -258,6 +261,24 @@ message:"Nicht genug Geld"
 player.currentBid = amount;
 player.highestBidder = team._id;
 
+/* =====================================================
+ANTI SNIPING
+===================================================== */
+
+const remainingSeconds =
+(player.auctionEnd - new Date()) / 1000;
+
+if(remainingSeconds < 60){
+
+const newEnd = new Date();
+newEnd.setSeconds(newEnd.getSeconds()+60);
+
+player.auctionEnd = newEnd;
+
+}
+
+/* Gebot speichern */
+
 await TransferBid.create({
 
 player:player._id,
@@ -283,5 +304,6 @@ message:"Serverfehler"
 }
 
 });
+
 
 module.exports = router;

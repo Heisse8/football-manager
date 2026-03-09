@@ -5,41 +5,54 @@ export default function CreateTeam() {
 
 const navigate = useNavigate();
 
-const [name, setName] = useState("");
-const [shortName, setShortName] = useState("");
-const [clubIdentity, setClubIdentity] = useState("love");
+const [name,setName] = useState("");
+const [shortName,setShortName] = useState("");
+const [clubIdentity,setClubIdentity] = useState("love");
 
-const [loading, setLoading] = useState(false);
-const [error, setError] = useState(null);
+const [loading,setLoading] = useState(false);
+const [error,setError] = useState(null);
+
+/* =====================================================
+SUBMIT
+===================================================== */
 
 const handleSubmit = async (e) => {
 
 e.preventDefault();
 
-setLoading(true);
-setError(null);
+if(loading) return;
 
 const token = localStorage.getItem("token");
 
-if (!token) {
+if(!token){
 navigate("/login");
 return;
 }
 
-try {
+/* VALIDATION */
 
-const res = await fetch("/api/team/create", {
+if(shortName.trim().length !== 3){
+setError("Kürzel muss genau 3 Buchstaben haben");
+return;
+}
 
-method: "POST",
+setLoading(true);
+setError(null);
 
-headers: {
-"Content-Type": "application/json",
-Authorization: `Bearer ${token}`,
+try{
+
+const res = await fetch("/api/team/create",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json",
+Authorization:`Bearer ${token}`
 },
 
-body: JSON.stringify({
-name: name.trim(),
-shortName: shortName.trim().toUpperCase(),
+body:JSON.stringify({
+name:name.trim(),
+shortName:shortName.trim().toUpperCase(),
 clubIdentity
 })
 
@@ -47,7 +60,7 @@ clubIdentity
 
 const data = await res.json();
 
-if (!res.ok) {
+if(!res.ok){
 
 setError(data.message || "Fehler beim Erstellen");
 setLoading(false);
@@ -55,12 +68,13 @@ return;
 
 }
 
-navigate("/", { replace: true });
+/* Erfolgreich */
 
-} catch (err) {
+navigate("/dashboard",{ replace:true });
 
-console.error("Create Team Fehler:", err);
+}catch(err){
 
+console.error("Create Team Fehler:",err);
 setError("Serverfehler");
 
 }
@@ -69,7 +83,11 @@ setLoading(false);
 
 };
 
-return (
+/* =====================================================
+RENDER
+===================================================== */
+
+return(
 
 <div className="min-h-screen bg-gray-900 text-white flex justify-center items-center">
 
@@ -98,7 +116,7 @@ maxLength={21}
 required
 placeholder="Teamname (max 21 Zeichen)"
 value={name}
-onChange={(e) => setName(e.target.value)}
+onChange={(e)=>setName(e.target.value)}
 className="w-full p-3 bg-gray-800 rounded"
 />
 
@@ -110,7 +128,15 @@ maxLength={3}
 required
 placeholder="Kürzel (3 Buchstaben)"
 value={shortName}
-onChange={(e) => setShortName(e.target.value.toUpperCase())}
+onChange={(e)=>{
+
+const value = e.target.value
+.replace(/[^a-zA-Z]/g,"")
+.toUpperCase();
+
+setShortName(value);
+
+}}
 className="w-full p-3 bg-gray-800 rounded uppercase"
 />
 
@@ -124,6 +150,8 @@ Vereinsimage
 
 <div className="grid grid-cols-2 gap-4">
 
+{/* LOVE */}
+
 <label
 className={`p-4 rounded-lg border cursor-pointer transition ${
 clubIdentity === "love"
@@ -136,7 +164,7 @@ clubIdentity === "love"
 type="radio"
 value="love"
 checked={clubIdentity === "love"}
-onChange={() => setClubIdentity("love")}
+onChange={()=>setClubIdentity("love")}
 className="hidden"
 />
 
@@ -155,6 +183,8 @@ Weniger Startbudget
 
 </label>
 
+{/* COMMERCIAL */}
+
 <label
 className={`p-4 rounded-lg border cursor-pointer transition ${
 clubIdentity === "commercial"
@@ -167,7 +197,7 @@ clubIdentity === "commercial"
 type="radio"
 value="commercial"
 checked={clubIdentity === "commercial"}
-onChange={() => setClubIdentity("commercial")}
+onChange={()=>setClubIdentity("commercial")}
 className="hidden"
 />
 
@@ -192,7 +222,11 @@ Schwächerer Heimvorteil
 
 <button
 disabled={loading}
-className="w-full bg-green-600 py-3 rounded hover:bg-green-500 transition"
+className={`w-full py-3 rounded transition ${
+loading
+? "bg-gray-600"
+: "bg-green-600 hover:bg-green-500"
+}`}
 >
 
 {loading ? "Erstelle..." : "Team erstellen"}

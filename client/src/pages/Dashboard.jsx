@@ -12,11 +12,16 @@ const [news,setNews] = useState([]);
 const [nextMatch,setNextMatch] = useState(null);
 const [nextMatch2,setNextMatch2] = useState(null);
 const [topScorers,setTopScorers] = useState([]);
+
 const [loading,setLoading] = useState(true);
 
-/* LOAD DASHBOARD */
+/* =====================================================
+LOAD DASHBOARD
+===================================================== */
 
 useEffect(()=>{
+
+let mounted = true;
 
 const load = async()=>{
 
@@ -30,15 +35,33 @@ return;
 }
 
 const res = await fetch("/api/dashboard",{
-headers:{ Authorization:`Bearer ${token}` }
+headers:{
+Authorization:`Bearer ${token}`
+}
 });
 
+/* TOKEN EXPIRED */
+
+if(res.status === 401){
+
+localStorage.removeItem("token");
+navigate("/login");
+return;
+
+}
+
+/* USER HAT NOCH KEIN TEAM */
+
 if(res.status === 404){
+
 navigate("/create-team");
 return;
+
 }
 
 const data = await res.json();
+
+if(!mounted) return;
 
 setTeam(data.team || null);
 setLeague(data.league || []);
@@ -48,41 +71,87 @@ setNextMatch2(data.nextMatch2 || null);
 setTopScorers(data.topScorers || []);
 
 }catch(err){
-console.error(err);
+
+console.error("Dashboard Fehler:",err);
+
 }
 
+if(mounted){
 setLoading(false);
+}
 
 };
 
+/* INITIAL LOAD */
+
 load();
+
+/* AUTO REFRESH */
+
+const interval = setInterval(load,30000);
+
+return ()=>{
+
+mounted = false;
+clearInterval(interval);
+
+};
 
 },[navigate]);
 
-/* LOADING */
+/* =====================================================
+LOADING SCREEN
+===================================================== */
 
 if(loading){
+
 return(
-<div className="p-10 text-white">
+
+<div className="flex items-center justify-center h-screen text-white bg-gray-900">
+
+<div className="animate-pulse text-xl">
 Dashboard lädt...
 </div>
+
+</div>
+
 );
+
 }
 
-/* SORT TABLE */
+/* =====================================================
+SORT TABLE
+===================================================== */
 
-const sortedLeague=[...league].sort((a,b)=>{
+const sortedLeague = league
+? [...league].sort((a,b)=>{
 
-if(b.points!==a.points) return b.points-a.points;
+if((b.points||0)!==(a.points||0))
+return (b.points||0)-(a.points||0);
 
 const diffA=(a.goalsFor||0)-(a.goalsAgainst||0);
 const diffB=(b.goalsFor||0)-(b.goalsAgainst||0);
 
 return diffB-diffA;
 
-});
+})
+: [];
 
-/* RENDER */
+/* =====================================================
+DATE FORMAT
+===================================================== */
+
+const formatDate = (date)=>{
+
+if(!date) return "-";
+
+return new Date(date).toLocaleDateString("de-DE");
+
+};
+
+/* =====================================================
+RENDER
+===================================================== */
 
 return(
 
@@ -100,11 +169,11 @@ style={{ backgroundImage:`url(${bgImage})` }}
 <div className="flex justify-between mb-8">
 
 <h1 className="text-3xl font-bold">
-{team?.name}
+{team?.name || "Mein Verein"}
 </h1>
 
 <div className="text-yellow-400 text-xl font-semibold">
-💰 {team?.balance?.toLocaleString()} €
+💰 {team?.balance?.toLocaleString() || 0} €
 </div>
 
 </div>
@@ -113,18 +182,24 @@ style={{ backgroundImage:`url(${bgImage})` }}
 
 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-{/* TABLE */}
+{/* =====================================================
+TABLE
+===================================================== */}
 
 <div className="bg-black/50 p-6 rounded-xl">
 
-<h2 className="font-bold mb-4">Tabelle</h2>
+<h2 className="font-bold mb-4">
+Tabelle
+</h2>
 
 <div className="grid grid-cols-5 text-xs opacity-70 mb-2 px-2">
+
 <span>#</span>
 <span>Team</span>
 <span>Sp</span>
 <span>TD</span>
 <span>Pkt</span>
+
 </div>
 
 <div className="space-y-1 text-sm">
@@ -132,7 +207,9 @@ style={{ backgroundImage:`url(${bgImage})` }}
 {sortedLeague.map((club,i)=>{
 
 const isMine = team && club._id === team._id;
-const goalDiff=(club.goalsFor||0)-(club.goalsAgainst||0);
+
+const goalDiff =
+(club.goalsFor||0)-(club.goalsAgainst||0);
 
 return(
 
@@ -146,14 +223,32 @@ isMine
 >
 
 <span>{i+1}</span>
-<span className="truncate">{club.name}</span>
-<span>{club.played||0}</span>
 
-<span className={goalDiff>=0?"text-green-400":"text-red-400"}>
-{goalDiff>=0?`+${goalDiff}`:goalDiff}
+<span className="truncate">
+{club.name}
 </span>
 
-<span className="font-semibold">{club.points}</span>
+<span>
+{club.played||0}
+</span>
+
+<span
+className={
+goalDiff>=0
+? "text-green-400"
+: "text-red-400"
+}
+>
+
+{goalDiff>=0
+? `+${goalDiff}`
+: goalDiff}
+
+</span>
+
+<span className="font-semibold">
+{club.points||0}
+</span>
 
 </div>
 
@@ -165,44 +260,61 @@ isMine
 
 </div>
 
-{/* NEWS */}
+{/* =====================================================
+NEWS
+===================================================== */}
 
 <div className="bg-black/50 p-6 rounded-xl">
 
-<h2 className="font-bold mb-4">Manager News</h2>
+<h2 className="font-bold mb-4">
+Manager News
+</h2>
 
-{news.length===0 && (
+{news.length===0 &&(
+
 <div className="opacity-60 text-center">
 Keine News verfügbar
 </div>
+
 )}
 
 {news.slice(0,5).map((n)=>(
-<div key={n._id} className="bg-black/30 p-4 rounded mb-3">
 
-<div className="font-semibold">{n.title}</div>
+<div
+key={n._id}
+className="bg-black/30 p-4 rounded mb-3"
+>
+
+<div className="font-semibold">
+{n.title}
+</div>
 
 <div className="text-sm opacity-80">
 {n.content}
 </div>
 
 </div>
+
 ))}
 
 </div>
 
-{/* MATCH + SCORERS */}
+{/* =====================================================
+MATCH + TOP SCORERS
+===================================================== */}
 
 <div className="bg-black/50 p-6 rounded-xl">
 
-<h2 className="font-bold mb-4">Nächstes Spiel</h2>
+<h2 className="font-bold mb-4">
+Nächstes Spiel
+</h2>
 
 {nextMatch ? (
 
 <div className="text-center">
 
 <div>
-{new Date(nextMatch.date).toLocaleDateString("de-DE")}
+{formatDate(nextMatch.date)}
 </div>
 
 <div className="text-xl font-bold mt-3">
@@ -225,6 +337,8 @@ Kein Spiel geplant
 
 )}
 
+{/* NEXT MATCH 2 */}
+
 {nextMatch2 && (
 
 <div className="mt-6 border-t border-white/20 pt-4 text-center">
@@ -234,7 +348,7 @@ Kein Spiel geplant
 </div>
 
 <div>
-{new Date(nextMatch2.date).toLocaleDateString("de-DE")}
+{formatDate(nextMatch2.date)}
 </div>
 
 <div className="font-semibold mt-2">
@@ -259,29 +373,37 @@ Kein Spiel geplant
 Top Torjäger
 </h3>
 
-{topScorers && topScorers.map((p,i) => {
+{topScorers.map((p,i)=>(
 
-return (
-<div key={p._id} className="flex justify-between py-1 text-sm">
+<div
+key={p._id}
+className="flex justify-between py-1 text-sm"
+>
 
 <span>
+
 {i+1}. {p.firstName} {p.lastName}
+
 </span>
 
 <span className="text-yellow-400">
+
 ⚽ {p.seasonStats?.goals || 0}
+
 </span>
 
 </div>
-);
 
-})}
-
-</div>
+))}
 
 </div>
+
 </div>
+
 </div>
+
+</div>
+
 </div>
 
 );

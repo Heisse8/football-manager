@@ -4,30 +4,50 @@ import { useNavigate } from "react-router-dom";
 export default function MatchCenter() {
 
 const navigate = useNavigate();
-const [matches, setMatches] = useState([]);
 
-useEffect(() => {
+const [matches,setMatches] = useState([]);
+const [loading,setLoading] = useState(true);
 
-const loadMatches = async () => {
+/* =====================================================
+LOAD MATCHES
+===================================================== */
 
-try {
+useEffect(()=>{
+
+const loadMatches = async ()=>{
+
+try{
 
 const res = await fetch("/api/match/current");
+
+if(!res.ok){
+setMatches([]);
+setLoading(false);
+return;
+}
+
 const data = await res.json();
 
 setMatches(Array.isArray(data) ? data : []);
 
-} catch (err) {
+}catch(err){
 
-console.error("Fehler beim Laden der Spiele");
+console.error("Fehler beim Laden der Spiele:",err);
+setMatches([]);
 
 }
+
+setLoading(false);
 
 };
 
 loadMatches();
 
-}, []);
+},[]);
+
+/* =====================================================
+FORMAT DATE
+===================================================== */
 
 function formatDate(date){
 
@@ -42,6 +62,10 @@ month:"2-digit"
 
 }
 
+/* =====================================================
+UI
+===================================================== */
+
 return (
 
 <div className="min-h-screen bg-gray-900 text-white p-10">
@@ -50,12 +74,20 @@ return (
 Aktueller Spieltag
 </h1>
 
-{matches.length === 0 && (
+{/* LOADING */}
 
+{loading && (
+<div className="opacity-60">
+Spiele werden geladen...
+</div>
+)}
+
+{/* EMPTY */}
+
+{!loading && matches.length === 0 && (
 <div className="opacity-60">
 Noch keine Spiele vorhanden.
 </div>
-
 )}
 
 <div className="grid gap-6">
@@ -94,20 +126,20 @@ played
 
 <div className="flex justify-between items-center text-lg font-semibold">
 
-<div className="w-1/3 text-right">
-{match.homeTeam?.name}
+<div className="w-1/3 text-right truncate">
+{match.homeTeam?.name || "Team"}
 </div>
 
 <div className="w-1/3 text-center text-xl font-bold">
 
 {played
-? `${match.homeGoals} : ${match.awayGoals}`
+? `${match.homeGoals ?? 0} : ${match.awayGoals ?? 0}`
 : "vs"}
 
 </div>
 
-<div className="w-1/3 text-left">
-{match.awayTeam?.name}
+<div className="w-1/3 text-left truncate">
+{match.awayTeam?.name || "Team"}
 </div>
 
 </div>
@@ -118,7 +150,7 @@ played
 
 <div className="mt-3 text-sm text-gray-400 text-center">
 
-xG {match.xG.home} - {match.xG.away}
+xG {match.xG.home ?? 0} - {match.xG.away ?? 0}
 
 </div>
 

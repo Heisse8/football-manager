@@ -56,7 +56,10 @@ continue;
 
 /* Budget */
 
-if(bot.balance < player.highestBid) continue;
+const currentBid =
+player.highestBid || player.transferPrice || 0;
+
+if(bot.balance < currentBid) continue;
 
 /* Marktwert Limit */
 

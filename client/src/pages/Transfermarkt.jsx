@@ -10,6 +10,8 @@ const [position,setPosition] = useState("");
 const [stars,setStars] = useState("");
 const [sort,setSort] = useState("");
 
+const [loading,setLoading] = useState(true);
+
 /* =====================================================
 LOAD MARKET
 ===================================================== */
@@ -28,16 +30,27 @@ const loadMarket = async ()=>{
 
 try{
 
+setLoading(true);
+
 const res = await fetch(`/api/market/${tab}`);
+
+if(!res.ok){
+setData([]);
+setLoading(false);
+return;
+}
+
 const result = await res.json();
 
-setData(result);
+setData(Array.isArray(result) ? result : []);
 
 }catch(err){
 
-console.error(err);
+console.error("Market Fehler:",err);
 
 }
+
+setLoading(false);
 
 };
 
@@ -49,11 +62,15 @@ const placeBid = async (player)=>{
 
 const token = localStorage.getItem("token");
 
+if(!token) return;
+
 const amount = prompt("Gebot eingeben");
 
 if(!amount) return;
 
-await fetch("/api/market/bid",{
+try{
+
+await fetch(`/api/team/bid/${player._id}`,{
 
 method:"POST",
 
@@ -63,13 +80,18 @@ Authorization:`Bearer ${token}`
 },
 
 body:JSON.stringify({
-playerId:player._id,
-bid:Number(amount)
+amount:Number(amount)
 })
 
 });
 
 loadMarket();
+
+}catch(err){
+
+console.error(err);
+
+}
 
 };
 
@@ -81,22 +103,27 @@ const buyScout = async (scout)=>{
 
 const token = localStorage.getItem("token");
 
-await fetch("/api/market/buy-scout",{
+if(!token) return;
+
+try{
+
+await fetch(`/api/market/buy-scout/${scout._id}`,{
 
 method:"POST",
 
 headers:{
-"Content-Type":"application/json",
 Authorization:`Bearer ${token}`
-},
-
-body:JSON.stringify({
-scoutId:scout._id
-})
+}
 
 });
 
 loadMarket();
+
+}catch(err){
+
+console.error(err);
+
+}
 
 };
 
@@ -108,22 +135,27 @@ const buyCoach = async (coach)=>{
 
 const token = localStorage.getItem("token");
 
-await fetch("/api/market/buy-coach",{
+if(!token) return;
+
+try{
+
+await fetch(`/api/market/buy-coach/${coach._id}`,{
 
 method:"POST",
 
 headers:{
-"Content-Type":"application/json",
 Authorization:`Bearer ${token}`
-},
-
-body:JSON.stringify({
-coachId:coach._id
-})
+}
 
 });
 
 loadMarket();
+
+}catch(err){
+
+console.error(err);
+
+}
 
 };
 
@@ -154,7 +186,7 @@ p.positions?.includes(position)
 if(stars){
 
 filtered = filtered.filter(p =>
-p.stars >= Number(stars)
+(p.stars || 0) >= Number(stars)
 );
 
 }
@@ -165,19 +197,19 @@ SORT
 
 if(sort === "price"){
 
-filtered.sort((a,b)=>b.highestBid - a.highestBid);
+filtered.sort((a,b)=>(b.highestBid || 0) - (a.highestBid || 0));
 
 }
 
 if(sort === "stars"){
 
-filtered.sort((a,b)=>b.stars - a.stars);
+filtered.sort((a,b)=>(b.stars || 0) - (a.stars || 0));
 
 }
 
 if(sort === "age"){
 
-filtered.sort((a,b)=>a.age - b.age);
+filtered.sort((a,b)=>(a.age || 0) - (b.age || 0));
 
 }
 
@@ -315,6 +347,14 @@ className="bg-gray-800 px-3 py-2 rounded"
 GRID
 ===================================================== */}
 
+{loading && (
+
+<div className="text-gray-400">
+Lade Transfermarkt...
+</div>
+
+)}
+
 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 
 {tab==="players" && filtered.map((p)=>(
@@ -338,7 +378,7 @@ Alter: {p.age}
 </div>
 
 <div className="text-yellow-400 mt-2">
-Gebot: € {p.highestBid?.toLocaleString()}
+Gebot: € {(p.highestBid || 0).toLocaleString()}
 </div>
 
 <div className="text-xs text-gray-400">
@@ -365,7 +405,7 @@ Scout ⭐{s.stars}
 </div>
 
 <div className="text-yellow-400 mt-2">
-Preis: € {s.transferPrice?.toLocaleString()}
+Preis: € {(s.transferPrice || 0).toLocaleString()}
 </div>
 
 <button
@@ -392,7 +432,7 @@ Scout verpflichten
 </div>
 
 <div className="text-yellow-400 mt-2">
-Preis: € {c.transferPrice?.toLocaleString()}
+Preis: € {(c.transferPrice || 0).toLocaleString()}
 </div>
 
 <button

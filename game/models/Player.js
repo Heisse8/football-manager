@@ -238,12 +238,20 @@ index:true
 timestamps:true
 });
 
-/* ================= PERFORMANCE INDEXES ================= */
+/* =====================================================
+INDEXES (PERFORMANCE)
+===================================================== */
 
-playerSchema.index({ team:1 });
-playerSchema.index({ isListed:1 });
-playerSchema.index({ stars:-1 });
-playerSchema.index({ marketValue:-1 });
-playerSchema.index({ nationality:1 });
+playerSchema.index({ team: 1 });
+
+playerSchema.index({ isListed: 1 });
+
+playerSchema.index({ transferType: 1 });
+
+playerSchema.index({ auctionEnd: 1 });
+
+playerSchema.index({ marketValue: -1 });
+
+playerSchema.index({ stars: -1 });
 
 module.exports = mongoose.model("Player",playerSchema);

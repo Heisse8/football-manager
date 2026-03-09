@@ -47,12 +47,10 @@ index:true
 
 },{timestamps:true});
 
-/* =====================================================
-INDEXES
-===================================================== */
+transferBidSchema.index({ player: 1 });
 
-transferBidSchema.index({ player:1 });
-transferBidSchema.index({ bidder:1 });
-transferBidSchema.index({ transfer:1 });
+transferBidSchema.index({ bidder: 1 });
+
+transferBidSchema.index({ createdAt: -1 });
 
 module.exports = mongoose.model("TransferBid", transferBidSchema);

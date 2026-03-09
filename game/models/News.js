@@ -88,11 +88,10 @@ default:null
 timestamps:true
 });
 
-/* =====================================
-INDEXES
-===================================== */
+newsSchema.index({ createdAt: -1 });
 
-newsSchema.index({ league:1, createdAt:-1 });
-newsSchema.index({ team:1, createdAt:-1 });
+newsSchema.index({ team: 1 });
+
+newsSchema.index({ league: 1 });
 
 module.exports = mongoose.model("News",newsSchema);

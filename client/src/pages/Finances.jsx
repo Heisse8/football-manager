@@ -1,9 +1,14 @@
-import { useEffect,useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Finances(){
 
 const [team,setTeam] = useState(null);
 const [sponsors,setSponsors] = useState([]);
+const [loading,setLoading] = useState(true);
+
+/* =====================================================
+LOAD DATA
+===================================================== */
 
 useEffect(()=>{
 
@@ -13,7 +18,14 @@ loadData();
 
 const loadData = async ()=>{
 
+try{
+
 const token = localStorage.getItem("token");
+
+if(!token){
+window.location="/login";
+return;
+}
 
 const headers = {
 Authorization:`Bearer ${token}`
@@ -22,6 +34,13 @@ Authorization:`Bearer ${token}`
 /* ================= TEAM ================= */
 
 const teamRes = await fetch("/api/team",{headers});
+
+if(teamRes.status === 401){
+localStorage.removeItem("token");
+window.location="/login";
+return;
+}
+
 const teamData = await teamRes.json();
 
 setTeam(teamData);
@@ -37,13 +56,25 @@ setSponsors(sponsorData);
 
 }
 
+}catch(err){
+
+console.error("Finances Fehler:",err);
+
+}
+
+setLoading(false);
+
 };
 
-/* ================= SIGN SPONSOR ================= */
+/* =====================================================
+SIGN SPONSOR
+===================================================== */
 
 const signSponsor = async (sponsor)=>{
 
 if(team?.sponsor) return;
+
+try{
 
 const token = localStorage.getItem("token");
 
@@ -62,9 +93,35 @@ body:JSON.stringify({sponsor})
 
 loadData();
 
+}catch(err){
+
+console.error("Sponsor Fehler:",err);
+
+}
+
 };
 
+/* =====================================================
+LOADING
+===================================================== */
+
+if(loading){
+
+return(
+
+<div className="flex justify-center items-center h-screen text-white">
+Finanzen laden...
+</div>
+
+);
+
+}
+
 if(!team) return null;
+
+/* =====================================================
+RENDER
+===================================================== */
 
 return(
 
@@ -81,14 +138,14 @@ return(
 <div className="flex justify-between">
 <span>Kontostand</span>
 <span className="text-green-400">
-€ {team.balance.toLocaleString()}
+€ {(team.balance || 0).toLocaleString()}
 </span>
 </div>
 
 <div className="flex justify-between mt-2">
 <span>Letzte Einnahmen</span>
 <span className="text-yellow-400">
-€ {team.lastMatchRevenue?.toLocaleString()}
+€ {(team.lastMatchRevenue || 0).toLocaleString()}
 </span>
 </div>
 
@@ -111,7 +168,7 @@ Aktueller Sponsor
 </div>
 
 <div className="text-sm text-gray-400">
-€ {team.sponsorPayment.toLocaleString()} pro Spiel
+€ {(team.sponsorPayment || 0).toLocaleString()} pro Spiel
 </div>
 
 {/* Siegbonus */}
@@ -162,7 +219,7 @@ Kein Sponsor aktiv
 
 </div>
 
-{/* ================= SPONSOR AUSWAHL ================= */}
+{/* ================= SPONSOR OFFERS ================= */}
 
 {!team.sponsor && (
 
@@ -186,8 +243,6 @@ Sponsorenangebote
 € {s.payment.toLocaleString()} / Spiel
 </div>
 
-{/* Siegbonus */}
-
 {s.winBonus > 0 && (
 
 <div className="text-xs text-yellow-400">
@@ -195,8 +250,6 @@ Siegbonus: € {s.winBonus.toLocaleString()}
 </div>
 
 )}
-
-{/* Saisonbonus */}
 
 {s.seasonBonus && (
 

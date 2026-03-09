@@ -3,7 +3,7 @@ const cron = require("node-cron");
 const Match = require("../models/Match");
 const Team = require("../models/Team");
 
-const { simulateRealisticMatch } = require("../engines/simulateRealisticMatch");
+const { simulateRealisticMatch } = require("../engines/alt/simulateRealisticMatch");
 
 /* =====================================================
 COMPETITION CRON
