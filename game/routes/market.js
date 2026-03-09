@@ -18,7 +18,9 @@ try{
 
 const players = await Player.find({
 isListed:true
-}).populate("team","name shortName");
+})
+.select("firstName lastName stars age marketValue highestBid auctionEnd team")
+.populate("team","name shortName");
 
 res.json(players);
 
@@ -41,7 +43,8 @@ try{
 
 const scouts = await Scout.find({
 isListed:true
-});
+})
+.select("firstName lastName stars transferPrice");
 
 res.json(scouts);
 
@@ -64,7 +67,8 @@ try{
 
 const coaches = await Coach.find({
 isListed:true
-});
+})
+.select("firstName lastName rating transferPrice");
 
 res.json(coaches);
 
@@ -87,25 +91,37 @@ try{
 
 const { playerId, startPrice, duration } = req.body;
 
-const player = await Player.findById(playerId);
+/* ================= TEAM + PLAYER ================= */
+
+const [player, team] = await Promise.all([
+
+Player.findById(playerId),
+
+Team.findOne({ owner:req.user.userId })
+
+]);
 
 if(!player){
 return res.status(404).json({message:"Spieler nicht gefunden"});
 }
 
-const team = await Team.findOne({
-owner:req.user.userId
-});
-
 if(!team){
 return res.status(404).json({message:"Kein Team"});
 }
+
+/* gehört Spieler zum Team */
 
 if(player.team.toString() !== team._id.toString()){
 return res.status(403).json({message:"Nicht dein Spieler"});
 }
 
-/* Mindestpreis = 50% Marktwert */
+/* bereits auf Markt */
+
+if(player.isListed){
+return res.status(400).json({message:"Spieler bereits auf Markt"});
+}
+
+/* Mindestpreis */
 
 if(startPrice < player.marketValue * 0.5){
 return res.status(400).json({
@@ -119,6 +135,8 @@ let hours = 24;
 
 if(duration === 48) hours = 48;
 if(duration === 72) hours = 72;
+
+/* Endzeit */
 
 const end = new Date();
 end.setHours(end.getHours()+hours);
@@ -155,27 +173,43 @@ try{
 
 const { playerId, bid } = req.body;
 
-const player = await Player.findById(playerId);
+/* ================= PLAYER + TEAM ================= */
+
+const [player, team] = await Promise.all([
+
+Player.findById(playerId),
+
+Team.findOne({ owner:req.user.userId })
+
+]);
 
 if(!player || player.transferType !== "auction"){
 return res.status(404).json({message:"Keine Auktion"});
 }
 
+if(!team){
+return res.status(404).json({message:"Kein Team"});
+}
+
+/* eigene Spieler blockieren */
+
+if(player.team.toString() === team._id.toString()){
+return res.status(400).json({message:"Eigenes Gebot nicht erlaubt"});
+}
+
+/* Auktion beendet */
+
 if(new Date() > player.auctionEnd){
 return res.status(400).json({message:"Auktion beendet"});
 }
+
+/* Gebot */
 
 if(bid <= player.highestBid){
 return res.status(400).json({message:"Gebot zu niedrig"});
 }
 
-const team = await Team.findOne({
-owner:req.user.userId
-});
-
-if(!team){
-return res.status(404).json({message:"Kein Team"});
-}
+/* Geld */
 
 if(team.balance < bid){
 return res.status(400).json({message:"Zu wenig Geld"});
@@ -223,15 +257,19 @@ try{
 
 const { playerId } = req.body;
 
-const player = await Player.findById(playerId);
+/* ================= TEAM + PLAYER ================= */
+
+const [player, team] = await Promise.all([
+
+Player.findById(playerId),
+
+Team.findOne({ owner:req.user.userId })
+
+]);
 
 if(!player){
 return res.status(404).json({message:"Spieler nicht gefunden"});
 }
-
-const team = await Team.findOne({
-owner:req.user.userId
-});
 
 if(!team){
 return res.status(404).json({message:"Kein Team"});
@@ -241,7 +279,7 @@ if(player.team.toString() !== team._id.toString()){
 return res.status(403).json({message:"Nicht dein Spieler"});
 }
 
-/* Verkaufspreis = 80% Marktwert */
+/* Verkaufspreis */
 
 const price = Math.floor(player.marketValue * 0.8);
 
@@ -249,7 +287,7 @@ const price = Math.floor(player.marketValue * 0.8);
 
 team.balance += price;
 
-/* Spieler entfernen */
+/* Spieler löschen */
 
 await Player.deleteOne({ _id: player._id });
 
@@ -279,15 +317,21 @@ try{
 
 const { scoutId } = req.body;
 
-const scout = await Scout.findById(scoutId);
+const [scout, team] = await Promise.all([
+
+Scout.findById(scoutId),
+
+Team.findOne({ owner:req.user.userId })
+
+]);
 
 if(!scout || !scout.isListed){
 return res.status(404).json({message:"Scout nicht verfügbar"});
 }
 
-const team = await Team.findOne({
-owner:req.user.userId
-});
+if(!team){
+return res.status(404).json({message:"Kein Team"});
+}
 
 if(team.balance < scout.transferPrice){
 return res.status(400).json({message:"Zu wenig Geld"});
@@ -297,11 +341,9 @@ if(team.scouts.length >= team.scoutSlots){
 return res.status(400).json({message:"Scout Slots voll"});
 }
 
-/* Geld */
+/* Transfer */
 
 team.balance -= scout.transferPrice;
-
-/* Scout */
 
 scout.team = team._id;
 scout.isListed = false;
@@ -332,25 +374,29 @@ try{
 
 const { coachId } = req.body;
 
-const coach = await Coach.findById(coachId);
+const [coach, team] = await Promise.all([
+
+Coach.findById(coachId),
+
+Team.findOne({ owner:req.user.userId })
+
+]);
 
 if(!coach || !coach.isListed){
 return res.status(404).json({message:"Trainer nicht verfügbar"});
 }
 
-const team = await Team.findOne({
-owner:req.user.userId
-});
+if(!team){
+return res.status(404).json({message:"Kein Team"});
+}
 
 if(team.balance < coach.transferPrice){
 return res.status(400).json({message:"Zu wenig Geld"});
 }
 
-/* Geld */
+/* Transfer */
 
 team.balance -= coach.transferPrice;
-
-/* Trainer */
 
 coach.team = team._id;
 coach.isListed = false;

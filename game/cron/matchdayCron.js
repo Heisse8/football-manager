@@ -14,7 +14,7 @@ function startMatchdayCron(){
 
 cron.schedule("0 4 * * 2,6", async () => {
 
-console.log("⚽ Matchday Simulation gestartet");
+console.log("⚽ Spieltag Simulation gestartet");
 
 try{
 
@@ -22,13 +22,15 @@ try{
 
 await simulateMatchday();
 
-console.log("✅ Matchday abgeschlossen");
+console.log("✅ Spieltag abgeschlossen");
 
-/* ================= TRANSFER AUKTIONEN ================= */
+/* ================= AUKTIONEN ================= */
 
 await resolveAuctions();
 
 console.log("💰 Transfer Auktionen ausgewertet");
+
+/* ================= BOT TRANSFERS ================= */
 
 await runBotTransfers();
 
@@ -40,12 +42,16 @@ await generateFreeAgents();
 
 console.log("🧑‍🎓 Neue Free Agents generiert");
 
+console.log("🏁 Matchday Cron komplett abgeschlossen");
+
 }catch(err){
 
-console.error("❌ Matchday Fehler:", err);
+console.error("❌ Matchday Cron Fehler:", err);
 
 }
 
+},{
+timezone: "Europe/Berlin"
 });
 
 }

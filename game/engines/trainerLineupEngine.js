@@ -3,7 +3,11 @@ const { calculatePositionScore } = require("./playerPositionScore");
 
 function generateLineup(team, trainer){
 
-const players = [...team.players];
+const players = [...(team.players || [])];
+
+if(players.length === 0){
+return { formation:"442", lineup:{}, bench:[] };
+}
 
 const formation = trainer?.favoriteFormation || team.formation || "442";
 
@@ -15,7 +19,6 @@ const lineup = {};
 
 /* ======================================================
  ROTATION INTENSITÄT
- Trainer bestimmt wie viel rotiert wird
 ====================================================== */
 
 const rotationFactor = getRotationFactor(trainer);
@@ -26,12 +29,11 @@ const rotationFactor = getRotationFactor(trainer);
 
 const goalkeeper = players
 .filter(p => p.positions?.includes("GK"))
-.sort((a,b)=>b.defending-a.defending)[0];
+.sort((a,b)=> (b.defending || 50) - (a.defending || 50))[0];
 
 if(goalkeeper){
 
 lineup["GK"] = goalkeeper._id;
-
 usedPlayers.add(goalkeeper._id);
 
 }
@@ -45,23 +47,27 @@ slots.forEach(position => {
 if(position === "GK") return;
 
 let bestPlayer = null;
-let bestScore = -1;
+let bestScore = -Infinity;
 
-players.forEach(player => {
+for(const player of players){
 
-if(usedPlayers.has(player._id)) return;
+if(usedPlayers.has(player._id)) continue;
 
 /* Fitness Einfluss */
 
-const fitnessModifier = (player.fitness || 100) / 100;
+const fitnessModifier = (player.fitness ?? 100) / 100;
 
 /* Rotation Einfluss */
 
 const rotationPenalty =
 player.lastMatchStarted ? (1 - rotationFactor) : 1;
 
+/* Positionsscore */
+
+const baseScore = calculatePositionScore(player, position);
+
 const score =
-calculatePositionScore(player, position) *
+baseScore *
 fitnessModifier *
 rotationPenalty;
 
@@ -72,17 +78,37 @@ bestPlayer = player;
 
 }
 
-});
+}
 
 if(bestPlayer){
 
 lineup[position] = bestPlayer._id;
-
 usedPlayers.add(bestPlayer._id);
 
 }
 
 });
+
+/* ======================================================
+ FALLBACK (falls Formation nicht voll)
+====================================================== */
+
+if(Object.keys(lineup).length < slots.length){
+
+for(const player of players){
+
+if(usedPlayers.has(player._id)) continue;
+
+const emptySlot = slots.find(s => !lineup[s]);
+
+if(!emptySlot) break;
+
+lineup[emptySlot] = player._id;
+usedPlayers.add(player._id);
+
+}
+
+}
 
 /* ======================================================
  BANK
@@ -118,12 +144,6 @@ if(!trainer) return 0.1;
 
 const stars = trainer.stars || 2;
 
-/*
-
-Top Trainer rotieren besser
-
-*/
-
 switch(stars){
 
 case 5: return 0.35;
@@ -152,9 +172,13 @@ function generateBench(players, usedPlayers){
 const remaining = players
 .filter(p => !usedPlayers.has(p._id));
 
+/* GK */
+
 const gk = remaining
 .filter(p => p.positions?.includes("GK"))
 .slice(0,1);
+
+/* DEF */
 
 const defenders = remaining
 .filter(p =>
@@ -164,6 +188,8 @@ p.positions?.includes("RB")
 )
 .slice(0,2);
 
+/* MID */
+
 const midfielders = remaining
 .filter(p =>
 p.positions?.includes("CM") ||
@@ -171,6 +197,8 @@ p.positions?.includes("CDM") ||
 p.positions?.includes("CAM")
 )
 .slice(0,2);
+
+/* ATT */
 
 const attackers = remaining
 .filter(p =>
@@ -180,15 +208,27 @@ p.positions?.includes("RW")
 )
 .slice(0,2);
 
-const bench = [
+let bench = [
 ...gk,
 ...defenders,
 ...midfielders,
 ...attackers
-]
+];
+
+/* Fallback falls weniger Spieler */
+
+if(bench.length < 7){
+
+const extra = remaining
+.filter(p => !bench.includes(p))
+.slice(0, 7 - bench.length);
+
+bench = [...bench, ...extra];
+
+}
+
+return bench
 .slice(0,7)
 .map(p => p._id);
-
-return bench;
 
 }

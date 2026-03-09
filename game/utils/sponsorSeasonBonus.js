@@ -14,29 +14,30 @@ const position = team.tablePosition;
 
 let bonus = 0;
 
+const bonusData = team.sponsorSeasonBonus;
+
 /* ================= BONUS PRÜFEN ================= */
 
-if(team.sponsorSeasonBonus.champion && position === 1){
+/* höchste Priorität zuerst */
 
-bonus = team.sponsorSeasonBonus.champion;
+if(bonusData.champion && position === 1){
 
-}
-
-else if(team.sponsorSeasonBonus.top3 && position <= 3){
-
-bonus = team.sponsorSeasonBonus.top3;
+bonus = bonusData.champion;
 
 }
+else if(bonusData.top3 && position <= 3){
 
-else if(team.sponsorSeasonBonus.top5 && position <= 5){
-
-bonus = team.sponsorSeasonBonus.top5;
+bonus = bonusData.top3;
 
 }
+else if(bonusData.top5 && position <= 5){
 
-else if(team.sponsorSeasonBonus.top10 && position <= 10){
+bonus = bonusData.top5;
 
-bonus = team.sponsorSeasonBonus.top10;
+}
+else if(bonusData.top10 && position <= 10){
+
+bonus = bonusData.top10;
 
 }
 
@@ -46,14 +47,17 @@ if(bonus > 0){
 
 team.balance += bonus;
 
+console.log(`${team.name} erhält Sponsor Bonus: ${bonus}`);
+
 }
 
-/* Sponsor zurücksetzen für neue Saison */
+/* ================= SPONSOR RESET ================= */
 
 team.sponsor = null;
 team.sponsorPayment = 0;
 team.sponsorWinBonus = 0;
 team.sponsorSeasonBonus = null;
+team.sponsorGamesLeft = 0;
 
 await team.save();
 

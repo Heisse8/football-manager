@@ -1,7 +1,7 @@
 const Team = require("../models/Team");
 
 /* =====================================================
-UEFA PRIZE MONEY
+ UEFA PRIZE MONEY
 ===================================================== */
 
 const prizes = {
@@ -24,111 +24,43 @@ winner: 30000000
 };
 
 /* =====================================================
-GRUPPENPHASE BONUS
+ GENERIC PRIZE FUNCTION
 ===================================================== */
 
-async function payGroupStage(team){
+async function payPrize(team, type){
 
-team.balance += prizes.groupStage;
+if(!team) return;
+
+const amount = prizes[type] || 0;
+
+team.balance += amount;
 
 await team.save();
+
+console.log(`💰 UEFA Prize: ${team.name} +${amount}`);
 
 }
 
 /* =====================================================
-GRUPPENSIEG
+ EXPORTS
 ===================================================== */
-
-async function payGroupWin(team){
-
-team.balance += prizes.groupWin;
-
-await team.save();
-
-}
-
-/* =====================================================
-GRUPPEN UNENTSCHIEDEN
-===================================================== */
-
-async function payGroupDraw(team){
-
-team.balance += prizes.groupDraw;
-
-await team.save();
-
-}
-
-/* =====================================================
-ACHTELFINALE
-===================================================== */
-
-async function payRound16(team){
-
-team.balance += prizes.round16;
-
-await team.save();
-
-}
-
-/* =====================================================
-VIERTELFINALE
-===================================================== */
-
-async function payQuarter(team){
-
-team.balance += prizes.quarter;
-
-await team.save();
-
-}
-
-/* =====================================================
-HALBFINALE
-===================================================== */
-
-async function paySemi(team){
-
-team.balance += prizes.semi;
-
-await team.save();
-
-}
-
-/* =====================================================
-FINALE
-===================================================== */
-
-async function payFinal(team){
-
-team.balance += prizes.final;
-
-await team.save();
-
-}
-
-/* =====================================================
-SIEGER BONUS
-===================================================== */
-
-async function payWinner(team){
-
-team.balance += prizes.winner;
-
-await team.save();
-
-}
 
 module.exports = {
 
-payGroupStage,
-payGroupWin,
-payGroupDraw,
+payGroupStage: (team) => payPrize(team,"groupStage"),
 
-payRound16,
-payQuarter,
-paySemi,
-payFinal,
-payWinner
+payGroupWin: (team) => payPrize(team,"groupWin"),
+
+payGroupDraw: (team) => payPrize(team,"groupDraw"),
+
+payRound16: (team) => payPrize(team,"round16"),
+
+payQuarter: (team) => payPrize(team,"quarter"),
+
+paySemi: (team) => payPrize(team,"semi"),
+
+payFinal: (team) => payPrize(team,"final"),
+
+payWinner: (team) => payPrize(team,"winner")
 
 };

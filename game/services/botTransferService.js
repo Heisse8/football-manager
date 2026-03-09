@@ -2,7 +2,7 @@ const Team = require("../models/Team");
 const Player = require("../models/Player");
 
 /* =====================================================
-BOT TRANSFER SYSTEM
+ BOT TRANSFER SYSTEM
 ===================================================== */
 
 async function runBotTransfers(){
@@ -19,7 +19,7 @@ await botBuyPlayers(team);
 }
 
 /* =====================================================
-BOT VERKAUFT SPIELER
+ BOT VERKAUFT SCHWACHE SPIELER
 ===================================================== */
 
 async function botSellPlayers(team){
@@ -28,28 +28,36 @@ const players = await Player.find({ team:team._id });
 
 if(players.length <= 20) return;
 
-const randomPlayer =
-players[Math.floor(Math.random()*players.length)];
+/* nach Stärke sortieren */
 
-randomPlayer.isListed = true;
-randomPlayer.transferType = "auction";
+players.sort((a,b)=>a.stars - b.stars);
 
-randomPlayer.currentBid = 0;
-randomPlayer.highestBidder = null;
+/* schwächster Spieler */
+
+const player = players[0];
+
+if(Math.random() > 0.4) return;
+
+player.isListed = true;
+player.transferType = "auction";
+
+player.highestBid = Math.floor(player.marketValue * 0.8);
+player.highestBidder = null;
 
 const end = new Date();
 end.setHours(end.getHours()+48);
 
-randomPlayer.auctionEnd = end;
+player.auctionEnd = end;
+player.sellerTeam = team._id;
 
-randomPlayer.sellerTeam = team._id;
+await player.save();
 
-await randomPlayer.save();
+console.log("🤖 Bot verkauft:", player.lastName);
 
 }
 
 /* =====================================================
-BOT KAUFT SPIELER
+ BOT KAUFT SPIELER
 ===================================================== */
 
 async function botBuyPlayers(team){
@@ -60,16 +68,21 @@ team:team._id
 
 if(squadSize >= 22) return;
 
+/* Marktspieler */
+
 const marketPlayers = await Player.find({
 isListed:true,
 team:{ $ne: team._id }
-})
-.limit(20);
+}).limit(20);
 
 if(marketPlayers.length === 0) return;
 
+/* zufälliger Spieler */
+
 const player =
 marketPlayers[Math.floor(Math.random()*marketPlayers.length)];
+
+/* Buy Now Transfer */
 
 if(player.transferType === "buy_now"){
 
@@ -86,9 +99,12 @@ await seller.save();
 
 player.team = team._id;
 player.isListed = false;
+player.transferType = "instant";
 
 await team.save();
 await player.save();
+
+console.log("🤖 Bot kauft:", player.lastName);
 
 }
 

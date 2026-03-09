@@ -4,7 +4,7 @@ const Match = require("../models/Match");
 const { payGroupStage } = require("./championsLeaguePrizeService");
 
 /* =====================================================
-CHAMPIONS LEAGUE STARTEN
+ CHAMPIONS LEAGUE STARTEN
 ===================================================== */
 
 async function generateChampionsLeague(){
@@ -17,7 +17,7 @@ let pot3=[];
 let pot4=[];
 
 /* =====================================================
-TOP 4 JE LIGA
+ TOP 4 JE LIGA
 ===================================================== */
 
 for(const league of leagues){
@@ -25,15 +25,15 @@ for(const league of leagues){
 const table = await Team.find({ league })
 .sort({ points:-1, goalDifference:-1, goalsFor:-1 });
 
-pot1.push(table[0]);
-pot2.push(table[1]);
-pot3.push(table[2]);
-pot4.push(table[3]);
+if(table[0]) pot1.push(table[0]);
+if(table[1]) pot2.push(table[1]);
+if(table[2]) pot3.push(table[2]);
+if(table[3]) pot4.push(table[3]);
 
 }
 
 /* =====================================================
-GRUPPEN ERSTELLEN
+ GRUPPEN ERSTELLEN
 ===================================================== */
 
 const groups={
@@ -65,7 +65,7 @@ addTeamToGroup(groups,i,pot4[i]);
 }
 
 /* =====================================================
-STARTGELD AUSZAHLEN
+ STARTGELD AUSZAHLEN
 ===================================================== */
 
 for(const group of Object.values(groups)){
@@ -79,22 +79,24 @@ await payGroupStage(team);
 }
 
 /* =====================================================
-GRUPPENSPIELE ERSTELLEN
+ GRUPPENSPIELE
 ===================================================== */
 
 await generateGroupMatches(groups);
 
-console.log("Champions League Gruppen erstellt");
+console.log("🏆 Champions League Gruppen erstellt");
 
 }
 
 /* =====================================================
-GRUPPENSPIELE
+ GRUPPENSPIELE
 ===================================================== */
 
 async function generateGroupMatches(groups){
 
 const groupNames=["A","B","C","D"];
+
+let matchday = 0;
 
 for(const g of groupNames){
 
@@ -107,36 +109,34 @@ for(let j=i+1;j<teams.length;j++){
 const home = teams[i];
 const away = teams[j];
 
-const date1 = getNextThursday();
-const date2 = getNextThursday(7);
+const date1 = getNextThursday(matchday*7);
+const date2 = getNextThursday((matchday+1)*7);
 
-await Match.create({
+await Match.insertMany([
 
+{
 homeTeam:home._id,
 awayTeam:away._id,
-
 competition:"ucl",
 group:g,
 leg:1,
-
 date:date1,
 played:false
+},
 
-});
-
-await Match.create({
-
+{
 homeTeam:away._id,
 awayTeam:home._id,
-
 competition:"ucl",
 group:g,
 leg:2,
-
 date:date2,
 played:false
+}
 
-});
+]);
+
+matchday++;
 
 }
 
@@ -147,12 +147,12 @@ played:false
 }
 
 /* =====================================================
-KO PHASE AUSLOSUNG
+ KO DRAW
 ===================================================== */
 
 function drawKnockout(first,second){
 
-const matches=[];
+let matches=[];
 
 shuffle(second);
 
@@ -162,9 +162,7 @@ let opponent = second.find(
 t => t.group !== team.group
 );
 
-if(!opponent){
-opponent = second[0];
-}
+if(!opponent) opponent = second[0];
 
 matches.push({
 home:team,
@@ -182,7 +180,7 @@ return matches;
 }
 
 /* =====================================================
-KO MATCHES ERSTELLEN
+ KO MATCHES
 ===================================================== */
 
 async function createKnockoutMatches(first,second,round){
@@ -194,49 +192,45 @@ for(const p of pairs){
 const date1 = getNextThursday();
 const date2 = getNextThursday(7);
 
-await Match.create({
+await Match.insertMany([
 
+{
 homeTeam:p.home._id,
 awayTeam:p.away._id,
-
 competition:"ucl",
 cupRound:round,
 leg:1,
-
 date:date1,
 played:false
+},
 
-});
-
-await Match.create({
-
+{
 homeTeam:p.away._id,
 awayTeam:p.home._id,
-
 competition:"ucl",
 cupRound:round,
 leg:2,
-
 date:date2,
 played:false
+}
 
-});
+]);
 
 }
 
 }
 
 /* =====================================================
-TEAM ZU GRUPPE HINZUFÜGEN
+ TEAM ZU GRUPPE
 ===================================================== */
 
 function addTeamToGroup(groups,index,team){
 
+if(!team) return;
+
 const keys=["A","B","C","D"];
 
 let groupKey = keys[index];
-
-/* gleiche Liga verhindern */
 
 if(groups[groupKey].some(t => t.league === team.league)){
 
@@ -253,14 +247,12 @@ return;
 
 }
 
-/* fallback */
-
 groups[groupKey].push(team);
 
 }
 
 /* =====================================================
-UTIL SHUFFLE
+ UTIL
 ===================================================== */
 
 function shuffle(array){
@@ -277,10 +269,6 @@ return array;
 
 }
 
-/* =====================================================
-NÄCHSTER DONNERSTAG
-===================================================== */
-
 function getNextThursday(offset=0){
 
 const now=new Date();
@@ -294,10 +282,6 @@ now.setDate(now.getDate()+diff+offset);
 return now;
 
 }
-
-/* =====================================================
-EXPORT
-===================================================== */
 
 module.exports = {
 

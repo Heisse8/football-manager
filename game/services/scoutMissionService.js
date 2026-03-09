@@ -2,38 +2,77 @@ const ScoutMission = require("../models/ScoutMission");
 const Scout = require("../models/Scout");
 const Team = require("../models/Team");
 
-async function startScoutMission({teamId,scoutId,region,duration}){
+async function startScoutMission({ teamId, scoutId, region, duration }){
+
+/* =====================================================
+TEAM PRÜFEN
+===================================================== */
+
+const team = await Team.findById(teamId);
+
+if(!team){
+throw new Error("Team nicht gefunden");
+}
+
+/* =====================================================
+SCOUT PRÜFEN
+===================================================== */
 
 const scout = await Scout.findById(scoutId);
 
-if(!scout) throw new Error("Scout nicht gefunden");
+if(!scout){
+throw new Error("Scout nicht gefunden");
+}
 
-if(scout.isOnMission)
+if(scout.isOnMission){
 throw new Error("Scout ist bereits unterwegs");
+}
 
-/* Dauer berechnen */
+/* =====================================================
+DAUER VALIDIEREN
+===================================================== */
 
-let days=7;
+const allowedDurations = [7,14,30];
 
-if(duration===14) days=14;
-if(duration===30) days=30;
+let days = 7;
+
+if(allowedDurations.includes(duration)){
+days = duration;
+}
+
+/* =====================================================
+MISSION ENDE
+===================================================== */
 
 const end = new Date();
-end.setDate(end.getDate()+days);
+end.setDate(end.getDate() + days);
 
-scout.isOnMission=true;
-scout.missionEnds=end;
-scout.missionRegion=region;
+/* =====================================================
+SCOUT STATUS
+===================================================== */
+
+scout.isOnMission = true;
+scout.missionEnds = end;
+scout.missionRegion = region;
 
 await scout.save();
 
+/* =====================================================
+MISSION ERSTELLEN
+===================================================== */
+
 const mission = await ScoutMission.create({
 
-team:teamId,
-scout:scoutId,
+team: teamId,
+scout: scoutId,
+
 region,
-duration:days,
-endsAt:end
+
+duration: days,
+
+endsAt: end,
+
+isResolved: false
 
 });
 
@@ -41,4 +80,4 @@ return mission;
 
 }
 
-module.exports={startScoutMission};
+module.exports = { startScoutMission };

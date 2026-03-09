@@ -5,18 +5,22 @@ const Team = require("../models/Team");
 const Season = require("../models/Season");
 const Match = require("../models/Match");
 
-const generateSchedule = require("../utils/scheduleGenerator");
+const { generateLeagueSchedule } = require("../utils/scheduleGenerator");
+
+const auth = require("../middleware/auth");
 
 /* =====================================================
 SPIELPLAN GENERIEREN
 POST /api/league/:league/generate
 ===================================================== */
 
-router.post("/:league/generate", async (req,res)=>{
+router.post("/:league/generate", auth, async (req,res)=>{
 
 try{
 
 const { league } = req.params;
+
+/* ================= TEAMS LADEN ================= */
 
 const teams = await Team.find({ league });
 
@@ -28,7 +32,9 @@ message:"Liga muss genau 18 Teams haben."
 
 }
 
-const existingSeason = await Season.findOne({ league });
+/* ================= SAISON PRÜFEN ================= */
+
+let existingSeason = await Season.findOne({ league });
 
 if(existingSeason && existingSeason.isGenerated){
 
@@ -40,11 +46,11 @@ message:"Spielplan bereits generiert."
 
 const seasonStart = new Date();
 
-/* Spielplan erstellen */
+/* ================= SPIELPLAN ERSTELLEN ================= */
 
-await generateSchedule(teams, league, seasonStart);
+await generateLeagueSchedule(teams, league, seasonStart);
 
-/* Season speichern */
+/* ================= SEASON SPEICHERN ================= */
 
 if(!existingSeason){
 
@@ -57,6 +63,8 @@ isGenerated:true
 }else{
 
 existingSeason.isGenerated = true;
+existingSeason.seasonStart = seasonStart;
+
 await existingSeason.save();
 
 }
@@ -68,12 +76,14 @@ message:"Spielplan erfolgreich generiert."
 }catch(err){
 
 console.error(err);
-res.status(500).json({message:"Serverfehler"});
+
+res.status(500).json({
+message:"Serverfehler"
+});
 
 }
 
 });
-
 
 /* =====================================================
 LIGATABELLE
@@ -87,6 +97,7 @@ try{
 const { league } = req.params;
 
 const table = await Team.find({ league })
+.select("name shortName points wins draws losses goalsFor goalsAgainst goalDifference tablePosition")
 .sort({
 points:-1,
 goalDifference:-1,
@@ -107,7 +118,6 @@ message:"Serverfehler"
 
 });
 
-
 /* =====================================================
 SPIELPLAN DER LIGA
 GET /api/league/schedule/:league
@@ -120,8 +130,8 @@ try{
 const { league } = req.params;
 
 const matches = await Match.find({ league })
-.populate("homeTeam","name")
-.populate("awayTeam","name")
+.populate("homeTeam","name shortName")
+.populate("awayTeam","name shortName")
 .sort({ date:1 });
 
 res.json(matches);
@@ -138,7 +148,6 @@ message:"Serverfehler"
 
 });
 
-
 /* =====================================================
 AKTUELLER SPIELTAG
 GET /api/league/matchday/:league
@@ -150,14 +159,24 @@ try{
 
 const { league } = req.params;
 
-const matchday = await Match.aggregate([
+/* ================= MAX MATCHDAY ================= */
+
+const result = await Match.aggregate([
+
 { $match:{ league } },
-{ $group:{ _id:null, maxMatchday:{ $max:"$matchday" } } }
+
+{
+$group:{
+_id:null,
+maxMatchday:{ $max:"$matchday" }
+}
+}
+
 ]);
 
-res.json({
-matchday: matchday[0]?.maxMatchday || 1
-});
+const matchday = result[0]?.maxMatchday || 1;
+
+res.json({ matchday });
 
 }catch(err){
 
@@ -171,5 +190,39 @@ message:"Serverfehler"
 
 });
 
+/* =====================================================
+SPIELE EINES SPIELTAGS
+GET /api/league/matchday/:league/:matchday
+===================================================== */
+
+router.get("/matchday/:league/:matchday", async (req,res)=>{
+
+try{
+
+const { league, matchday } = req.params;
+
+const matches = await Match.find({
+
+league,
+matchday:Number(matchday)
+
+})
+.populate("homeTeam","name shortName")
+.populate("awayTeam","name shortName")
+.sort({ date:1 });
+
+res.json(matches);
+
+}catch(err){
+
+console.error(err);
+
+res.status(500).json({
+message:"Serverfehler"
+});
+
+}
+
+});
 
 module.exports = router;

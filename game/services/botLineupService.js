@@ -1,8 +1,46 @@
 const Team = require("../models/Team");
 const Player = require("../models/Player");
+const Manager = require("../models/Manager");
 
 /* =====================================================
-BOT LINEUP
+ FORMATION SLOT MAP
+===================================================== */
+
+const formations = {
+
+"4-3-3":[
+"GK",
+"LB","LCB","RCB","RB",
+"LCM","CM","RCM",
+"LW","ST","RW"
+],
+
+"4-4-2":[
+"GK",
+"LB","LCB","RCB","RB",
+"LM","LCM","RCM","RM",
+"LST","RST"
+],
+
+"3-5-2":[
+"GK",
+"LCB","CCB","RCB",
+"LWB","LCM","CM","RCM","RWB",
+"LST","RST"
+],
+
+"4-2-3-1":[
+"GK",
+"LB","LCB","RCB","RB",
+"LCDM","RCDM",
+"LW","CAM","RW",
+"ST"
+]
+
+};
+
+/* =====================================================
+ BOT LINEUP
 ===================================================== */
 
 async function updateBotLineups(){
@@ -11,54 +49,99 @@ const bots = await Team.find({ isBot:true });
 
 for(const bot of bots){
 
-const players = await Player.find({ team:bot._id });
+const manager = await Manager.findOne({ team:bot._id });
+
+if(!manager) continue;
+
+const formation = formations[manager.formation] || formations["4-3-3"];
+
+/* Spieler laden */
+
+let players = await Player.find({ team:bot._id });
 
 /* nach Stärke sortieren */
 
 players.sort((a,b)=>b.stars - a.stars);
 
-/* beste 11 */
-
-const startingXI = players.slice(0,11);
-const bench = players.slice(11,18);
-
-/* Lineup speichern */
+/* Lineup */
 
 const lineup = {};
+const usedPlayers = new Set();
 
-let i = 0;
+/* =====================================================
+ STARTELF NACH POSITION
+===================================================== */
 
-for(const p of startingXI){
+for(const slot of formation){
 
-lineup[`slot${i}`] = p._id;
+let player = players.find(p => 
+!usedPlayers.has(p._id.toString()) &&
+p.positions &&
+p.positions.includes(slot)
+);
 
-p.startingXI = true;
-p.bench = false;
+/* fallback falls keine passende Position */
 
-await p.save();
+if(!player){
 
-i++;
+player = players.find(p =>
+!usedPlayers.has(p._id.toString())
+);
 
 }
 
-/* Bank */
+if(player){
 
-for(const p of bench){
+lineup[slot] = player._id;
+
+player.startingXI = true;
+player.bench = false;
+
+usedPlayers.add(player._id.toString());
+
+}
+
+}
+
+/* =====================================================
+ BANK
+===================================================== */
+
+const bench = [];
+
+for(const p of players){
+
+if(!usedPlayers.has(p._id.toString())){
 
 p.startingXI = false;
 p.bench = true;
 
-await p.save();
+bench.push(p._id);
+
+if(bench.length >= 7) break;
 
 }
 
+}
+
+/* =====================================================
+ SPIELER SPEICHERN
+===================================================== */
+
+await Promise.all(players.map(p => p.save()));
+
+/* =====================================================
+ TEAM LINEUP SPEICHERN
+===================================================== */
+
 bot.lineup = lineup;
+bot.bench = bench;
 
 await bot.save();
 
 }
 
-console.log("Bot Lineups aktualisiert");
+console.log("🤖 Bot Lineups aktualisiert (Formation berücksichtigt)");
 
 }
 

@@ -1,7 +1,7 @@
 const Team = require("../models/Team");
 
 /* =====================================================
-BOT TACTIC AI
+ BOT TACTIC AI
 ===================================================== */
 
 async function updateBotTactics(){
@@ -15,7 +15,7 @@ for(const bot of bots){
 const position = bot.tablePosition || 10;
 
 /* =====================================================
-FORMATION
+ FORMATION
 ===================================================== */
 
 let formation = "4-4-2";
@@ -24,30 +24,27 @@ if(position <= 4){
 
 formation = random([
 "4-3-3",
-"4-2-3-1",
-"3-4-3"
+"4-2-3-1"
 ]);
 
 }else if(position <= 10){
 
 formation = random([
 "4-4-2",
-"4-1-4-1",
 "4-2-3-1"
 ]);
 
 }else{
 
 formation = random([
-"5-4-1",
-"5-3-2",
-"4-1-4-1"
+"4-4-2",
+"3-5-2"
 ]);
 
 }
 
 /* =====================================================
-MENTALITÄT
+ MENTALITÄT
 ===================================================== */
 
 let mentality = "ausgewogen";
@@ -69,7 +66,7 @@ mentality = random([
 }
 
 /* =====================================================
-PRESSING
+ PRESSING
 ===================================================== */
 
 let pressing = "mittel";
@@ -88,25 +85,29 @@ pressing = "low_block";
 }
 
 /* =====================================================
-DEFENSIVE LINE
+ DEFENSIVE LINE
 ===================================================== */
 
 let defensiveLine = "mittel";
 
 if(mentality === "sehr_offensiv"){
-
 defensiveLine = "hoch";
-
 }
 
 if(mentality === "defensiv"){
-
 defensiveLine = "tief";
-
 }
 
 /* =====================================================
-TAKTIK SPEICHERN
+ TACTIC OBJECT SICHERSTELLEN
+===================================================== */
+
+if(!bot.tactics){
+bot.tactics = {};
+}
+
+/* =====================================================
+ SPEICHERN
 ===================================================== */
 
 bot.formation = formation;
@@ -119,18 +120,16 @@ await bot.save();
 
 }
 
-console.log("Bot Taktiken aktualisiert");
+console.log("🤖 Bot Taktiken aktualisiert");
 
 }
 
 /* =====================================================
-UTIL
+ UTIL
 ===================================================== */
 
 function random(arr){
-
 return arr[Math.floor(Math.random()*arr.length)];
-
 }
 
 module.exports = { updateBotTactics };

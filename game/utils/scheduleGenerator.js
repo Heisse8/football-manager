@@ -1,17 +1,9 @@
 const Match = require("../models/Match");
 
-/*
-=====================================
-ROUND ROBIN SCHEDULE GENERATOR
-=====================================
-18 Teams
-34 Matchdays
-Hin + Rückrunde
-Heim/Auswärts wechselt
-=====================================
-*/
-
 async function generateLeagueSchedule(teams, league){
+
+const DAY = 86400000;
+const MATCH_INTERVAL = 3 * DAY;
 
 const teamIds = teams.map(t => t._id);
 
@@ -27,9 +19,7 @@ let rotation = [...teamIds];
 let matchday = 1;
 const matches = [];
 
-/* ================================
-HINRUNDE
-================================ */
+/* ================= HINRUNDE ================= */
 
 for(let round = 0; round < rounds; round++){
 
@@ -40,8 +30,8 @@ const teamB = rotation[rotation.length - 1 - i];
 
 if(teamA && teamB){
 
-const homeTeam = round % 2 === 0 ? teamA : teamB;
-const awayTeam = round % 2 === 0 ? teamB : teamA;
+const homeTeam = i % 2 === 0 ? teamA : teamB;
+const awayTeam = i % 2 === 0 ? teamB : teamA;
 
 matches.push({
 
@@ -50,7 +40,7 @@ matchday,
 homeTeam,
 awayTeam,
 played:false,
-date: new Date(Date.now() + matchday * 86400000)
+date: new Date(Date.now() + matchday * MATCH_INTERVAL)
 
 });
 
@@ -58,7 +48,7 @@ date: new Date(Date.now() + matchday * 86400000)
 
 }
 
-/* ROTATION */
+/* Rotation */
 
 rotation.splice(1,0,rotation.pop());
 
@@ -66,9 +56,7 @@ matchday++;
 
 }
 
-/* ================================
-RÜCKRUNDE
-================================ */
+/* ================= RÜCKRUNDE ================= */
 
 const firstHalf = [...matches];
 
@@ -77,19 +65,17 @@ for(const m of firstHalf){
 matches.push({
 
 league,
-matchday:m.matchday + rounds,
-homeTeam:m.awayTeam,
-awayTeam:m.homeTeam,
+matchday: m.matchday + rounds,
+homeTeam: m.awayTeam,
+awayTeam: m.homeTeam,
 played:false,
-date:new Date()
+date: new Date(Date.now() + (m.matchday + rounds) * MATCH_INTERVAL)
 
 });
 
 }
 
-/* ================================
-SAVE MATCHES
-================================ */
+/* ================= SAVE ================= */
 
 await Match.insertMany(matches);
 

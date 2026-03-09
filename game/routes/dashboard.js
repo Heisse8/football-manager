@@ -17,9 +17,7 @@ router.get("/", auth, async (req,res)=>{
 
 try{
 
-/* =====================================================
-TEAM
-===================================================== */
+/* ================= TEAM ================= */
 
 const team = await Team.findOne({
 owner:req.user.userId
@@ -32,23 +30,33 @@ message:"Kein Team gefunden"
 }
 
 /* =====================================================
-LEAGUE TABLE
+ALLE QUERIES PARALLEL
 ===================================================== */
 
-const league = await Team.find({
+const [
+league,
+matches,
+news,
+teamForm,
+stadium,
+playerOfMonth
+] = await Promise.all([
+
+/* ================= LEAGUE TABLE ================= */
+
+Team.find({
 league:team.league
 })
+.select("name points goalDifference goalsFor tablePosition _id")
 .sort({
 points:-1,
 goalDifference:-1,
 goalsFor:-1
-});
+}),
 
-/* =====================================================
-NEXT MATCHES
-===================================================== */
+/* ================= NEXT MATCHES ================= */
 
-const matches = await Match.find({
+Match.find({
 
 $or:[
 {homeTeam:team._id},
@@ -58,61 +66,22 @@ $or:[
 played:false
 
 })
-.populate("homeTeam")
-.populate("awayTeam")
+.populate("homeTeam","name shortName")
+.populate("awayTeam","name shortName")
 .sort({date:1})
-.limit(2);
+.limit(2),
 
-const nextMatch = matches[0] || null;
-const nextMatch2 = matches[1] || null;
+/* ================= NEWS ================= */
 
-/* =====================================================
-NEWS
-===================================================== */
-
-let news = [];
-
-try{
-
-news = await News.find({
+News.find({
 league:team.league
 })
 .sort({createdAt:-1})
-.limit(5);
+.limit(5),
 
-}catch{
+/* ================= TEAM FORM ================= */
 
-news = [];
-
-}
-
-/* =====================================================
-TOP SCORERS
-===================================================== */
-
-let topScorers = [];
-
-try{
-
-topScorers = await Player.find({
-league:team.league
-})
-.sort({"seasonStats.goals":-1})
-.limit(5);
-
-}catch{
-topScorers = [];
-}
-
-/* =====================================================
-TEAM FORM (LAST 5 MATCHES)
-===================================================== */
-
-let teamForm = [];
-
-try{
-
-teamForm = await Match.find({
+Match.find({
 
 $or:[
 {homeTeam:team._id},
@@ -124,51 +93,44 @@ played:true
 })
 .sort({date:-1})
 .limit(5)
-.populate("homeTeam")
-.populate("awayTeam");
+.populate("homeTeam","name")
+.populate("awayTeam","name"),
 
-}catch{
+/* ================= STADIUM ================= */
 
-teamForm = [];
-
-}
-
-/* =====================================================
-STADIUM
-===================================================== */
-
-let stadium = null;
-
-try{
-
-stadium = await Stadium.findOne({
+Stadium.findOne({
 team:team._id
-});
+}),
 
-}catch{
+/* ================= PLAYER OF MONTH ================= */
 
-stadium = null;
-
-}
-
-/* =====================================================
-PLAYER OF MONTH
-===================================================== */
-
-let playerOfMonth = null;
-
-try{
-
-playerOfMonth = await Player.findOne({
+Player.findOne({
 team:team._id
 })
-.sort({"seasonStats.rating":-1});
+.sort({"seasonStats.rating":-1})
+.select("firstName lastName seasonStats")
 
-}catch{
+]);
 
-playerOfMonth = null;
+/* =====================================================
+TOP SCORERS
+===================================================== */
 
-}
+const leagueTeamIds = league.map(t => t._id);
+
+const topScorers = await Player.find({
+team:{ $in: leagueTeamIds }
+})
+.select("firstName lastName seasonStats team")
+.sort({"seasonStats.goals":-1})
+.limit(5);
+
+/* =====================================================
+NEXT MATCHES
+===================================================== */
+
+const nextMatch = matches[0] || null;
+const nextMatch2 = matches[1] || null;
 
 /* =====================================================
 FINANCE

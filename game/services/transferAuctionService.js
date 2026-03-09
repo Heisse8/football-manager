@@ -1,6 +1,10 @@
 const Player = require("../models/Player");
 const Team = require("../models/Team");
 
+/* =====================================================
+AUKTIONEN AUFLÖSEN
+===================================================== */
+
 async function resolveAuctions(){
 
 const now = new Date();
@@ -13,30 +17,58 @@ isListed:true
 
 });
 
+console.log("Auktionen beendet:", players.length);
+
 for(const player of players){
+
+/* =====================================================
+HAT EIN BIETER GEWONNEN
+===================================================== */
 
 if(player.highestBidder){
 
 const buyer = await Team.findById(player.highestBidder);
-const seller = await Team.findById(player.team);
+const seller = await Team.findById(player.sellerTeam);
 
-if(buyer.balance >= player.currentBid){
+const bid = player.highestBid || 0;
 
-buyer.balance -= player.currentBid;
-seller.balance += player.currentBid;
+if(buyer && buyer.balance >= bid){
+
+/* Geld transferieren */
+
+buyer.balance -= bid;
+
+if(seller){
+seller.balance += bid;
+await seller.save();
+}
+
+/* Spieler wechseln */
 
 player.team = buyer._id;
 
 await buyer.save();
-await seller.save();
+
+console.log(
+`Transfer: ${player.lastName} → ${buyer.name} (${bid})`
+);
 
 }
 
 }
+
+/* =====================================================
+AUKTION RESET
+===================================================== */
 
 player.isListed = false;
 player.transferType = null;
+
+player.highestBid = 0;
+player.highestBidder = null;
+
 player.auctionEnd = null;
+player.sellerTeam = null;
 
 await player.save();
 

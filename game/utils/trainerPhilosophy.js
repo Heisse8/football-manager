@@ -1,51 +1,60 @@
 function chooseFormationByPhilosophy(players, philosophy){
 
+philosophy = (philosophy || "").toLowerCase();
+
 let strikers = 0;
 let wingers = 0;
 let cams = 0;
 
-players.forEach(p=>{
+for(const p of players){
 
 const pos = p.positions || [];
 
 if(pos.includes("ST")) strikers++;
-if(pos.includes("LW") || pos.includes("RW")) wingers++;
-if(pos.includes("CAM")) cams++;
 
-});
+if(pos.includes("LW") || pos.includes("RW"))
+wingers++;
+
+if(pos.includes("CAM"))
+cams++;
+
+}
 
 /* ================= BALLBESITZ ================= */
 
-if(philosophy === "Ballbesitz"){
+if(philosophy === "ballbesitz"){
 
-if(cams >=1) return "4-2-3-1";
+if(cams >= 1) return "4-2-3-1";
+
 return "4-3-3";
 
 }
 
 /* ================= GEGENPRESSING ================= */
 
-if(philosophy === "Gegenpressing"){
+if(philosophy === "gegenpressing"){
 
-if(wingers >=2) return "4-3-3";
+if(wingers >= 2) return "4-3-3";
+
 return "4-4-2";
 
 }
 
 /* ================= KONTER ================= */
 
-if(philosophy === "Kontern"){
+if(philosophy === "konter"){
 
-if(strikers >=2) return "4-4-2";
-return "3-5-2";
+if(strikers >= 2) return "4-4-2";
+
+return "5-3-2";
 
 }
 
-/* ================= DEFENSIV ================= */
+/* ================= MAUERN ================= */
 
-if(philosophy === "Mauern"){
+if(philosophy === "mauern"){
 
-return "3-5-2";
+return "5-4-1";
 
 }
 

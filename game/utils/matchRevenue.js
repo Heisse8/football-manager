@@ -6,13 +6,11 @@ async function generateMatchRevenue(teamId){
 
 const team = await Team.findById(teamId);
 
-const stadium = await Stadium.findOne({
-team:teamId
-});
+const stadium = await Stadium.findOne({ team:teamId });
 
 if(!team || !stadium) return;
 
-/* ================= MATCH LADEN ================= */
+/* ================= LETZTES MATCH ================= */
 
 const match = await Match.findOne({
 $or:[
@@ -22,36 +20,25 @@ $or:[
 played:true
 }).sort({ date:-1 });
 
-let opponent = null;
-let teamWon = false;
+if(!match) return;
 
-if(match){
+/* ================= NUR HEIMSPIELE ================= */
 
-if(match.homeTeam.toString() === teamId.toString()){
-
-opponent = await Team.findById(match.awayTeam);
-
-if(match.homeGoals > match.awayGoals){
-teamWon = true;
+if(match.homeTeam.toString() !== teamId.toString()){
+return;
 }
 
-}else{
+/* ================= GEGNER ================= */
 
-opponent = await Team.findById(match.homeTeam);
+const opponent = await Team.findById(match.awayTeam);
 
-if(match.awayGoals > match.homeGoals){
-teamWon = true;
-}
+let teamWon = match.homeGoals > match.awayGoals;
 
-}
-
-}
-
-/* ================= ZUSCHAUER BASIS ================= */
+/* ================= BASIS NACHFRAGE ================= */
 
 let demand = team.fanBase * 4500;
 
-/* ================= TABELLENPLATZ HEIMTEAM ================= */
+/* ================= TABELLENFAKTOR ================= */
 
 let tableFactor = 1;
 
@@ -59,7 +46,7 @@ if(team.tablePosition){
 tableFactor = 1 + ((18 - team.tablePosition) * 0.03);
 }
 
-/* ================= TABELLENPLATZ GEGNER ================= */
+/* ================= GEGNERFAKTOR ================= */
 
 let opponentFactor = 1;
 
@@ -73,12 +60,9 @@ let priceFactor = 1 - (stadium.ticketPrice / 80);
 
 priceFactor = Math.max(0.2, priceFactor);
 
-/* ================= STADION KOMFORT ================= */
+/* ================= STADION FEATURES ================= */
 
 const comfort = stadium.fanComfort || 1;
-
-/* ================= ATMOSPHÄRE ================= */
-
 const atmosphere = stadium.atmosphere || 1;
 
 /* ================= ZUSCHAUER ================= */
@@ -91,37 +75,22 @@ priceFactor *
 comfort *
 atmosphere;
 
-/* Stadionlimit */
-
 attendance = Math.min(stadium.capacity, attendance);
-
-/* Mindestinteresse */
-
 attendance = Math.max(500, attendance);
 
 attendance = Math.round(attendance);
 
-/* ================= TICKET EINNAHMEN ================= */
+/* ================= EINNAHMEN ================= */
 
 let revenue =
 attendance *
 stadium.ticketPrice *
 1.05;
 
-/* ================= SPONSOR ZAHLUNG ================= */
-
-if(team.sponsorPayment){
-
-revenue += team.sponsorPayment;
-
-}
-
-/* ================= SPONSOR SIEG BONUS ================= */
+/* ================= SIEG BONUS ================= */
 
 if(team.sponsorWinBonus && teamWon){
-
 revenue += team.sponsorWinBonus;
-
 }
 
 /* ================= SPEICHERN ================= */
@@ -133,11 +102,9 @@ team.lastAttendance = attendance;
 
 /* ================= HEIMBONUS ================= */
 
-const fillRate =
-attendance / stadium.capacity;
+const fillRate = attendance / stadium.capacity;
 
-team.homeBonus =
-1 + (fillRate * 0.15);
+team.homeBonus = 1 + (fillRate * 0.15);
 
 await team.save();
 

@@ -2,18 +2,26 @@ const mongoose = require("mongoose");
 
 const coachSchema = new mongoose.Schema({
 
+/* =====================================
+BASIC INFO
+===================================== */
+
 firstName:{
 type:String,
-required:true
+required:true,
+trim:true
 },
 
 lastName:{
 type:String,
-required:true
+required:true,
+trim:true
 },
 
 age:{
 type:Number,
+min:25,
+max:75,
 default:45
 },
 
@@ -21,7 +29,8 @@ stars:{
 type:Number,
 min:1,
 max:5,
-required:true
+required:true,
+index:true
 },
 
 /* =====================================
@@ -36,7 +45,8 @@ enum:[
 "konter",
 "defensiv"
 ],
-default:"ballbesitz"
+default:"ballbesitz",
+index:true
 },
 
 preferredFormation:{
@@ -52,23 +62,51 @@ default:"4-4-2"
 },
 
 /* =====================================
+ATTRIBUTES (für spätere Match Engine)
+===================================== */
+
+tactics:{
+type:Number,
+min:1,
+max:100,
+default:50
+},
+
+motivation:{
+type:Number,
+min:1,
+max:100,
+default:50
+},
+
+discipline:{
+type:Number,
+min:1,
+max:100,
+default:50
+},
+
+/* =====================================
 MARKET
 ===================================== */
 
 isListed:{
 type:Boolean,
-default:true
+default:true,
+index:true
 },
 
 transferPrice:{
 type:Number,
-required:true
+required:true,
+min:0
 },
 
 sellerTeam:{
 type:mongoose.Schema.Types.ObjectId,
 ref:"Team",
-default:null
+default:null,
+index:true
 },
 
 /* =====================================
@@ -78,9 +116,12 @@ TEAM
 team:{
 type:mongoose.Schema.Types.ObjectId,
 ref:"Team",
-default:null
+default:null,
+index:true
 }
 
-},{timestamps:true});
+},{
+timestamps:true
+});
 
 module.exports = mongoose.model("Coach", coachSchema);

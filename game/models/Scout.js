@@ -8,24 +8,31 @@ BASIS
 
 firstName:{
 type:String,
-required:true
+required:true,
+trim:true,
+maxlength:30
 },
 
 lastName:{
 type:String,
-required:true
+required:true,
+trim:true,
+maxlength:30
 },
 
 age:{
 type:Number,
-default:40
+default:40,
+min:25,
+max:75
 },
 
 stars:{
 type:Number,
 min:1,
 max:5,
-required:true
+required:true,
+index:true
 },
 
 /* =====================================================
@@ -34,16 +41,22 @@ SCOUT QUALITÄT
 
 scoutingSkill:{
 type:Number,
+min:1,
+max:100,
 default:50
 },
 
 potentialDetection:{
 type:Number,
+min:1,
+max:100,
 default:50
 },
 
 network:{
 type:Number,
+min:1,
+max:100,
 default:50
 },
 
@@ -61,7 +74,8 @@ enum:[
 "nordamerika",
 "australien"
 ],
-default:null
+default:null,
+index:true
 },
 
 /* =====================================================
@@ -70,12 +84,14 @@ TRANSFERMARKT
 
 isListed:{
 type:Boolean,
-default:true
+default:true,
+index:true
 },
 
 transferPrice:{
 type:Number,
-required:true
+required:true,
+min:0
 },
 
 sellerTeam:{
@@ -85,13 +101,14 @@ default:null
 },
 
 /* =====================================================
-TEAM ZUGEHÖRIGKEIT
+TEAM
 ===================================================== */
 
 team:{
 type:mongoose.Schema.Types.ObjectId,
 ref:"Team",
-default:null
+default:null,
+index:true
 },
 
 /* =====================================================
@@ -100,7 +117,8 @@ MISSION SYSTEM
 
 isOnMission:{
 type:Boolean,
-default:false
+default:false,
+index:true
 },
 
 missionRegion:{
@@ -128,7 +146,8 @@ default:null
 
 missionEnds:{
 type:Date,
-default:null
+default:null,
+index:true
 },
 
 /* =====================================================
@@ -145,6 +164,16 @@ type:Number,
 default:1
 }
 
-},{timestamps:true});
+},{
+timestamps:true
+});
+
+/* =====================================================
+INDEXES
+===================================================== */
+
+scoutSchema.index({ team:1 });
+scoutSchema.index({ isListed:1 });
+scoutSchema.index({ regionSpecialty:1 });
 
 module.exports = mongoose.model("Scout", scoutSchema);

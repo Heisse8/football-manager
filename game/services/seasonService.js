@@ -18,6 +18,8 @@ SAISON ENDE
 
 async function processSeasonEnd(){
 
+console.log("🏁 Saison Ende Verarbeitung startet");
+
 const countries = ["GER","ENG","ESP","ITA","FRA"];
 
 /* =====================================================
@@ -38,14 +40,22 @@ const table2 = await Team.find({ league: liga2 })
 const promoted = table2.slice(0,3);
 const relegated = table1.slice(-3);
 
+/* Aufsteiger */
+
 for(const team of promoted){
+
 team.league = liga1;
 await team.save();
+
 }
 
+/* Absteiger */
+
 for(const team of relegated){
+
 team.league = liga2;
 await team.save();
+
 }
 
 }
@@ -63,7 +73,7 @@ SPIELER ENTWICKLUNG
 await processPlayerDevelopment();
 
 /* =====================================================
-SPIELER KARRIERE ENDE
+SPIELER RÜCKTRITTE
 ===================================================== */
 
 await processPlayerRetirements();
@@ -81,7 +91,7 @@ ECONOMY BALANCE
 await balanceEconomy();
 
 /* =====================================================
-TABELLEN RESET
+TEAM STATISTIK RESET
 ===================================================== */
 
 const teams = await Team.find();
@@ -105,6 +115,10 @@ team.currentMatchday = 1;
 
 team.seasonReady = true;
 
+/* Form reset */
+
+team.form = [];
+
 await team.save();
 
 }
@@ -120,15 +134,21 @@ for(const p of players){
 p.seasonStats.games = 0;
 p.seasonStats.goals = 0;
 p.seasonStats.assists = 0;
+
 p.seasonStats.rating = 6.5;
+
 p.seasonStats.cleanSheets = 0;
 p.seasonStats.saves = 0;
+
+/* Verletzungen heilen */
+
+p.injuredUntil = null;
 
 await p.save();
 
 }
 
-console.log("Saison beendet");
+console.log("✅ Saison beendet");
 
 }
 
@@ -227,6 +247,8 @@ NEUE SAISON STARTEN
 
 async function startNewSeason(){
 
+console.log("🚀 Neue Saison wird erstellt");
+
 const leagues = await Team.distinct("league");
 
 /* alte Spiele löschen */
@@ -288,7 +310,7 @@ await team.save();
 
 }
 
-console.log("Neue Saison gestartet");
+console.log("✅ Neue Saison gestartet");
 
 }
 

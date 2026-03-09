@@ -2,22 +2,53 @@ function generateSponsors(team){
 
 const reputation = team.sponsorReputation || 1;
 const fanBase = team.fanBase || 1;
-const leagueLevel = team.leagueLevel || 1;
+
+/* Liga Level automatisch bestimmen */
+
+const leagueLevel =
+team.league && team.league.endsWith("_1") ? 2 : 1;
+
+/* Basiswert */
 
 let base =
 fanBase *
-25000 *
+12000 *
 reputation *
 (1 + leagueLevel * 0.15);
 
-/* ================= ANGEBOTE ================= */
+/* Sponsor Namen */
+
+const regionalNames = [
+"Autohaus Müller",
+"Stadtwerke",
+"Sparkasse",
+"Brauer & Sohn"
+];
+
+const nationalNames = [
+"TeleCom AG",
+"NordBank",
+"SportFit",
+"MediaTech"
+];
+
+const globalNames = [
+"Adreno",
+"HyperEnergy",
+"NovaTech",
+"SkyLink"
+];
+
+function random(arr){
+return arr[Math.floor(Math.random()*arr.length)];
+}
+
+/* Angebote */
 
 return [
 
-/* ================= SICHER ================= */
-
 {
-name:"Regionaler Sponsor",
+name: random(regionalNames),
 
 payment: Math.round(base * 0.9),
 
@@ -26,10 +57,8 @@ winBonus:0,
 seasonBonus:null
 },
 
-/* ================= BALANCED ================= */
-
 {
-name:"Nationaler Sponsor",
+name: random(nationalNames),
 
 payment: Math.round(base * 0.7),
 
@@ -41,10 +70,8 @@ top5: Math.round(base * 8)
 }
 },
 
-/* ================= RISIKO ================= */
-
 {
-name:"Global Brand",
+name: random(globalNames),
 
 payment: Math.round(base * 0.4),
 

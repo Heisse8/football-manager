@@ -2,7 +2,7 @@ const Team = require("../models/Team");
 const Player = require("../models/Player");
 
 /* =====================================================
-BOT TRANSFER AI
+ BOT TRANSFER AI
 ===================================================== */
 
 async function runBotTransfers(){
@@ -13,21 +13,32 @@ for(const bot of bots){
 
 const squad = await Player.find({ team:bot._id });
 
-const avgStars =
-squad.reduce((sum,p)=>sum+p.stars,0) / (squad.length || 1);
+if(squad.length === 0) continue;
 
 /* =====================================================
-POSITION CHECK
+ TEAM STÄRKE
+===================================================== */
+
+const avgStars =
+squad.reduce((sum,p)=>sum + (p.stars || 0),0) / squad.length;
+
+/* =====================================================
+ POSITION CHECK
 ===================================================== */
 
 const positionsNeeded = [];
 
-if(!squad.some(p=>p.positions.includes("GK"))) positionsNeeded.push("GK");
-if(!squad.some(p=>p.positions.includes("ST"))) positionsNeeded.push("ST");
-if(!squad.some(p=>p.positions.includes("CB"))) positionsNeeded.push("CB");
+if(!squad.some(p => p.positions && p.positions.includes("GK")))
+positionsNeeded.push("GK");
+
+if(!squad.some(p => p.positions && p.positions.includes("ST")))
+positionsNeeded.push("ST");
+
+if(!squad.some(p => p.positions && p.positions.includes("CB")))
+positionsNeeded.push("CB");
 
 /* =====================================================
-MARKT SPIELER SUCHEN
+ MARKT SPIELER SUCHEN
 ===================================================== */
 
 const marketPlayers = await Player.find({
@@ -37,17 +48,31 @@ transferType:"auction"
 
 for(const player of marketPlayers){
 
+/* nicht selbst überbieten */
+
+if(player.highestBidder &&
+player.highestBidder.toString() === bot._id.toString())
+continue;
+
+/* Budget */
+
 if(bot.balance < player.highestBid) continue;
+
+/* Marktwert Limit */
+
+if(player.highestBid > player.marketValue * 1.2) continue;
 
 /* Bot kauft nur bessere Spieler */
 
-if(player.stars < avgStars) continue;
+if((player.stars || 0) < avgStars) continue;
 
 /* Position bevorzugen */
 
 if(
 positionsNeeded.length > 0 &&
-!positionsNeeded.some(pos => player.positions.includes(pos))
+!(player.positions || []).some(pos =>
+positionsNeeded.includes(pos)
+)
 ){
 continue;
 }
@@ -65,17 +90,18 @@ player.highestBidder = bot._id;
 
 await player.save();
 
-console.log("Bot bietet auf:", player.lastName);
+console.log("🤖 Bot bietet auf:", player.lastName);
 
 break;
 
 }
 
 /* =====================================================
-SCHWACHE SPIELER VERKAUFEN
+ SCHWACHE SPIELER VERKAUFEN
 ===================================================== */
 
-const weakPlayers = squad.filter(p => p.stars < avgStars - 0.5);
+const weakPlayers =
+squad.filter(p => (p.stars || 0) < avgStars - 0.5);
 
 if(weakPlayers.length > 0 && Math.random() < 0.3){
 
@@ -88,14 +114,14 @@ player.transferType = "auction";
 player.highestBid = Math.floor(player.marketValue * 0.8);
 
 const end = new Date();
-end.setHours(end.getHours()+48);
+end.setHours(end.getHours() + 48);
 
 player.auctionEnd = end;
 player.sellerTeam = bot._id;
 
 await player.save();
 
-console.log("Bot verkauft:", player.lastName);
+console.log("💰 Bot verkauft:", player.lastName);
 
 }
 

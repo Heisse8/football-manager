@@ -1,25 +1,25 @@
 const philosophyFormations = {
 
-Ballbesitz: [
+ballbesitz: [
 "4-3-3",
 "4-2-3-1",
-"3-2-4-1"
+"3-4-3"
 ],
 
-Gegenpressing: [
+gegenpressing: [
 "4-1-2-1-2",
 "4-3-3",
 "4-2-3-1"
 ],
 
-Kontern: [
+konter: [
 "4-4-2",
 "4-2-3-1",
 "5-3-2",
 "5-4-1"
 ],
 
-Mauern: [
+mauern: [
 "4-4-2",
 "5-4-1",
 "5-3-2"

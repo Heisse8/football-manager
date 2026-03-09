@@ -4,14 +4,26 @@ const { maintainPlayerPool } = require("../services/playerPoolService");
 
 function startPlayerPoolCron(){
 
-/* jeden Tag 03:00 */
+/* täglich 03:00 */
 
 cron.schedule("0 3 * * *", async ()=>{
 
-console.log("Player Pool Check");
+console.log("🧬 Player Pool Check gestartet");
+
+try{
 
 await maintainPlayerPool();
 
+console.log("✅ Player Pool erfolgreich aktualisiert");
+
+}catch(err){
+
+console.error("❌ PlayerPoolCron Fehler:", err);
+
+}
+
+},{
+timezone: "Europe/Berlin"
 });
 
 }

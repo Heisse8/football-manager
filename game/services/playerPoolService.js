@@ -18,9 +18,13 @@ const needed = targetPlayers - totalPlayers;
 
 console.log("Generiere neue Free Agents:", needed);
 
+const players = [];
+
 for(let i=0;i<needed;i++){
-await createRandomPlayer();
+players.push(generateRandomPlayer());
 }
+
+await Player.insertMany(players);
 
 }
 
@@ -28,7 +32,7 @@ await createRandomPlayer();
 RANDOM PLAYER GENERATOR
 ===================================================== */
 
-async function createRandomPlayer(){
+function generateRandomPlayer(){
 
 const firstNames = [
 "Luca","Jonas","David","Noah","Leo","Ben","Elias","Finn","Tom","Paul"
@@ -67,14 +71,14 @@ STERNE
 ===================================================== */
 
 let stars = generateStars();
+stars = Math.min(stars,5);
 
 /* =====================================================
 POTENTIAL
 ===================================================== */
 
 let potential = stars + Math.random()*1.5;
-
-if(potential > 5) potential = 5;
+potential = Math.min(potential,5);
 
 /* =====================================================
 ATTRIBUTE
@@ -87,7 +91,9 @@ const defending = random(40,90);
 const physical = random(40,90);
 const mentality = random(40,90);
 
-/* Marktwert */
+/* =====================================================
+MARKTWERT
+===================================================== */
 
 let marketValue = 0;
 
@@ -108,10 +114,10 @@ marketValue = random(20000000,40000000);
 }
 
 /* =====================================================
-SPIELER ERSTELLEN
+SPIELER OBJEKT
 ===================================================== */
 
-await Player.create({
+return {
 
 firstName:firstNames[random(0,firstNames.length-1)],
 lastName:lastNames[random(0,lastNames.length-1)],
@@ -136,12 +142,10 @@ marketValue,
 
 team:null,
 
-/* Free Agents kommen NICHT automatisch auf den Markt */
-
 isListed:false,
 transferType:"auction"
 
-});
+};
 
 }
 
@@ -153,31 +157,21 @@ function generateStars(){
 
 const roll = Math.random();
 
-/* viele schlechte Spieler */
-
 if(roll < 0.50){
 return 1 + Math.random();
 }
-
-/* durchschnitt */
 
 if(roll < 0.80){
 return 2 + Math.random();
 }
 
-/* gute */
-
 if(roll < 0.93){
 return 3 + Math.random();
 }
 
-/* sehr gute */
-
 if(roll < 0.99){
 return 4 + Math.random();
 }
-
-/* seltene Weltklasse */
 
 return 5;
 
@@ -191,19 +185,13 @@ function randomWeightedAge(){
 
 const roll = Math.random();
 
-/* junge Spieler */
-
 if(roll < 0.40){
 return random(17,21);
 }
 
-/* prime */
-
 if(roll < 0.80){
 return random(22,28);
 }
-
-/* ältere */
 
 return random(29,34);
 

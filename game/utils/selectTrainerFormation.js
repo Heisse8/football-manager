@@ -7,8 +7,6 @@ const possible = philosophyFormations[philosophy] || ["4-3-3"];
 let bestFormation = possible[0];
 let bestScore = -999;
 
-/* jede Formation testen */
-
 possible.forEach(formation=>{
 
 const score = evaluateFormation(players, formation);
@@ -32,21 +30,42 @@ return bestFormation;
 
 function evaluateFormation(players, formation){
 
-let score = 0;
+const [def, mid, att] = formation.split("-").map(Number);
+
+let defenders = 0;
+let midfielders = 0;
+let attackers = 0;
 
 players.forEach(p=>{
 
 const pos = p.positions || [];
 
-/* einfache Bewertung */
+if(pos.includes("CB") || pos.includes("LB") || pos.includes("RB")){
+defenders++;
+}
 
-if(pos.includes("ST")) score += 3;
-if(pos.includes("LW") || pos.includes("RW")) score += 2;
-if(pos.includes("CM") || pos.includes("CDM")) score += 2;
-if(pos.includes("CB")) score += 2;
+if(pos.includes("CM") || pos.includes("CDM") || pos.includes("CAM")){
+midfielders++;
+}
 
-score += (p.stars || 0);
+if(pos.includes("ST") || pos.includes("LW") || pos.includes("RW")){
+attackers++;
+}
 
+});
+
+/* Formation Fit */
+
+let score = 0;
+
+score -= Math.abs(defenders - def) * 2;
+score -= Math.abs(midfielders - mid) * 2;
+score -= Math.abs(attackers - att) * 2;
+
+/* Spielerqualität */
+
+players.forEach(p=>{
+score += p.stars || 0;
 });
 
 /* leichte Varianz */

@@ -14,20 +14,26 @@ async function simulateMatchday(){
 
 const today = new Date();
 
+/* nur heutige Spiele */
+
+const startOfDay = new Date(today);
+startOfDay.setHours(0,0,0,0);
+
+const endOfDay = new Date(today);
+endOfDay.setHours(23,59,59,999);
+
 const matches = await Match.find({
 played:false,
-date:{ $lte: today }
+date:{ $gte:startOfDay, $lte:endOfDay }
 })
 .populate("homeTeam")
 .populate("awayTeam");
 
-console.log("Spiele gefunden:", matches.length);
+console.log("⚽ Spiele heute:", matches.length);
 
 for(const match of matches){
 
-/* =====================================================
-MATCH SIMULATION
-===================================================== */
+/* MATCH SIMULATION */
 
 const result = await simulateRealisticMatch({
 homeTeam: match.homeTeam,
@@ -45,21 +51,17 @@ match.xG = result.xG;
 
 match.played = true;
 
-/* =====================================================
-TEAM LADEN
-===================================================== */
+/* TEAM LADEN */
 
 const home = await Team.findById(match.homeTeam._id);
 const away = await Team.findById(match.awayTeam._id);
 
-/* =====================================================
-TABELLEN UPDATE
-===================================================== */
+/* SPIELE */
 
 home.played += 1;
 away.played += 1;
 
-/* Tore */
+/* TORE */
 
 home.goalsFor += match.homeGoals;
 home.goalsAgainst += match.awayGoals;
@@ -67,12 +69,12 @@ home.goalsAgainst += match.awayGoals;
 away.goalsFor += match.awayGoals;
 away.goalsAgainst += match.homeGoals;
 
-/* Torverhältnis */
+/* TORVERHÄLTNIS */
 
 home.goalDifference = home.goalsFor - home.goalsAgainst;
 away.goalDifference = away.goalsFor - away.goalsAgainst;
 
-/* Punkte */
+/* PUNKTE */
 
 if(match.homeGoals > match.awayGoals){
 
@@ -80,8 +82,6 @@ home.wins += 1;
 away.losses += 1;
 
 home.points += 3;
-
-/* Sponsor Bonus */
 
 await paySponsorWinBonus(home);
 
@@ -92,8 +92,6 @@ away.wins += 1;
 home.losses += 1;
 
 away.points += 3;
-
-/* Sponsor Bonus */
 
 await paySponsorWinBonus(away);
 
@@ -108,13 +106,9 @@ away.points += 1;
 
 }
 
-/* =====================================================
-ZUSCHAUER & STADION EINNAHMEN
-===================================================== */
+/* STADION EINNAHMEN */
 
-const stadium = await Stadium.findOne({
-team: home._id
-});
+const stadium = await Stadium.findOne({ team: home._id });
 
 if(stadium){
 
@@ -131,16 +125,12 @@ match.attendance = attendance;
 
 }
 
-/* =====================================================
-SPONSOR SPIELTAG REDUZIEREN
-===================================================== */
+/* SPONSOR SPIELE */
 
 await reduceSponsorGames(home);
 await reduceSponsorGames(away);
 
-/* =====================================================
-SPEICHERN
-===================================================== */
+/* SPEICHERN */
 
 await home.save();
 await away.save();
@@ -152,24 +142,20 @@ console.log(
 
 }
 
-/* =====================================================
-TABELLENPOSITIONEN NEU BERECHNEN
-===================================================== */
+/* TABELLE NEU SORTIEREN */
 
 await updateLeagueTables();
 
-/* =====================================================
-MARKTWERTE AKTUALISIEREN
-===================================================== */
+/* MARKTWERTE */
 
 await updateMarketValues();
 
-console.log("Matchday komplett abgeschlossen");
+console.log("✅ Matchday komplett abgeschlossen");
 
 }
 
 /* =====================================================
-LEAGUE TABLE UPDATE
+TABELLENPOSITIONEN
 ===================================================== */
 
 async function updateLeagueTables(){
@@ -189,7 +175,6 @@ goalsFor:-1
 for(let i=0;i<teams.length;i++){
 
 teams[i].tablePosition = i + 1;
-
 await teams[i].save();
 
 }

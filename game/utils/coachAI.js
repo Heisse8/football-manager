@@ -13,27 +13,42 @@ const style = team.tactics?.playStyle || "ballbesitz";
 
 const possible = philosophyFormations[style] || ["442"];
 
-/* Heimteam offensiver */
+/* =====================================================
+HEIMVORTEIL → offensiver
+===================================================== */
 
-if(team.homeBonus > 1.1){
+if(team.homeBonus && team.homeBonus > 1.1){
 
 if(possible.includes("433")) return "433";
+if(possible.includes("4231")) return "4231";
 
 }
 
-/* schwächeres Team defensiver */
+/* =====================================================
+SCHWÄCHERES TEAM → defensiver
+===================================================== */
 
-if(team.attackStrength < opponent.attackStrength){
+if(opponent && team.attackStrength < opponent.attackStrength){
 
 if(possible.includes("541")) return "541";
 if(possible.includes("532")) return "532";
 
 }
 
-/* zufällige Formation */
+/* =====================================================
+ZUFÄLLIGE FORMATION
+===================================================== */
 
-return possible[Math.floor(Math.random()*possible.length)];
+return random(possible);
 
+}
+
+/* =====================================================
+UTIL RANDOM
+===================================================== */
+
+function random(arr){
+return arr[Math.floor(Math.random()*arr.length)];
 }
 
 module.exports = { chooseFormation };

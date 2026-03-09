@@ -8,23 +8,32 @@ TEAMS
 
 homeTeam:{
 type:mongoose.Schema.Types.ObjectId,
-ref:"Team"
+ref:"Team",
+required:true,
+index:true
 },
 
 awayTeam:{
 type:mongoose.Schema.Types.ObjectId,
-ref:"Team"
+ref:"Team",
+required:true,
+index:true
 },
 
 /* =====================================================
 DATUM
 ===================================================== */
 
-date:Date,
+date:{
+type:Date,
+required:true,
+index:true
+},
 
 matchday:{
 type:Number,
-default:null
+default:null,
+index:true
 },
 
 /* =====================================================
@@ -34,7 +43,8 @@ WETTBEWERB
 competition:{
 type:String,
 enum:["league","cup","ucl"],
-default:"league"
+default:"league",
+index:true
 },
 
 /* =====================================================
@@ -69,7 +79,7 @@ default:1
 },
 
 /* =====================================================
-SPIELERGEBNIS
+ERGEBNIS
 ===================================================== */
 
 homeGoals:{
@@ -82,42 +92,28 @@ type:Number,
 default:0
 },
 
-/* Verlängerung */
+/* =====================================================
+VERLÄNGERUNG
+===================================================== */
 
 extraTime:{
-played:{
-type:Boolean,
-default:false
-},
-homeGoals:{
-type:Number,
-default:0
-},
-awayGoals:{
-type:Number,
-default:0
-}
-},
-
-/* Elfmeterschießen */
-
-penalties:{
-played:{
-type:Boolean,
-default:false
-},
-home:{
-type:Number,
-default:0
-},
-away:{
-type:Number,
-default:0
-}
+played:{ type:Boolean, default:false },
+homeGoals:{ type:Number, default:0 },
+awayGoals:{ type:Number, default:0 }
 },
 
 /* =====================================================
-POSSESSION
+ELFMETERSCHIESSEN
+===================================================== */
+
+penalties:{
+played:{ type:Boolean, default:false },
+home:{ type:Number, default:0 },
+away:{ type:Number, default:0 }
+},
+
+/* =====================================================
+BALLBESITZ
 ===================================================== */
 
 possession:{
@@ -197,19 +193,26 @@ MATCH STATUS
 status:{
 type:String,
 enum:["scheduled","live","finished"],
-default:"scheduled"
+default:"scheduled",
+index:true
 },
 
 played:{
 type:Boolean,
-default:false
-},
-
-createdAt:{
-type:Date,
-default:Date.now
+default:false,
+index:true
 }
 
+},{
+timestamps:true
 });
+
+/* =====================================================
+INDEXES (Performance)
+===================================================== */
+
+matchSchema.index({ homeTeam:1, date:1 });
+matchSchema.index({ awayTeam:1, date:1 });
+matchSchema.index({ competition:1, matchday:1 });
 
 module.exports = mongoose.model("Match",matchSchema);

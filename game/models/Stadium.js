@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+ const mongoose = require("mongoose");
 
 const stadiumSchema = new mongoose.Schema({
 
@@ -9,7 +9,9 @@ TEAM
 team:{
 type:mongoose.Schema.Types.ObjectId,
 ref:"Team",
-required:true
+required:true,
+unique:true,
+index:true
 },
 
 /* =====================================================
@@ -18,7 +20,9 @@ BASIS
 
 name:{
 type:String,
-default:"Vereinsstadion"
+default:"Vereinsstadion",
+trim:true,
+maxlength:40
 },
 
 nameLocked:{
@@ -28,12 +32,15 @@ default:false
 
 capacity:{
 type:Number,
-default:10000
+default:10000,
+min:1000
 },
 
 ticketPrice:{
 type:Number,
-default:15
+default:15,
+min:5,
+max:200
 },
 
 /* =====================================================
@@ -42,12 +49,16 @@ FAN EXPERIENCE
 
 fanComfort:{
 type:Number,
-default:1
+default:1,
+min:0.5,
+max:2
 },
 
 atmosphere:{
 type:Number,
-default:1
+default:1,
+min:0.5,
+max:2
 },
 
 /* =====================================================
@@ -58,7 +69,8 @@ construction:{
 
 inProgress:{
 type:Boolean,
-default:false
+default:false,
+index:true
 },
 
 targetCapacity:{
@@ -73,11 +85,19 @@ default:null
 
 finishDate:{
 type:Date,
-default:null
+default:null,
+index:true
 }
 
 }
 
 },{timestamps:true});
+
+/* =====================================================
+INDEXES
+===================================================== */
+
+stadiumSchema.index({ team:1 });
+stadiumSchema.index({ "construction.finishDate":1 });
 
 module.exports = mongoose.model("Stadium", stadiumSchema);

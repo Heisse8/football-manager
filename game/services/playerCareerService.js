@@ -43,22 +43,35 @@ continue;
 
 }
 
-/* Leistungsabfall im Alter */
+/* =====================================================
+ALTERSABFALL
+===================================================== */
 
 if(player.age > 32){
 
-player.pace *= 0.95;
-player.physical *= 0.95;
+player.pace *= 0.97;
+player.physical *= 0.97;
 
 }
 
-/* Entwicklung junger Spieler */
+/* =====================================================
+ENTWICKLUNG JUNGER SPIELER
+===================================================== */
 
 if(player.age <= 23 && player.potential > player.stars){
 
-player.stars += 0.1;
+player.stars = Math.min(
+player.stars + 0.1,
+player.potential
+);
 
 }
+
+/* Sicherheit */
+
+player.stars = Math.min(player.stars,5);
+
+/* speichern */
 
 await player.save();
 

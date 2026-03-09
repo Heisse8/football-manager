@@ -9,13 +9,15 @@ BASIS
 name:{
 type:String,
 required:true,
-unique:true
+unique:true,
+trim:true
 },
 
 shortName:{
 type:String,
 required:true,
-unique:true
+unique:true,
+trim:true
 },
 
 country:{
@@ -25,7 +27,8 @@ required:true
 
 league:{
 type:String,
-required:true
+required:true,
+index:true
 },
 
 owner:{
@@ -46,7 +49,8 @@ BOT SYSTEM
 
 isBot:{
 type:Boolean,
-default:false
+default:false,
+index:true
 },
 
 /* =====================================================
@@ -81,35 +85,10 @@ type:Number,
 default:3
 },
 
-scouts:{
-type:[{
+scouts:[{
 type:mongoose.Schema.Types.ObjectId,
 ref:"Scout"
 }],
-default:[]
-},
-
-activeScouting:{
-type:[{
-scout:{
-type:mongoose.Schema.Types.ObjectId,
-ref:"Scout"
-},
-region:{
-type:String
-},
-duration:{
-type:Number
-},
-startedAt:{
-type:Date
-},
-returnAt:{
-type:Date
-}
-}],
-default:[]
-},
 
 /* =====================================================
 CLUB IDENTITY
@@ -132,12 +111,15 @@ default:"Vereinsstadion"
 
 stadiumCapacity:{
 type:Number,
-default:12000
+default:12000,
+min:1000
 },
 
 ticketPrice:{
 type:Number,
-default:18
+default:18,
+min:5,
+max:200
 },
 
 stadiumLevel:{
@@ -161,12 +143,16 @@ FANS & HOME ADVANTAGE
 
 fanBase:{
 type:Number,
-default:1
+default:1,
+min:0.5,
+max:5
 },
 
 homeBonus:{
 type:Number,
-default:1
+default:1,
+min:0.5,
+max:2
 },
 
 /* =====================================================
@@ -258,15 +244,15 @@ LINEUP
 ===================================================== */
 
 lineup:{
-type:Object,
+type:Map,
+of:mongoose.Schema.Types.ObjectId,
 default:{}
 },
 
-bench:{
-type:[mongoose.Schema.Types.ObjectId],
-ref:"Player",
-default:[]
-},
+bench:[{
+type:mongoose.Schema.Types.ObjectId,
+ref:"Player"
+}],
 
 benchLimit:{
 type:Number,
@@ -283,15 +269,15 @@ default:false
 },
 
 lockedLineup:{
-type:Object,
+type:Map,
+of:mongoose.Schema.Types.ObjectId,
 default:{}
 },
 
-lockedBench:{
-type:[mongoose.Schema.Types.ObjectId],
-ref:"Player",
-default:[]
-},
+lockedBench:[{
+type:mongoose.Schema.Types.ObjectId,
+ref:"Player"
+}],
 
 /* =====================================================
 MATCHDAY SYSTEM
@@ -351,12 +337,15 @@ TEAM DYNAMICS
 
 teamChemistry:{
 type:Number,
-default:70
+default:70,
+min:0,
+max:100
 },
 
 clubReputation:{
 type:Number,
-default:50
+default:50,
+index:true
 },
 
 /* =====================================================
@@ -365,7 +354,7 @@ TABELLE
 
 played:{ type:Number, default:0 },
 
-points:{ type:Number, default:0 },
+points:{ type:Number, default:0, index:true },
 
 wins:{ type:Number, default:0 },
 draws:{ type:Number, default:0 },
@@ -384,7 +373,8 @@ FINANZEN
 
 balance:{
 type:Number,
-default:50000000
+default:50000000,
+index:true
 },
 
 lastMatchRevenue:{
@@ -446,5 +436,13 @@ default:0
 }
 
 },{timestamps:true});
+
+/* =====================================================
+INDEXES
+===================================================== */
+
+teamSchema.index({ league:1 });
+teamSchema.index({ owner:1 });
+teamSchema.index({ isBot:1 });
 
 module.exports = mongoose.model("Team",teamSchema);

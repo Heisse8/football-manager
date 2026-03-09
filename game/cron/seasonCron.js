@@ -5,48 +5,34 @@ const { processSeasonEnd, startNewSeason } = require("../services/seasonService"
 function startSeasonCron(){
 
 /* =====================================================
-SAISON ENDE
-===================================================== */
-
-/*
+SAISON CHECK
 läuft jeden Tag um 05:00
-prüft ob Saison fertig ist
-*/
+===================================================== */
 
 cron.schedule("0 5 * * *", async ()=>{
 
+console.log("🏆 Season Check gestartet");
+
 try{
 
-console.log("Season Check gestartet");
+/* Saisonende prüfen */
 
 await processSeasonEnd();
 
-}catch(err){
-
-console.error("Season End Fehler:", err);
-
-}
-
-});
-
-/* =====================================================
-NEUE SAISON STARTEN (4 Wochen Pause)
-===================================================== */
-
-cron.schedule("0 5 * * *", async ()=>{
-
-try{
-
-console.log("Season Start Check");
+/* neue Saison prüfen */
 
 await startNewSeason();
 
+console.log("✅ Season Check abgeschlossen");
+
 }catch(err){
 
-console.error("Season Start Fehler:", err);
+console.error("❌ SeasonCron Fehler:", err);
 
 }
 
+},{
+timezone: "Europe/Berlin"
 });
 
 }

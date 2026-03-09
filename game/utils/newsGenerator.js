@@ -1,10 +1,14 @@
 const News = require("../models/News");
 const Team = require("../models/Team");
 
+/* =====================================================
+MATCH NEWS
+===================================================== */
+
 async function generateMatchNews(match){
 
-const homeTeam = match.homeTeam.name;
-const awayTeam = match.awayTeam.name;
+const homeTeam = match.homeTeam?.name || "Heimteam";
+const awayTeam = match.awayTeam?.name || "Gastteam";
 
 const homeGoals = match.homeGoals;
 const awayGoals = match.awayGoals;
@@ -15,21 +19,18 @@ let content;
 if(homeGoals > awayGoals){
 
 title = `${homeTeam} besiegt ${awayTeam}`;
-
 content = `${homeTeam} gewinnt mit ${homeGoals}:${awayGoals} gegen ${awayTeam}.`;
 
 }
 else if(awayGoals > homeGoals){
 
 title = `${awayTeam} gewinnt bei ${homeTeam}`;
-
 content = `${awayTeam} setzt sich mit ${awayGoals}:${homeGoals} durch.`;
 
 }
 else{
 
 title = `Remis zwischen ${homeTeam} und ${awayTeam}`;
-
 content = `${homeTeam} und ${awayTeam} trennen sich ${homeGoals}:${awayGoals}.`;
 
 }
@@ -39,11 +40,15 @@ await News.create({
 title,
 content,
 type:"match",
-league:match.league
+league: match.league || null
 
 });
 
 }
+
+/* =====================================================
+TEAM CRISIS NEWS
+===================================================== */
 
 async function generateTeamCrisisNews(){
 
@@ -51,7 +56,7 @@ const teams = await Team.find();
 
 for(const team of teams){
 
-if(team.losses >= 3){
+if(team.losses >= 3 && team.losses % 3 === 0){
 
 await News.create({
 

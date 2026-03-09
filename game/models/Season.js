@@ -2,47 +2,78 @@ const mongoose = require("mongoose");
 
 const seasonSchema = new mongoose.Schema({
 
-seasonNumber: {
-type: Number,
-required: true
+/* =====================================
+SEASON NUMBER
+===================================== */
+
+seasonNumber:{
+type:Number,
+required:true,
+index:true
 },
 
-currentMatchday: {
-type: Number,
-default: 0
+/* =====================================
+MATCHDAYS
+===================================== */
+
+currentMatchday:{
+type:Number,
+default:0,
+min:0
 },
 
-totalMatchdays: {
-type: Number,
-default: 34
+totalMatchdays:{
+type:Number,
+default:34
 },
 
-seasonStart: {
-type: Date,
-required: true
+/* =====================================
+DATES
+===================================== */
+
+seasonStart:{
+type:Date,
+required:true,
+index:true
 },
 
-seasonEnd: {
-type: Date,
-required: true
+seasonEnd:{
+type:Date,
+required:true
 },
 
-transferWindowOpen: {
-type: Boolean,
-default: true
+/* =====================================
+TRANSFER WINDOWS
+===================================== */
+
+transferWindowOpen:{
+type:Boolean,
+default:true
 },
 
-winterTransferOpen: {
-type: Boolean,
-default: false
+winterTransferOpen:{
+type:Boolean,
+default:false
 },
 
-status: {
-type: String,
-enum: ["preseason","running","finished"],
-default: "preseason"
+/* =====================================
+STATUS
+===================================== */
+
+status:{
+type:String,
+enum:["preseason","running","finished"],
+default:"preseason",
+index:true
 }
 
-}, { timestamps:true });
+},{timestamps:true});
+
+/* =====================================
+INDEXES
+===================================== */
+
+seasonSchema.index({ seasonNumber:1 });
+seasonSchema.index({ status:1 });
 
 module.exports = mongoose.model("Season", seasonSchema);

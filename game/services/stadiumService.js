@@ -8,27 +8,37 @@ const stadiumLevels = {
 
 1:{
 capacity:12000,
-upgradeCost:0
+ticketPrice:18,
+upgradeCost:0,
+buildDays:0
 },
 
 2:{
 capacity:20000,
-upgradeCost:5000000
+ticketPrice:20,
+upgradeCost:5000000,
+buildDays:7
 },
 
 3:{
 capacity:30000,
-upgradeCost:15000000
+ticketPrice:22,
+upgradeCost:15000000,
+buildDays:14
 },
 
 4:{
 capacity:45000,
-upgradeCost:35000000
+ticketPrice:25,
+upgradeCost:35000000,
+buildDays:21
 },
 
 5:{
 capacity:60000,
-upgradeCost:70000000
+ticketPrice:28,
+upgradeCost:70000000,
+buildDays:30
 }
 
 };
@@ -43,6 +53,12 @@ const team = await Team.findById(teamId);
 
 if(!team){
 throw new Error("Team nicht gefunden");
+}
+
+/* Bauphase check */
+
+if(team.stadiumConstructionEnd){
+throw new Error("Stadion wird bereits ausgebaut");
 }
 
 const nextLevel = team.stadiumLevel + 1;
@@ -61,18 +77,74 @@ throw new Error("Zu wenig Geld");
 
 team.balance -= upgrade.upgradeCost;
 
-/* Stadion upgraden */
+/* Bauzeit berechnen */
 
-team.stadiumLevel = nextLevel;
-team.stadiumCapacity = upgrade.capacity;
+const endDate = new Date();
+endDate.setDate(endDate.getDate() + upgrade.buildDays);
+
+team.stadiumConstructionEnd = endDate;
+
+/* Level vormerken */
+
+team.stadiumNextLevel = nextLevel;
 
 await team.save();
 
 return {
+
+message:"Stadionausbau gestartet",
 newLevel:nextLevel,
-capacity:upgrade.capacity
+fertigAm:endDate
+
 };
 
 }
 
-module.exports = { upgradeStadium };
+/* =====================================================
+STADIUM BUILD COMPLETE
+(wird täglich von Cron geprüft)
+===================================================== */
+
+async function finishStadiumUpgrades(){
+
+const now = new Date();
+
+const teams = await Team.find({
+stadiumConstructionEnd:{ $lte: now }
+});
+
+for(const team of teams){
+
+const level = team.stadiumNextLevel;
+
+if(!stadiumLevels[level]) continue;
+
+const data = stadiumLevels[level];
+
+team.stadiumLevel = level;
+team.stadiumCapacity = data.capacity;
+team.ticketPrice = data.ticketPrice;
+
+team.stadiumConstructionEnd = null;
+team.stadiumNextLevel = null;
+
+await team.save();
+
+console.log(
+`Stadion Upgrade fertig: ${team.name} Level ${level}`
+);
+
+}
+
+}
+
+/* =====================================================
+EXPORT
+===================================================== */
+
+module.exports = {
+
+upgradeStadium,
+finishStadiumUpgrades
+
+};

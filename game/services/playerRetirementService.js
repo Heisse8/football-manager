@@ -12,9 +12,13 @@ for(const player of players){
 
 /* Rücktritt erst ab 34 */
 
-if(player.age >= 34){
+if(player.age < 34) continue;
 
-const chance = (player.age - 33) * 0.15;
+/* =====================================================
+RÜCKTRITT CHANCE
+===================================================== */
+
+let chance = (player.age - 33) * 0.15;
 
 /*
 34 = 15%
@@ -24,13 +28,25 @@ const chance = (player.age - 33) * 0.15;
 38 = 75%
 */
 
+/* Stars spielen länger */
+
+if(player.stars >= 4){
+chance *= 0.6;
+}
+
+/* Maximum 95% */
+
+chance = Math.min(chance,0.95);
+
+/* =====================================================
+RÜCKTRITT
+===================================================== */
+
 if(Math.random() < chance){
 
 console.log(
-`${player.firstName} ${player.lastName} beendet Karriere`
+`👴 ${player.firstName} ${player.lastName} beendet Karriere`
 );
-
-/* Spieler entfernen */
 
 await Player.deleteOne({ _id: player._id });
 
@@ -38,7 +54,7 @@ await Player.deleteOne({ _id: player._id });
 
 }
 
-}
+console.log("Spieler-Rücktritte verarbeitet");
 
 }
 

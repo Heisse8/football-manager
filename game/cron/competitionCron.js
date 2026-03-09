@@ -19,7 +19,15 @@ cron.schedule("0 4 * * 2", async ()=>{
 
 console.log("⚽ Liga Spieltag (Dienstag)");
 
+try{
+
 await simulateLeagueMatches();
+
+}catch(err){
+
+console.error("Liga Cron Fehler:", err);
+
+}
 
 });
 
@@ -31,7 +39,15 @@ cron.schedule("0 4 * * 6", async ()=>{
 
 console.log("⚽ Liga Spieltag (Samstag)");
 
+try{
+
 await simulateLeagueMatches();
+
+}catch(err){
+
+console.error("Liga Cron Fehler:", err);
+
+}
 
 });
 
@@ -43,8 +59,16 @@ cron.schedule("0 4 * * 4", async ()=>{
 
 console.log("🏆 Pokal / Champions League");
 
+try{
+
 await simulateCupMatches();
 await simulateChampionsLeagueMatches();
+
+}catch(err){
+
+console.error("Competition Cron Fehler:", err);
+
+}
 
 });
 
@@ -122,6 +146,8 @@ MATCH SIMULATION
 
 async function simulateSingleMatch(match, knockout=false){
 
+try{
+
 const result = await simulateRealisticMatch({
 homeTeam: match.homeTeam,
 awayTeam: match.awayTeam,
@@ -192,6 +218,12 @@ await updateLeague(match);
 console.log(
 `${match.homeTeam.name} ${match.homeGoals}:${match.awayGoals} ${match.awayTeam.name}`
 );
+
+}catch(err){
+
+console.error("Match Simulation Fehler:", err);
+
+}
 
 }
 

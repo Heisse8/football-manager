@@ -1,7 +1,7 @@
 const Player = require("../models/Player");
 
 /* =====================================================
-FREE AGENT GENERATOR
+ FREE AGENT GENERATOR
 ===================================================== */
 
 async function generateFreeAgents(){
@@ -10,21 +10,23 @@ const listedPlayers = await Player.countDocuments({
 team:null
 });
 
-let target = 200;
+const target = 200;
 
 if(listedPlayers >= target){
 return;
 }
 
-/* wie viele erzeugen */
-
 const amount = target - listedPlayers;
+
+let players=[];
 
 for(let i=0;i<amount;i++){
 
 const stars = generateStars();
 
-const player = new Player({
+const value = calculateMarketValue(stars);
+
+players.push({
 
 firstName: random(firstNames),
 lastName: random(lastNames),
@@ -35,9 +37,9 @@ age: randomAge(stars),
 positions:[random(positionPool)],
 
 stars:stars,
-potential: stars + Math.random()*0.5,
+potential: Math.min(5, stars + Math.random()*0.5),
 
-marketValue: calculateMarketValue(stars),
+marketValue:value,
 
 pace: randomStat(),
 shooting: randomStat(),
@@ -47,22 +49,23 @@ physical: randomStat(),
 mentality: randomStat(),
 
 team:null,
+
 isListed:true,
 transferType:"instant",
-transferPrice: calculateMarketValue(stars)
+transferPrice:value
 
 });
 
-await player.save();
-
 }
 
-console.log("Free Agents generiert:", amount);
+await Player.insertMany(players);
+
+console.log("🧑‍🎓 Free Agents generiert:", amount);
 
 }
 
 /* =====================================================
-STAR VERTEILUNG
+ STAR VERTEILUNG
 ===================================================== */
 
 function generateStars(){
@@ -79,30 +82,30 @@ return 5;
 }
 
 /* =====================================================
-MARKTWERT
+ MARKTWERT
 ===================================================== */
 
 function calculateMarketValue(stars){
 
 switch(stars){
 
-case 1: return 20000 + Math.random()*30000
-case 2: return 80000 + Math.random()*120000
-case 3: return 400000 + Math.random()*600000
-case 4: return 2000000 + Math.random()*3000000
-case 5: return 8000000 + Math.random()*7000000
+case 1: return Math.floor(20000 + Math.random()*30000);
+case 2: return Math.floor(80000 + Math.random()*120000);
+case 3: return Math.floor(400000 + Math.random()*600000);
+case 4: return Math.floor(2000000 + Math.random()*3000000);
+case 5: return Math.floor(8000000 + Math.random()*7000000);
 
 }
 
 }
 
 /* =====================================================
-ALTER
+ ALTER
 ===================================================== */
 
 function randomAge(stars){
 
-if(stars >=4){
+if(stars >= 4){
 return 18 + Math.floor(Math.random()*10);
 }
 
@@ -111,7 +114,7 @@ return 20 + Math.floor(Math.random()*14);
 }
 
 /* =====================================================
-STATS
+ STATS
 ===================================================== */
 
 function randomStat(){
@@ -119,12 +122,16 @@ return 40 + Math.floor(Math.random()*50);
 }
 
 /* =====================================================
-HELPER
+ HELPER
 ===================================================== */
 
 function random(arr){
 return arr[Math.floor(Math.random()*arr.length)];
 }
+
+/* =====================================================
+ DATA
+===================================================== */
 
 const firstNames = [
 "Luca","Noah","Leon","Mateo","Julian",

@@ -6,27 +6,49 @@ const Team = require("../models/Team");
 
 const auth = require("../middleware/auth");
 
+/* =====================================================
+START SCOUT MISSION
+POST /api/scout/mission
+===================================================== */
+
 router.post("/mission", auth, async (req,res)=>{
 
 try{
 
 const { scoutId, region, duration } = req.body;
 
-const team = await Team.findOne({
-owner:req.user.userId
+/* ================= TEAM + SCOUT LADEN ================= */
+
+const [team, scout] = await Promise.all([
+Team.findOne({ owner:req.user.userId }).select("_id balance"),
+Scout.findById(scoutId)
+]);
+
+if(!team){
+return res.status(404).json({
+message:"Team nicht gefunden"
 });
+}
 
-const scout = await Scout.findById(scoutId);
+if(!scout){
+return res.status(404).json({
+message:"Scout nicht gefunden"
+});
+}
 
-if(!scout || scout.team.toString() !== team._id.toString()){
+/* ================= TEAM CHECK ================= */
 
-return res.status(400).json({
+if(!scout.team || scout.team.toString() !== team._id.toString()){
+
+return res.status(403).json({
 message:"Scout gehört nicht deinem Team"
 });
 
 }
 
-if(scout.busyUntil){
+/* ================= BUSY CHECK ================= */
+
+if(scout.busyUntil && scout.busyUntil > new Date()){
 
 return res.status(400).json({
 message:"Scout ist bereits unterwegs"
@@ -34,13 +56,13 @@ message:"Scout ist bereits unterwegs"
 
 }
 
-/* MAX 5 SCOUTS */
+/* ================= MAX SCOUTS CHECK ================= */
 
-const scouts = await Scout.countDocuments({
+const scoutCount = await Scout.countDocuments({
 team:team._id
 });
 
-if(scouts > 5){
+if(scoutCount >= 5){
 
 return res.status(400).json({
 message:"Maximal 5 Scouts erlaubt"
@@ -48,12 +70,14 @@ message:"Maximal 5 Scouts erlaubt"
 
 }
 
-/* KOSTEN */
+/* ================= MISSION COST ================= */
 
 let cost = 50000;
 
 if(duration === 7) cost = 120000;
 if(duration === 14) cost = 220000;
+
+/* ================= MONEY CHECK ================= */
 
 if(team.balance < cost){
 
@@ -63,10 +87,16 @@ message:"Nicht genug Geld"
 
 }
 
+/* ================= BALANCE UPDATE ================= */
+
 team.balance -= cost;
 
+/* ================= MISSION END ================= */
+
 const end = new Date();
-end.setDate(end.getDate()+duration);
+end.setDate(end.getDate() + duration);
+
+/* ================= SCOUT UPDATE ================= */
 
 scout.busyUntil = end;
 
@@ -75,16 +105,23 @@ region,
 duration
 };
 
-await team.save();
-await scout.save();
+/* ================= SAVE ================= */
+
+await Promise.all([
+team.save(),
+scout.save()
+]);
+
+/* ================= RESPONSE ================= */
 
 res.json({
-success:true
+success:true,
+missionEnds:end
 });
 
 }catch(err){
 
-console.error(err);
+console.error("Scout Mission Fehler:", err);
 
 res.status(500).json({
 message:"Serverfehler"

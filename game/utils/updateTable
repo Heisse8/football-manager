@@ -5,18 +5,20 @@ async function updateTable(homeTeamId, awayTeamId, homeGoals, awayGoals){
 const home = await Team.findById(homeTeamId);
 const away = await Team.findById(awayTeamId);
 
+if(!home || !away) return;
+
 /* Spiele */
 
-home.played++;
-away.played++;
+home.played = (home.played || 0) + 1;
+away.played = (away.played || 0) + 1;
 
 /* Tore */
 
-home.goalsFor += homeGoals;
-home.goalsAgainst += awayGoals;
+home.goalsFor = (home.goalsFor || 0) + homeGoals;
+home.goalsAgainst = (home.goalsAgainst || 0) + awayGoals;
 
-away.goalsFor += awayGoals;
-away.goalsAgainst += homeGoals;
+away.goalsFor = (away.goalsFor || 0) + awayGoals;
+away.goalsAgainst = (away.goalsAgainst || 0) + homeGoals;
 
 /* Tordifferenz */
 
@@ -27,34 +29,38 @@ away.goalDifference = away.goalsFor - away.goalsAgainst;
 
 if(homeGoals > awayGoals){
 
-home.wins++;
-home.points += 3;
+home.wins = (home.wins || 0) + 1;
+home.points = (home.points || 0) + 3;
 
-away.losses++;
+away.losses = (away.losses || 0) + 1;
 
 }
 
 else if(homeGoals < awayGoals){
 
-away.wins++;
-away.points += 3;
+away.wins = (away.wins || 0) + 1;
+away.points = (away.points || 0) + 3;
 
-home.losses++;
+home.losses = (home.losses || 0) + 1;
 
 }
 
 else{
 
-home.draws++;
-away.draws++;
+home.draws = (home.draws || 0) + 1;
+away.draws = (away.draws || 0) + 1;
 
-home.points++;
-away.points++;
+home.points = (home.points || 0) + 1;
+away.points = (away.points || 0) + 1;
 
 }
 
-await home.save();
-await away.save();
+/* speichern */
+
+await Promise.all([
+home.save(),
+away.save()
+]);
 
 }
 

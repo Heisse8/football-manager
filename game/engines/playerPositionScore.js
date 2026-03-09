@@ -1,82 +1,118 @@
 function calculatePositionScore(player, position){
 
+const pace = player.pace ?? 50;
+const passing = player.passing ?? 50;
+const shooting = player.shooting ?? 50;
+const defending = player.defending ?? 50;
+const physical = player.physical ?? 50;
+const mentality = player.mentality ?? 50;
+const fitness = player.fitness ?? 100;
+
 let score = 0;
 
-/* Grundattribute */
+/* =====================================================
+GRUNDATTRIBUTE
+===================================================== */
 
-score += (player.pace || 50) * 0.2;
-score += (player.passing || 50) * 0.2;
-score += (player.physical || 50) * 0.2;
-score += (player.mentality || 50) * 0.2;
-score += (player.fitness || 100) * 0.2;
+score += pace * 0.15;
+score += passing * 0.15;
+score += physical * 0.15;
+score += mentality * 0.15;
+score += fitness * 0.10;
 
-/* Positionsbonus */
+/* =====================================================
+POSITIONSMATCH BONUS
+===================================================== */
+
+if(player.positions && player.positions.includes(position)){
+score *= 1.15;
+}
+
+/* =====================================================
+POSITIONSSPEZIFISCHE ATTRIBUTE
+===================================================== */
 
 switch(position){
 
 case "ST":
 
-score += (player.shooting || 50) * 0.6;
+score += shooting * 0.7;
+score += pace * 0.2;
 
 if(player.playStyle === "finisher") score *= 1.2;
 if(player.playStyle === "targetman") score *= 1.1;
 
 break;
 
+
 case "LW":
 case "RW":
 
-score += (player.pace || 50) * 0.5;
-score += (player.shooting || 50) * 0.2;
+score += pace * 0.6;
+score += shooting * 0.2;
+score += passing * 0.2;
 
 if(player.playStyle === "winger") score *= 1.2;
 
 break;
 
+
 case "CAM":
 
-score += (player.passing || 50) * 0.6;
+score += passing * 0.7;
+score += mentality * 0.2;
 
 if(player.playStyle === "playmaker") score *= 1.3;
 
 break;
 
+
 case "CM":
 
-score += (player.passing || 50) * 0.3;
-score += (player.physical || 50) * 0.3;
+score += passing * 0.4;
+score += physical * 0.3;
+score += mentality * 0.2;
 
 if(player.playStyle === "box_to_box") score *= 1.15;
 
 break;
 
+
 case "CDM":
 
-score += (player.defending || 50) * 0.6;
+score += defending * 0.6;
+score += physical * 0.2;
+score += mentality * 0.2;
 
 if(player.playStyle === "ball_winner") score *= 1.25;
 
 break;
 
+
 case "CB":
 
-score += (player.defending || 50) * 0.7;
-score += (player.physical || 50) * 0.3;
+score += defending * 0.7;
+score += physical * 0.3;
+
+if(player.playStyle === "defensive_wall") score *= 1.15;
 
 break;
+
 
 case "LB":
 case "RB":
 
-score += (player.pace || 50) * 0.4;
-score += (player.defending || 50) * 0.3;
+score += pace * 0.4;
+score += defending * 0.3;
+score += passing * 0.2;
 
 break;
 
+
 case "GK":
 
-score += (player.defending || 50) * 0.6;
-score += (player.mentality || 50) * 0.4;
+score += defending * 0.6;
+score += mentality * 0.3;
 
 if(player.playStyle === "sweeper_keeper") score *= 1.1;
 
@@ -84,7 +120,28 @@ break;
 
 }
 
-return score;
+/* =====================================================
+ALTERSFAKTOR
+===================================================== */
+
+if(player.age){
+
+if(player.age < 21) score *= 0.95;
+if(player.age > 32) score *= 0.92;
+
+}
+
+/* =====================================================
+MORALE BONUS
+===================================================== */
+
+if(player.morale){
+
+score *= 1 + ((player.morale - 50) / 500);
+
+}
+
+return Math.round(score);
 
 }
 

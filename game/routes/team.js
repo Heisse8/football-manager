@@ -55,7 +55,7 @@ return cleanPos === cleanSlot;
 }
 
 /* =====================================================
-TRAINER KI LINEUP
+SMART LINEUP
 ===================================================== */
 
 function generateSmartLineup(players,formation){
@@ -123,7 +123,7 @@ const userId = req.user.userId;
 
 let { name, shortName, clubIdentity } = req.body;
 
-/* VALIDATION */
+/* ================= VALIDATION ================= */
 
 if(!name || !shortName){
 return res.status(400).json({ message:"Name und Kürzel erforderlich." });
@@ -140,19 +140,27 @@ if(!/^[A-Z]{3}$/.test(shortName)){
 return res.status(400).json({ message:"Kürzel muss genau 3 Großbuchstaben haben." });
 }
 
-if(await Team.findOne({ owner:userId })){
+/* ================= EXIST CHECK ================= */
+
+const [existingOwner, existingName, existingShort] = await Promise.all([
+Team.findOne({ owner:userId }),
+Team.findOne({ name }),
+Team.findOne({ shortName })
+]);
+
+if(existingOwner){
 return res.status(400).json({ message:"Du hast bereits ein Team." });
 }
 
-if(await Team.findOne({ name })){
+if(existingName){
 return res.status(400).json({ message:"Teamname bereits vergeben." });
 }
 
-if(await Team.findOne({ shortName })){
+if(existingShort){
 return res.status(400).json({ message:"Kürzel bereits vergeben." });
 }
 
-/* CLUB IDENTITY */
+/* ================= CLUB IDENTITY ================= */
 
 let balance;
 let stadiumCapacity;
@@ -175,11 +183,11 @@ fanBase = 0.9;
 
 }
 
-/* LIGA */
+/* ================= LIGA ================= */
 
 const league = await getNextLeague();
 
-/* TEAM */
+/* ================= TEAM ================= */
 
 const newTeam = new Team({
 
@@ -198,15 +206,15 @@ currentMatchday:1
 
 await newTeam.save();
 
-/* BOT ERSETZEN */
+/* ================= BOT ERSETZEN ================= */
 
 await replaceBotTeam(newTeam);
 
-/* SPIELER */
+/* ================= SPIELER ================= */
 
 await generatePlayersForTeam(newTeam);
 
-/* MANAGER */
+/* ================= MANAGER ================= */
 
 const firstNames = ["Thomas","Michael","Stefan","Lukas","Daniel"];
 const lastNames = ["Schmidt","Müller","Wagner","Becker","Hoffmann"];
@@ -226,7 +234,7 @@ playstyle:playstyles[Math.floor(Math.random()*playstyles.length)]
 
 });
 
-/* STADION */
+/* ================= STADIUM ================= */
 
 await Stadium.create({
 
@@ -239,7 +247,7 @@ atmosphere:1
 });
 
 /* =====================================================
-LIGA FÜLLEN MIT BOTS
+LIGA MIT BOTS FÜLLEN
 ===================================================== */
 
 let teamsInLeague = await Team.find({ league });
@@ -314,8 +322,6 @@ message:"Kein Team gefunden"
 });
 }
 
-/* TRAINER LADEN */
-
 const manager = await Manager.findOne({
 team:team._id
 });
@@ -353,17 +359,14 @@ if(!team){
 return res.status(404).json({ message:"Kein Team" });
 }
 
-const manager = await Manager.findOne({
-team:team._id
-});
+const [manager, players] = await Promise.all([
+Manager.findOne({ team:team._id }),
+Player.find({ team:team._id })
+]);
 
 if(!manager){
 return res.status(404).json({ message:"Kein Manager" });
 }
-
-const players = await Player.find({
-team:team._id
-});
 
 const formation = selectTrainerFormation(
 players,

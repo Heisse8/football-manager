@@ -1,6 +1,6 @@
 // ======================================================
-// MATCH ENGINE V13 – FULL FOOTBALL SIMULATION
-// Trainer KI + Formation System
+// MATCH ENGINE V14 – FULL FOOTBALL SIMULATION
+// Optimized + Realistic
 // ======================================================
 
 const Player = require("../models/Player");
@@ -127,8 +127,6 @@ function applyCoachAdaptation(state,homeCtx,awayCtx){
 
 const diff = state.home.goals - state.away.goals;
 
-/* Heimteam verliert */
-
 if(diff < 0 && state.minute > 60){
 
 homeCtx.attackStrength *= 1.08;
@@ -136,16 +134,12 @@ homeCtx.defenseStrength *= 0.95;
 
 }
 
-/* Auswärtsteam verliert */
-
 if(diff > 0 && state.minute > 60){
 
 awayCtx.attackStrength *= 1.08;
 awayCtx.defenseStrength *= 0.95;
 
 }
-
-/* Führung verteidigen */
 
 if(diff > 0 && state.minute > 75){
 
@@ -172,13 +166,20 @@ function buildTeamContext(team,isHome){
 
 const players = team.players || [];
 
+const goalkeeper =
+players.find(p=>p.positions?.includes("GK")) || players[0];
+
 const ctx={
+
 players,
-goalkeeper: players.find(p=>p.positions?.includes("GK")),
+
+goalkeeper,
+
 attackStrength:team.attackStrength || 50,
 defenseStrength:team.defenseStrength || 50,
 possessionSkill:team.possessionSkill || 50,
 tactics:team.tactics || {}
+
 };
 
 if(isHome && team.homeBonus){
@@ -268,20 +269,6 @@ state.momentum.away += 0.02;
 
 }
 
-if(diff > 0 && state.minute > 70){
-
-homeCtx.defenseStrength *= 1.05;
-homeCtx.attackStrength *= 0.96;
-
-}
-
-if(diff < 0 && state.minute > 70){
-
-awayCtx.defenseStrength *= 1.05;
-awayCtx.attackStrength *= 0.96;
-
-}
-
 }
 
 
@@ -322,7 +309,7 @@ maybeInjury(state,attacking);
 
 
 // ======================================================
-// BUILD UP PHASE
+// BUILD UP
 // ======================================================
 
 function buildUpPhase(state,attacking,defending,attackCtx,defendCtx){
@@ -362,9 +349,19 @@ finishPhase(state,attacking,defending,attackCtx,defendCtx,creator);
 // FINISH PHASE
 // ======================================================
 
-function finishPhase(state,attacking,defending,attackCtx,defendCtx,creator){
+function finishPhase(state,attacking,defending,attackCtx,defendCtx){
 
-const attacker = pickRandom(attackCtx.players);
+const attackers = attackCtx.players.filter(p=>
+p.positions?.includes("ST") ||
+p.positions?.includes("LW") ||
+p.positions?.includes("RW") ||
+p.positions?.includes("CAM")
+);
+
+const attacker = pickRandom(
+attackers.length ? attackers : attackCtx.players
+);
+
 const goalkeeper = defendCtx.goalkeeper;
 
 if(!attacker) return;
@@ -425,7 +422,7 @@ const def =
 
 const duel = atk/(atk+def);
 
-return 0.05 + duel*0.30;
+return 0.02 + duel*0.35;
 
 }
 
@@ -456,11 +453,12 @@ if(Math.random()<0.00025) team.reds++;
 // INJURY
 // ======================================================
 
-function maybeInjury(state,team){
+async function maybeInjury(state,team){
 
 if(Math.random()>0.0006) return;
 
 const players = team===state.home ? state.homePlayers : state.awayPlayers;
+
 const player = players[Math.floor(Math.random()*players.length)];
 
 if(!player) return;
@@ -471,31 +469,39 @@ const until = new Date();
 until.setDate(until.getDate()+days);
 
 player.injuredUntil = until;
-player.save();
+
+await player.save();
 
 }
 
 
 // ======================================================
-// FITNESS
+// FITNESS (FAST BULK UPDATE)
 // ======================================================
 
 async function applyFitnessLoss(players){
 
-for(const p of players){
+const updates = players.map(p=>{
 
 const loss = 6 + Math.random()*4;
-p.fitness = Math.max(0,(p.fitness||100)-loss);
+const newFitness = Math.max(0,(p.fitness||100)-loss);
 
-await p.save();
-
+return{
+updateOne:{
+filter:{_id:p._id},
+update:{fitness:newFitness}
 }
+};
+
+});
+
+await Player.bulkWrite(updates);
 
 }
 
 
 // ======================================================
-// STATS
+// PLAYER STATS
 // ======================================================
 
 function addStat(state,id,stat){
@@ -507,6 +513,11 @@ state.playerStats[id]={goals:0,assists:0};
 state.playerStats[id][stat]++;
 
 }
+
+
+// ======================================================
+// RATINGS
+// ======================================================
 
 function calculateRatings(state){
 
@@ -548,7 +559,7 @@ away:Math.round(100-home)
 
 
 // ======================================================
-// BUILD STATS
+// STATS
 // ======================================================
 
 function buildStats(state){

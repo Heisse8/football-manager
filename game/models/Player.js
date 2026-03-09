@@ -6,31 +6,38 @@ const playerSchema = new mongoose.Schema({
 
 firstName:{
 type:String,
-required:true
+required:true,
+trim:true,
+maxlength:30
 },
 
 lastName:{
 type:String,
-required:true
+required:true,
+trim:true,
+maxlength:30
 },
 
 nationality:{
 type:String,
-required:true
+required:true,
+index:true
 },
 
 age:{
 type:Number,
 required:true,
 min:16,
-max:40
+max:40,
+index:true
 },
 
 /* ================= POSITIONEN ================= */
 
 positions:{
 type:[String],
-required:true
+required:true,
+index:true
 },
 
 /* ================= PLAYSTYLE ================= */
@@ -58,31 +65,34 @@ stars:{
 type:Number,
 required:true,
 min:0.5,
-max:5
+max:5,
+index:true
 },
 
 potential:{
 type:Number,
 min:0.5,
 max:5,
-default:2.5
+default:2.5,
+index:true
 },
 
 /* ================= MARKTWERT ================= */
 
 marketValue:{
 type:Number,
-default:0
+default:0,
+index:true
 },
 
 /* ================= MATCH ENGINE ATTRIBUTE ================= */
 
-pace:{ type:Number, min:0, max:99 },
-shooting:{ type:Number, min:0, max:99 },
-passing:{ type:Number, min:0, max:99 },
-defending:{ type:Number, min:0, max:99 },
-physical:{ type:Number, min:0, max:99 },
-mentality:{ type:Number, min:0, max:99 },
+pace:{ type:Number, min:0, max:99, default:50 },
+shooting:{ type:Number, min:0, max:99, default:50 },
+passing:{ type:Number, min:0, max:99, default:50 },
+defending:{ type:Number, min:0, max:99, default:50 },
+physical:{ type:Number, min:0, max:99, default:50 },
+mentality:{ type:Number, min:0, max:99, default:50 },
 
 /* ================= MATCH ZUSTAND ================= */
 
@@ -104,7 +114,8 @@ default:70
 
 injuredUntil:{
 type:Date,
-default:null
+default:null,
+index:true
 },
 
 suspendedUntil:{
@@ -177,7 +188,8 @@ default:null
 
 isListed:{
 type:Boolean,
-default:false
+default:false,
+index:true
 },
 
 transferType:{
@@ -218,9 +230,20 @@ default:null
 team:{
 type:mongoose.Schema.Types.ObjectId,
 ref:"Team",
-default:null
+default:null,
+index:true
 }
 
-},{timestamps:true});
+},{
+timestamps:true
+});
+
+/* ================= PERFORMANCE INDEXES ================= */
+
+playerSchema.index({ team:1 });
+playerSchema.index({ isListed:1 });
+playerSchema.index({ stars:-1 });
+playerSchema.index({ marketValue:-1 });
+playerSchema.index({ nationality:1 });
 
 module.exports = mongoose.model("Player",playerSchema);

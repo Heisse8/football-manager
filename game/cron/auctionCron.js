@@ -5,7 +5,7 @@ const Team = require("../models/Team");
 
 function startAuctionCron(){
 
-cron.schedule("*/30 * * * * *", async ()=>{
+cron.schedule("*/10 * * * * *", async ()=>{
 
 try{
 
@@ -24,7 +24,25 @@ const seller = await Team.findById(player.sellerTeam);
 
 if(!buyer) continue;
 
-/* Geld */
+/* Prüfen ob Käufer genug Geld hat */
+
+if(buyer.balance < player.highestBid){
+
+console.log("Auktion abgebrochen (zu wenig Geld)");
+
+player.isListed = false;
+player.transferType = null;
+player.highestBid = 0;
+player.highestBidder = null;
+player.auctionEnd = null;
+
+await player.save();
+
+continue;
+
+}
+
+/* Geld transfer */
 
 buyer.balance -= player.highestBid;
 
@@ -33,11 +51,11 @@ seller.balance += player.highestBid;
 await seller.save();
 }
 
-/* Spieler wechseln */
+/* Spieler wechselt Team */
 
 player.team = buyer._id;
 player.isListed = false;
-player.transferType = "instant";
+player.transferType = null;
 player.highestBid = 0;
 player.highestBidder = null;
 player.auctionEnd = null;
