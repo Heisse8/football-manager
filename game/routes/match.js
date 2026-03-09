@@ -49,49 +49,47 @@ res.json({ hasNew:false });
  GET MATCHES FOR CURRENT USER (MONTH VIEW)
 ====================================================== */
 
-router.get("/my-month", auth, async (req, res) => {
+router.get("/my-month", auth, async (req,res)=>{
 
-try {
+try{
 
-const { year, month } = req.query;
-
-if (!year || month === undefined) {
-return res.status(400).json({
-error: "Year und Month fehlen"
+const team = await Team.findOne({
+owner:req.user.userId
 });
+
+if(!team){
+return res.status(404).json([]);
 }
 
-const team = await Team.findOne({ owner: req.user.userId });
+const year = parseInt(req.query.year);
+const month = parseInt(req.query.month);
 
-if (!team) {
-return res.status(404).json({
-error: "Kein Team gefunden"
-});
-}
-
-const start = new Date(year, month, 1);
-const end = new Date(year, Number(month) + 1, 1);
+const startDate = new Date(year, month, 1);
+const endDate = new Date(year, month + 1, 1);
 
 const matches = await Match.find({
-date: { $gte: start, $lt: end },
-$or: [
+
+$or:[
 { homeTeam: team._id },
 { awayTeam: team._id }
-]
+],
+
+date:{
+$gte:startDate,
+$lt:endDate
+}
+
 })
-.populate("homeTeam", "name")
-.populate("awayTeam", "name")
-.sort({ date: 1 });
+.populate("homeTeam")
+.populate("awayTeam")
+.sort({ date:1 });
 
 res.json(matches);
 
-} catch (err) {
+}catch(err){
 
-console.error(err);
-
-res.status(500).json({
-error: "Fehler beim Laden des Monats"
-});
+console.error("Kalender Fehler:",err);
+res.status(500).json([]);
 
 }
 

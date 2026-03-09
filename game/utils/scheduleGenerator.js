@@ -1,146 +1,100 @@
 const Match = require("../models/Match");
 
-/* =====================================================
- SPIELPLAN GENERATOR
-===================================================== */
+/*
+=====================================
+ROUND ROBIN SCHEDULE GENERATOR
+=====================================
+18 Teams
+34 Matchdays
+Hin + Rückrunde
+Heim/Auswärts wechselt
+=====================================
+*/
 
-function shuffle(array) {
-
-for (let i = array.length - 1; i > 0; i--) {
-
-const j = Math.floor(Math.random() * (i + 1));
-
-[array[i], array[j]] = [array[j], array[i]];
-
-}
-
-return array;
-
-}
-
-/* =====================================================
- ROUND ROBIN SYSTEM
-===================================================== */
-
-function generateRoundRobin(teams) {
+async function generateLeagueSchedule(teams, league){
 
 const teamIds = teams.map(t => t._id);
 
-shuffle(teamIds);
+if(teamIds.length % 2 !== 0){
+teamIds.push(null);
+}
 
-const rounds = [];
-const teamCount = teamIds.length;
+const rounds = teamIds.length - 1;
+const matchesPerRound = teamIds.length / 2;
 
-for (let round = 0; round < teamCount - 1; round++) {
+let rotation = [...teamIds];
 
+let matchday = 1;
 const matches = [];
 
-for (let i = 0; i < teamCount / 2; i++) {
+/* ================================
+HINRUNDE
+================================ */
 
-const home = teamIds[i];
-const away = teamIds[teamCount - 1 - i];
+for(let round = 0; round < rounds; round++){
 
-matches.push({ home, away });
+for(let i = 0; i < matchesPerRound; i++){
 
-}
+const teamA = rotation[i];
+const teamB = rotation[rotation.length - 1 - i];
 
-rounds.push(matches);
+if(teamA && teamB){
 
-// rotation
+const homeTeam = round % 2 === 0 ? teamA : teamB;
+const awayTeam = round % 2 === 0 ? teamB : teamA;
 
-teamIds.splice(1, 0, teamIds.pop());
-
-}
-
-return rounds;
-
-}
-
-/* =====================================================
- SPIELDATUM GENERATOR
-===================================================== */
-
-function generateMatchDate(startDate, matchday) {
-
-const base = new Date(startDate);
-
-const weeks = Math.floor(matchday / 2);
-
-const isTuesday = matchday % 2 === 0;
-
-base.setDate(base.getDate() + weeks * 7);
-
-if (isTuesday) {
-
-base.setDate(base.getDate() + 2);
-
-} else {
-
-base.setDate(base.getDate() + 6);
-
-}
-
-base.setHours(4,0,0,0);
-
-return base;
-
-}
-
-/* =====================================================
- HAUPTFUNKTION
-===================================================== */
-
-async function generateLeagueSchedule(teams, league) {
-
-if (teams.length !== 18) {
-
-throw new Error("Liga braucht genau 18 Teams");
-
-}
-
-const firstRound = generateRoundRobin(teams);
-const secondRound = firstRound.map(round =>
-round.map(match => ({
-home: match.away,
-away: match.home
-}))
-);
-
-const allRounds = [...firstRound, ...secondRound];
-
-const startDate = new Date();
-
-let matchday = 0;
-
-for (const round of allRounds) {
-
-const date = generateMatchDate(startDate, matchday);
-
-for (const match of round) {
-
-await Match.create({
+matches.push({
 
 league,
-
-homeTeam: match.home,
-awayTeam: match.away,
-
-date,
-
-matchday: matchday + 1,
-
-played: false
+matchday,
+homeTeam,
+awayTeam,
+played:false,
+date: new Date(Date.now() + matchday * 86400000)
 
 });
 
 }
 
+}
+
+/* ROTATION */
+
+rotation.splice(1,0,rotation.pop());
+
 matchday++;
 
 }
 
+/* ================================
+RÜCKRUNDE
+================================ */
+
+const firstHalf = [...matches];
+
+for(const m of firstHalf){
+
+matches.push({
+
+league,
+matchday:m.matchday + rounds,
+homeTeam:m.awayTeam,
+awayTeam:m.homeTeam,
+played:false,
+date:new Date()
+
+});
+
 }
 
-module.exports = {
-generateLeagueSchedule
-};
+/* ================================
+SAVE MATCHES
+================================ */
+
+await Match.insertMany(matches);
+
+console.log("Spielplan erstellt:", matches.length, "Spiele");
+
+}
+
+module.exports = { generateLeagueSchedule };
