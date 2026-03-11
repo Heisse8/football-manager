@@ -37,26 +37,72 @@ index:true
 positions:{
 type:[String],
 required:true,
+enum:[
+"GK",
+"CB",
+"LB",
+"RB",
+"LWB",
+"RWB",
+"CDM",
+"CM",
+"CAM",
+"LW",
+"RW",
+"ST"
+],
 index:true
 },
 
 /* ================= PLAYSTYLE ================= */
 
-playStyle:{
-type:String,
+playstyles:{
+type:[String],
 enum:[
-"finisher",
-"targetman",
-"poacher",
-"playmaker",
-"winger",
-"box_to_box",
-"ball_winner",
-"deep_playmaker",
+
+/* GOALKEEPER */
 "sweeper_keeper",
-"defensive_wall"
+"shot_stopper",
+
+/* CENTER BACK */
+"ball_playing_cb",
+"stopper_cb",
+"interceptor_cb",
+
+/* FULLBACK */
+"wingback",
+"inverted_fullback",
+"defensive_fullback",
+
+/* DEFENSIVE MIDFIELD */
+"anchor_man",
+"deep_playmaker",
+
+/* CENTRAL MIDFIELD */
+"box_to_box",
+"control_cm",
+"dribbling_cm",
+"offensive_cm",
+
+/* ATTACKING MIDFIELD */
+"playmaker_cam",
+"shadow_striker",
+"dribbling_cam",
+"free_roamer",
+
+/* WINGERS */
+"inside_forward",
+"crossing_winger",
+"dribble_winger",
+
+/* STRIKERS */
+"target_man",
+"poacher",
+"false_9",
+"speed_striker"
+
 ],
-default:null
+default:[]
 },
 
 /* ================= RATING ================= */
@@ -238,13 +284,28 @@ index:true
 timestamps:true
 });
 
+playerSchema.pre("save", function(){
+
+if(!this.marketValue || this.marketValue === 0){
+
+let value = this.stars * 2000000;
+
+value += this.potential * 500000;
+
+if(this.age <= 21) value *= 1.5;
+if(this.age >= 30) value *= 0.7;
+
+if(this.stars >= 4.5) value *= 2;
+
+this.marketValue = Math.round(value);
+
+}
+
+});
+
 /* =====================================================
 INDEXES (PERFORMANCE)
 ===================================================== */
-
-playerSchema.index({ team: 1 });
-
-playerSchema.index({ isListed: 1 });
 
 playerSchema.index({ transferType: 1 });
 

@@ -1,0 +1,51 @@
+function applyTacticImpact(teamCtx,state){
+
+const style = teamCtx.tactics?.style;
+
+if(!style) return;
+
+switch(style){
+
+case "gegenpressing":
+
+teamCtx.defenseStrength *= 1.10;
+
+if(Math.random() < 0.08){
+
+state.turnoverBoost = true;
+
+}
+
+break;
+
+
+case "ballbesitz":
+
+teamCtx.possessionSkill *= 1.12;
+
+break;
+
+
+case "konter":
+
+if(state.turnoverBoost){
+
+teamCtx.attackStrength *= 1.20;
+
+}
+
+break;
+
+
+case "mauern":
+
+teamCtx.defenseStrength *= 1.15;
+teamCtx.attackStrength *= 0.9;
+
+break;
+
+}
+
+}
+
+module.exports = { applyTacticImpact };

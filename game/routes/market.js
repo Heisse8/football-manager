@@ -215,12 +215,14 @@ if(team.balance < bid){
 return res.status(400).json({message:"Zu wenig Geld"});
 }
 
-/* neues Gebot */
+/* ================= ATOMIC BID UPDATE ================= */
 
-player.highestBid = bid;
-player.highestBidder = team._id;
+const update = {
+highestBid: bid,
+highestBidder: team._id
+};
 
-/* ================= ANTI SNIPING ================= */
+/* Anti Sniping */
 
 const remainingSeconds =
 (player.auctionEnd - new Date()) / 1000;
@@ -230,11 +232,26 @@ if(remainingSeconds < 60){
 const newEnd = new Date();
 newEnd.setSeconds(newEnd.getSeconds()+60);
 
-player.auctionEnd = newEnd;
+update.auctionEnd = newEnd;
 
 }
 
-await player.save();
+const result = await Player.findOneAndUpdate(
+{
+_id: playerId,
+highestBid: { $lt: bid }
+},
+{
+$set: update
+},
+{ new: true }
+);
+
+if(!result){
+return res.status(400).json({
+message:"Gebot zu niedrig"
+});
+}
 
 res.json({message:"Gebot erfolgreich"});
 

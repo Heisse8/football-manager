@@ -1,67 +1,47 @@
-function chooseFormationByPhilosophy(players, philosophy){
+function generateTrainerPhilosophy(type){
 
-philosophy = (philosophy || "").toLowerCase();
+const philosophies = {
 
-let strikers = 0;
-let wingers = 0;
-let cams = 0;
+gegenpress: {
+pressing: 85,
+tempo: 80,
+width: 65,
+defensiveLine: 75,
+counter: 60,
+possession: 55
+},
 
-for(const p of players){
+possession: {
+pressing: 65,
+tempo: 60,
+width: 80,
+defensiveLine: 70,
+counter: 30,
+possession: 90
+},
 
-const pos = p.positions || [];
+defensive: {
+pressing: 45,
+tempo: 45,
+width: 50,
+defensiveLine: 40,
+counter: 80,
+possession: 40
+},
 
-if(pos.includes("ST")) strikers++;
+balanced: {
+pressing: 60,
+tempo: 60,
+width: 60,
+defensiveLine: 60,
+counter: 60,
+possession: 60
+}
 
-if(pos.includes("LW") || pos.includes("RW"))
-wingers++;
+};
 
-if(pos.includes("CAM"))
-cams++;
+return philosophies[type] || philosophies.balanced;
 
 }
 
-/* ================= BALLBESITZ ================= */
-
-if(philosophy === "ballbesitz"){
-
-if(cams >= 1) return "4-2-3-1";
-
-return "4-3-3";
-
-}
-
-/* ================= GEGENPRESSING ================= */
-
-if(philosophy === "gegenpressing"){
-
-if(wingers >= 2) return "4-3-3";
-
-return "4-4-2";
-
-}
-
-/* ================= KONTER ================= */
-
-if(philosophy === "konter"){
-
-if(strikers >= 2) return "4-4-2";
-
-return "5-3-2";
-
-}
-
-/* ================= MAUERN ================= */
-
-if(philosophy === "mauern"){
-
-return "5-4-1";
-
-}
-
-/* ================= FALLBACK ================= */
-
-return "4-3-3";
-
-}
-
-module.exports = { chooseFormationByPhilosophy };
+module.exports = { generateTrainerPhilosophy };

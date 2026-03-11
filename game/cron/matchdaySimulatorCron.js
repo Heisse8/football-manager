@@ -2,6 +2,7 @@ const cron = require("node-cron");
 
 const { simulateMatchday } = require("../services/matchdaySimulator");
 
+
 function startMatchdaySimulatorCron(){
 
 /* Beispiel: jeden Samstag 18:00 */

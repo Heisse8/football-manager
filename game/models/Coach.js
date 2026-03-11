@@ -61,8 +61,22 @@ enum:[
 default:"4-4-2"
 },
 
+personality:{
+type:String,
+enum:[
+"balanced",
+"possession_master",
+"gegenpress_monster",
+"defensive_wall",
+"tactical_genius",
+"direct_play"
+],
+default:"balanced",
+index:true
+},
+
 /* =====================================
-ATTRIBUTES (für spätere Match Engine)
+ATTRIBUTES
 ===================================== */
 
 tactics:{
@@ -116,8 +130,7 @@ TEAM
 team:{
 type:mongoose.Schema.Types.ObjectId,
 ref:"Team",
-default:null,
-index:true
+unique:true
 }
 
 },{

@@ -8,13 +8,14 @@ const Manager = require("../models/Manager");
 const Match = require("../models/Match");
 
 const auth = require("../middleware/auth");
-
-const { generatePlayersForTeam } = require("../utils/playerGenerator");
+const { assignPlayersToTeam } = require("../utils/playerPool");
 const { getNextLeague } = require("../utils/leagueManager");
 const { generateLeagueSchedule } = require("../utils/scheduleGenerator");
 const { createBotTeam } = require("../utils/botGenerator");
 const { replaceBotTeam } = require("../utils/replaceBotTeam");
 const { selectTrainerFormation } = require("../utils/selectTrainerFormation");
+const { generateStarterCoach } = require("../utils/generateStarterCoach");
+const Coach = require("../models/Coach");
 
 /* =====================================================
 FORMATIONEN
@@ -206,13 +207,23 @@ currentMatchday:1
 
 await newTeam.save();
 
+/* ================= START TRAINER ================= */
+
+const coach = await generateStarterCoach(newTeam._id);
+
+res.status(201).json({
+message:"Team erfolgreich erstellt.",
+team:newTeam,
+coach
+});
+
 /* ================= BOT ERSETZEN ================= */
 
 await replaceBotTeam(newTeam);
 
 /* ================= SPIELER ================= */
 
-await generatePlayersForTeam(newTeam);
+await assignPlayersToTeam(newTeam);
 
 /* ================= MANAGER ================= */
 
@@ -326,9 +337,14 @@ const manager = await Manager.findOne({
 team:team._id
 });
 
+const coach = await Coach.findOne({
+team: team._id
+});
+
 res.json({
 team,
-manager
+manager,
+coach
 });
 
 }catch(err){

@@ -4,6 +4,7 @@ const { simulateMatchday } = require("../services/matchdaySimulator");
 const { resolveAuctions } = require("../services/transferAuctionService");
 const { generateFreeAgents } = require("../services/freeAgentGenerator");
 const { runBotTransfers } = require("../services/botTransferService");
+const { acquireLock, releaseLock } = require("../services/systemLockService");
 
 /* =========================================
  MATCHDAY CRON
@@ -13,6 +14,13 @@ const { runBotTransfers } = require("../services/botTransferService");
 function startMatchdayCron(){
 
 cron.schedule("0 4 * * 2,6", async () => {
+
+const lock = await acquireLock("matchday");
+
+if(!lock){
+console.log("Matchday bereits gestartet");
+return;
+}
 
 console.log("⚽ Spieltag Simulation gestartet");
 
@@ -49,6 +57,8 @@ console.log("🏁 Matchday Cron komplett abgeschlossen");
 console.error("❌ Matchday Cron Fehler:", err);
 
 }
+
+await releaseLock("matchday");
 
 },{
 timezone: "Europe/Berlin"

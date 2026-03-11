@@ -76,6 +76,7 @@ const transferRoutes = require("./routes/transfer");
 const marketRoutes = require("./routes/market");
 const sponsorRoutes = require("./routes/sponsor");
 const dashboardRoutes = require("./routes/dashboard");
+const simulationTestRoutes = require("./routes/simulationTest");
 
 /* =====================================================
 HEALTH CHECK
@@ -105,6 +106,7 @@ app.use("/api/transfer", transferRoutes);
 app.use("/api/market", marketRoutes);
 app.use("/api/sponsor", sponsorRoutes);
 app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/simulate", simulationTestRoutes);
 
 /* =====================================================
 FRONTEND BUILD
