@@ -19,7 +19,7 @@ import MatchDetail from "./pages/MatchDetail";
 import Spieltag from "./pages/Spieltag";
 import Finances from "./pages/Finances";
 import Transfermarkt from "./pages/Transfermarkt";
-import ScoutPage from "./pages/ScoutPage.jsx/index.js";
+import ScoutPage from "./pages/ScoutPage.jsx";
 import CompetitionsPage from "./pages/CompetitionsPage.jsx";
 
 export default function App(){
