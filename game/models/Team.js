@@ -19,7 +19,7 @@ required:true
 owner:{
 type: mongoose.Schema.Types.ObjectId,
 ref: "User",
-unique: true,
+default: null,
 index: true
 },
 
