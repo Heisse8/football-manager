@@ -47,7 +47,7 @@ playerOfMonth
 Team.find({
 league:team.league
 })
-.select("name points goalDifference goalsFor tablePosition _id")
+.select("name points goalDifference goalsFor goalsAgainst played tablePosition _id")
 .sort({
 points:-1,
 goalDifference:-1,
