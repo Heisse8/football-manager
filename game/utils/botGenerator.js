@@ -2,7 +2,6 @@ const Team = require("../models/Team");
 const Manager = require("../models/Manager");
 
 const cityNames = require("./cityNames");
-const { generatePlayersForTeam } = require("./playerGenerator");
 const { generateClubName } = require("./clubNameGenerator");
 
 /* =====================================================
@@ -106,7 +105,7 @@ rating: 2,
 
 formation: "4-4-2",
 
-playStyle: styles[Math.floor(Math.random()*styles.length)]
+playstyle: styles[Math.floor(Math.random()*styles.length)]
 
 });
 
