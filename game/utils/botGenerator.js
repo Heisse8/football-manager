@@ -86,10 +86,10 @@ TRAINER ERSTELLEN
 ===================================================== */
 
 const styles = [
-"ballbesitz",
-"konter",
-"gegenpressing",
-"mauern"
+"Ballbesitz",
+"Kontern",
+"Gegenpressing",
+"Mauern"
 ];
 
 await Manager.create({
