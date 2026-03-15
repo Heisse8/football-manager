@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const Team = require("../models/Team");
-const { simulateRealisticMatch } = require("../engine/matchEngine");
+const { simulateRealisticMatch } = require("../engines/matchEngine");
 
 router.get("/:count", async (req,res)=>{
 
