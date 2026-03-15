@@ -128,7 +128,9 @@ const navLinks = [
 
 { path:"/", label:"Dashboard" },
 { path:"/team", label:"Team" },
+{ path:"/wettbewerbe", label:"Wettbewerbe" },
 { path:"/transfermarkt", label:"Transfermarkt" },
+{ path:"/scouting", label:"Scouting" },
 { path:"/kalender", label:"Kalender" },
 { path:"/stadium", label:"Stadion" },
 { path:"/finanzen", label:"Finanzen" }

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-
+import PlayerModal from "../components/PlayerModal";
 export default function Transfermarkt(){
 
 const [tab,setTab] = useState("players");
@@ -9,8 +9,9 @@ const [search,setSearch] = useState("");
 const [position,setPosition] = useState("");
 const [stars,setStars] = useState("");
 const [sort,setSort] = useState("");
-
+const [bidValues,setBidValues] = useState({});
 const [loading,setLoading] = useState(true);
+const [selectedPlayer,setSelectedPlayer] = useState(null);
 
 /* =====================================================
 LOAD MARKET
@@ -61,12 +62,11 @@ BID
 const placeBid = async (player)=>{
 
 const token = localStorage.getItem("token");
-
 if(!token) return;
 
-const amount = prompt("Gebot eingeben");
+const amount = Number(bidValues[player._id]);
 
-if(!amount) return;
+if(!amount) return alert("Bitte Gebot eingeben");
 
 try{
 
@@ -80,7 +80,7 @@ Authorization:`Bearer ${token}`
 },
 
 body:JSON.stringify({
-amount:Number(amount)
+amount
 })
 
 });
@@ -230,8 +230,17 @@ if(diff <= 0) return "Beendet";
 
 const hours = Math.floor(diff / 1000 / 60 / 60);
 const minutes = Math.floor((diff / 1000 / 60) % 60);
+const seconds = Math.floor((diff / 1000) % 60);
 
+if(hours > 0){
 return `${hours}h ${minutes}m`;
+}
+
+if(minutes > 0){
+return `${minutes}m ${seconds}s`;
+}
+
+return `${seconds}s`;
 
 }
 
@@ -359,7 +368,11 @@ Lade Transfermarkt...
 
 {tab==="players" && filtered.map((p)=>(
 
-<div key={p._id} className="bg-black/50 p-5 rounded-xl">
+<div
+key={p._id}
+onClick={()=>setSelectedPlayer(p)}
+className="bg-black/50 p-5 rounded-xl cursor-pointer"
+>
 
 <div className="font-semibold text-lg">
 {p.firstName} {p.lastName}
@@ -369,12 +382,16 @@ Lade Transfermarkt...
 Position: {p.positions?.join(", ")}
 </div>
 
-<div className="text-sm">
-⭐ {p.stars}
+<div className="text-yellow-400">
+{"★".repeat(Math.round(p.stars || 0))}
 </div>
 
 <div className="text-sm">
 Alter: {p.age}
+</div>
+
+<div className="text-sm text-gray-400">
+Marktwert: € {(p.marketValue || 0).toLocaleString()}
 </div>
 
 <div className="text-yellow-400 mt-2">
@@ -385,9 +402,23 @@ Gebot: € {(p.highestBid || 0).toLocaleString()}
 Ende in: {getRemainingTime(p.auctionEnd)}
 </div>
 
+<input
+type="number"
+placeholder="Gebot eingeben"
+value={bidValues[p._id] || ""}
+onChange={(e)=>setBidValues({
+...bidValues,
+[p._id]:e.target.value
+})}
+className="bg-gray-800 px-3 py-2 rounded w-full mt-3"
+/>
+
 <button
-onClick={()=>placeBid(p)}
-className="bg-green-600 hover:bg-green-500 mt-4 px-3 py-2 rounded w-full"
+onClick={(e)=>{
+e.stopPropagation();
+placeBid(p);
+}}
+className="bg-green-600 hover:bg-green-500 mt-2 px-3 py-2 rounded w-full"
 >
 Gebot abgeben
 </button>
@@ -401,7 +432,7 @@ Gebot abgeben
 <div key={s._id} className="bg-black/50 p-5 rounded-xl">
 
 <div className="font-semibold text-lg">
-Scout ⭐{s.stars}
+Scout {"★".repeat(Math.round(s.stars || 0))}
 </div>
 
 <div className="text-yellow-400 mt-2">
@@ -427,8 +458,8 @@ Scout verpflichten
 {c.name}
 </div>
 
-<div className="text-sm">
-⭐ {c.stars}
+<div className="text-yellow-400">
+{"★".repeat(Math.round(c.stars || 0))}
 </div>
 
 <div className="text-yellow-400 mt-2">
@@ -447,6 +478,11 @@ Trainer verpflichten
 ))}
 
 </div>
+
+<PlayerModal
+player={selectedPlayer}
+onClose={()=>setSelectedPlayer(null)}
+/>
 
 </div>
 

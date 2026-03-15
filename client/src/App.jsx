@@ -19,6 +19,8 @@ import MatchDetail from "./pages/MatchDetail";
 import Spieltag from "./pages/Spieltag";
 import Finances from "./pages/Finances";
 import Transfermarkt from "./pages/Transfermarkt";
+import ScoutPage from "./pages/ScoutPage.jsx/index.js";
+import CompetitionsPage from "./pages/CompetitionsPage.jsx";
 
 export default function App(){
 
@@ -61,6 +63,10 @@ element={
 <Route path="/spieltag" element={<Spieltag />} />
 
 <Route path="/match/:id" element={<MatchDetail />} />
+
+<Route path="/scouting" element={<ScoutPage />} />
+
+<Route path="/wettbewerbe" element={<CompetitionsPage />} />
 
 </Route>
 

@@ -215,12 +215,14 @@ return(
 
 <div
 key={club._id}
-className={`grid grid-cols-5 px-2 py-1 rounded ${
+onClick={()=>navigate(`/team/${club._id}`)}
+className={`cursor-pointer grid grid-cols-5 px-2 py-1 rounded ${
 isMine
 ? "bg-green-600/30 border-l-4 border-green-400"
-: "hover:bg-white/10"
+: "hover:bg-white/10 hover:scale-[1.01] transition"
 }`}
 >
+
 
 <span>{i+1}</span>
 
@@ -289,9 +291,14 @@ className="bg-black/30 p-4 rounded mb-3"
 {n.title}
 </div>
 
+<div className="text-xs opacity-60 mb-1">
+{formatDate(n.createdAt)}
+</div>
+
 <div className="text-sm opacity-80">
 {n.content}
 </div>
+
 
 </div>
 

@@ -55,7 +55,21 @@ setMyTeamId(teamData?._id);
 if(matchRes.ok){
 
 const matchData = await matchRes.json();
-setMatches(Array.isArray(matchData) ? matchData : []);
+if(Array.isArray(matchData) && teamData?._id){
+
+const filtered = matchData.filter(m =>
+m.homeTeam?._id === teamData._id ||
+m.awayTeam?._id === teamData._id
+);
+
+setMatches(filtered);
+
+}else{
+
+setMatches([]);
+
+}
+
 
 }
 
@@ -148,7 +162,7 @@ return(
 
 <button
 onClick={prevMonth}
-className="bg-gray-800 px-4 py-2 rounded hover:bg-gray-700"
+className="bg-gray-800 px-4 py-2 rounded hover:bg-gray-700 hover:scale-[1.02] transition"
 >
 ◀
 </button>
@@ -253,15 +267,32 @@ className="cursor-pointer text-xs p-2 mb-2 rounded bg-gray-900 border border-gra
 
 <div className="font-semibold text-gray-300">
 
-{match.competition === "cup"
-? "Pokal"
-: "Liga"}
+<div className="font-semibold text-gray-300">
+
+{match.competition === "cup" && "Pokal"}
+
+{match.competition === "league" && "Liga"}
+
+{match.competition === "champions_league" && "CL"}
+
+</div>
+
 
 </div>
 
 <div className="text-gray-400">
 vs {opponent}
 </div>
+
+<div className="text-xs text-gray-500">
+
+{new Date(match.date).toLocaleTimeString("de-DE",{
+hour:"2-digit",
+minute:"2-digit"
+})}
+
+</div>
+
 
 {match.played && (
 

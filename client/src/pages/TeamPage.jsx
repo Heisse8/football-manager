@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import PlayerModal from "../components/PlayerModal";
 
 /* =====================================================
  SLOT POSITIONEN
@@ -33,13 +34,19 @@ function detectFormation(lineup){
 const slots = Object.keys(lineup);
 
 const defenders =
-slots.filter(s=>["LB","RB","LCB","CCB","RCB"].includes(s)).length;
+slots.filter(s=>[
+"LB","RB","LCB","CCB","RCB","LWB","RWB"
+].includes(s)).length;
 
 const midfielders =
-slots.filter(s=>["CDM","LCDM","RCDM","LCM","RCM","CAM"].includes(s)).length;
+slots.filter(s=>[
+"CDM","LCDM","RCDM","LCM","RCM","CAM","LW","RW"
+].includes(s)).length;
 
 const strikers =
-slots.filter(s=>["ST","LST","RST","LW","RW"].includes(s)).length;
+slots.filter(s=>[
+"ST","LST","RST"
+].includes(s)).length;
 
 return `${defenders}-${midfielders}-${strikers}`;
 
@@ -57,6 +64,8 @@ const [manager,setManager] = useState(null);
 
 const [lineup,setLineup] = useState({});
 const [bench,setBench] = useState([]);
+
+const [selectedPlayer,setSelectedPlayer] = useState(null);
 
 const [loading,setLoading] = useState(true);
 
@@ -172,7 +181,7 @@ Trainer: {manager.firstName} {manager.lastName} • {manager.age} Jahre
 Formation
 </p>
 
-<p className="text-xl">
+<p className="text-2xl font-bold text-yellow-400">
 {formation}
 </p>
 
@@ -204,15 +213,9 @@ Startelf wird automatisch generiert...
 
 <div className="relative w-[720px] h-[960px] bg-green-700 rounded-xl border-4 border-white overflow-hidden">
 
-{/* Mittellinie */}
-
 <div className="absolute top-1/2 left-0 w-full h-[2px] bg-white -translate-y-1/2"></div>
 
-{/* Mittelkreis */}
-
 <div className="absolute top-1/2 left-1/2 w-44 h-44 border-2 border-white rounded-full -translate-x-1/2 -translate-y-1/2"></div>
-
-{/* Strafräume */}
 
 <div className="absolute top-0 left-1/2 w-[320px] h-[150px] border-2 border-white -translate-x-1/2"></div>
 
@@ -238,13 +241,18 @@ left:`${coords.x}%`,
 top:`${coords.y}%`,
 transform:"translate(-50%,-50%)"
 }}
-className="flex flex-col items-center"
+className="flex flex-col items-center cursor-pointer hover:scale-110 transition"
+onClick={()=>setSelectedPlayer(player)}
 >
 
 <Circle player={player}/>
 
 <div className="text-xs font-semibold mt-1">
 {player.lastName}
+</div>
+
+<div className="text-xs text-gray-300">
+{player.fitness || 100}%
 </div>
 
 <div className="text-yellow-400 text-xs">
@@ -278,7 +286,11 @@ if(!player) return null;
 
 return(
 
-<div key={id} className="flex flex-col items-center w-[90px]">
+<div
+key={id}
+className="flex flex-col items-center w-[90px] cursor-pointer hover:scale-110 transition"
+onClick={()=>setSelectedPlayer(player)}
+>
 
 <Circle player={player}/>
 
@@ -317,7 +329,7 @@ Startelf
 const p = getPlayerById(id);
 if(!p) return null;
 
-return <PlayerCard key={p._id} player={p}/>;
+return <PlayerCard key={p._id} player={p} setSelectedPlayer={setSelectedPlayer}/>;
 
 })}
 
@@ -330,13 +342,18 @@ Auswechselbank
 const p = getPlayerById(id);
 if(!p) return null;
 
-return <PlayerCard key={p._id} player={p}/>;
+return <PlayerCard key={p._id} player={p} setSelectedPlayer={setSelectedPlayer}/>;
 
 })}
 
 </div>
 
 </div>
+
+<PlayerModal
+player={selectedPlayer}
+onClose={()=>setSelectedPlayer(null)}
+/>
 
 </div>
 
@@ -348,11 +365,14 @@ return <PlayerCard key={p._id} player={p}/>;
  PLAYER CARD
 ===================================================== */
 
-function PlayerCard({player}){
+function PlayerCard({player,setSelectedPlayer}){
 
 return(
 
-<div className="bg-gray-900 p-3 rounded mb-2">
+<div
+onClick={()=>setSelectedPlayer(player)}
+className="bg-gray-900 p-3 rounded mb-2 cursor-pointer hover:bg-gray-800 transition"
+>
 
 <div className="font-semibold">
 {player.firstName} {player.lastName}
@@ -378,9 +398,29 @@ return(
 
 function Circle({player}){
 
+let color = "bg-blue-700"
+
+if(player.positions?.includes("GK")) color = "bg-yellow-500"
+
+else if(
+player.positions?.includes("CB") ||
+player.positions?.includes("LB") ||
+player.positions?.includes("RB")
+){
+color = "bg-red-600"
+}
+
+else if(
+player.positions?.includes("CM") ||
+player.positions?.includes("CDM") ||
+player.positions?.includes("CAM")
+){
+color = "bg-green-600"
+}
+
 return(
 
-<div className="w-14 h-14 rounded-full bg-blue-700 border-2 border-white flex items-center justify-center text-xs font-semibold">
+<div className={`w-14 h-14 rounded-full ${color} border-2 border-white flex items-center justify-center text-xs font-semibold`}>
 {player.positions?.[0] || ""}
 </div>
 

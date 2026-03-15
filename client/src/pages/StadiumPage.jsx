@@ -172,7 +172,7 @@ if(!stadium || !team) return 0;
 
 const fanBase = team.fanBase || 1;
 
-let demand = fanBase * 4500;
+let demand = fanBase * 2500 + 12000;
 
 let tableFactor = 1;
 
@@ -182,8 +182,8 @@ tableFactor = 1 + ((18 - team.tablePosition) * 0.03);
 
 let opponentFactor = 1.05;
 
-let priceFactor = 1 - (ticketPrice / 80);
-priceFactor = Math.max(0.2, priceFactor);
+let priceFactor = 1 - (ticketPrice / 140);
+priceFactor = Math.max(0.35, priceFactor);
 
 const comfort = stadium.fanComfort || 1;
 const atmosphere = stadium.atmosphere || 1;
