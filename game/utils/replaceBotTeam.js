@@ -8,8 +8,7 @@ isBot: true
 });
 
 if(!bot){
-console.log("Kein Bot Team verfügbar");
-return;
+throw new Error("Kein Bot Team verfügbar");
 }
 
 await Team.deleteOne({ _id: bot._id });

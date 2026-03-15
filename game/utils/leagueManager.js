@@ -1,56 +1,33 @@
 const Team = require("../models/Team");
 
+async function getNextLeague() {
+
 const leagues = [
-
-"GER_1",
-"GER_2",
-
-"ENG_1",
-"ENG_2",
-
-"ESP_1",
-"ESP_2",
-
-"ITA_1",
-"ITA_2",
-
-"FRA_1",
-"FRA_2"
-
+"DE1","DE2",
+"EN1","EN2",
+"ES1","ES2",
+"IT1","IT2",
+"FR1","FR2"
 ];
 
-async function getNextLeague(){
-
-/* Teams pro Liga zählen */
-
-const counts = await Team.aggregate([
-{
-$group:{
-_id:"$league",
-count:{ $sum:1 }
-}
-}
-]);
-
-const map = {};
-
-counts.forEach(c=>{
-map[c._id] = c.count;
-});
-
-/* nächste Liga suchen */
+/* Suche Liga mit Bot Teams */
 
 for(const league of leagues){
 
-const count = map[league] || 0;
+const bot = await Team.findOne({
+league,
+isBot: true
+});
 
-if(count < 18){
+if(bot){
 return league;
 }
 
 }
 
-throw new Error("Alle Ligen sind voll");
+/* Falls keine Bots existieren */
+
+throw new Error("Keine Liga mit Bot Teams verfügbar");
 
 }
 
