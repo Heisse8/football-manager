@@ -66,7 +66,7 @@ return;
 
 /* TOKEN SPEICHERN */
 
-localStorage.setItem("token",data.token);
+localStorage.setItem("token",data.accessToken);
 
 /* REDIRECT */
 
