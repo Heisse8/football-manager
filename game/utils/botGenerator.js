@@ -37,7 +37,20 @@ if(!team) exists = false;
 CLUB NAME GENERIEREN
 ===================================================== */
 
-const club = generateClubName();
+let club;
+let nameExists = true;
+
+while(nameExists){
+
+club = generateClubName();
+
+const existing = await Team.findOne({ name: club.name + " 🤖" });
+
+if(!existing){
+nameExists = false;
+}
+
+}
 
 /* =====================================================
 LAND AUS LIGA ERKENNEN
@@ -56,7 +69,7 @@ TEAM ERSTELLEN
 
 const botTeam = new Team({
 
-name: club.name,
+name: club.name + " 🤖",
 
 shortName: club.shortName + randomNumber(),
 
