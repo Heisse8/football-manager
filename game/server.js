@@ -62,6 +62,13 @@ const { startMatchdaySimulatorCron } = require("./cron/matchdaySimulatorCron");
 const { startPlayerRecoveryCron } = require("./cron/playerRecoveryCron");
 
 /* =====================================================
+UTILS
+===================================================== */
+
+const { seedLeagues } = require("./utils/leagueSeeder");
+const { generatePlayerPool } = require("./utils/playerPool");
+
+/* =====================================================
 ROUTES IMPORT
 ===================================================== */
 
@@ -79,7 +86,6 @@ const marketRoutes = require("./routes/market");
 const sponsorRoutes = require("./routes/sponsor");
 const dashboardRoutes = require("./routes/dashboard");
 const simulationTestRoutes = require("./routes/simulationTest");
-const { seedLeagues } = require("./utils/leagueSeeder");
 
 /* =====================================================
 HEALTH CHECK
@@ -146,9 +152,20 @@ mongoose.connect(process.env.MONGO_URI)
 
 console.log("MongoDB verbunden");
 
-/* Ligen erstellen */
+/* =====================================================
+SPIELWELT INITIALISIEREN
+===================================================== */
 
 await seedLeagues();
+
+console.log("Ligen & Bots erstellt");
+
+/* Spielerpool generieren */
+
+await generatePlayerPool();
+
+console.log("Spielerpool erstellt");
+
 /* =====================================================
 CRON JOBS STARTEN
 ===================================================== */
