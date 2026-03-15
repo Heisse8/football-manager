@@ -143,10 +143,9 @@ return res.status(400).json({ message:"Kürzel muss genau 3 Großbuchstaben habe
 
 /* ================= EXIST CHECK ================= */
 
-const [existingOwner, existingName, existingShort] = await Promise.all([
+const [existingOwner, existingName] = await Promise.all([
 Team.findOne({ owner:userId }),
-Team.findOne({ name }),
-Team.findOne({ shortName })
+Team.findOne({ name })
 ]);
 
 if(existingOwner){
@@ -155,10 +154,6 @@ return res.status(400).json({ message:"Du hast bereits ein Team." });
 
 if(existingName){
 return res.status(400).json({ message:"Teamname bereits vergeben." });
-}
-
-if(existingShort){
-return res.status(400).json({ message:"Kürzel bereits vergeben." });
 }
 
 /* ================= CLUB IDENTITY ================= */
