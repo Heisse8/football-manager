@@ -3,8 +3,6 @@ const cron = require("node-cron");
 const Match = require("../models/Match");
 const Team = require("../models/Team");
 
-const { simulateRealisticMatch } = require("../engines/alt/simulateRealisticMatch");
-
 /* =====================================================
 COMPETITION CRON
 ===================================================== */
@@ -147,12 +145,6 @@ MATCH SIMULATION
 async function simulateSingleMatch(match, knockout=false){
 
 try{
-
-const result = await simulateRealisticMatch({
-homeTeam: match.homeTeam,
-awayTeam: match.awayTeam,
-match
-});
 
 /* Ergebnis */
 
