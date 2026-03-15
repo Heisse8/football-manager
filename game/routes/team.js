@@ -14,7 +14,6 @@ const { generateLeagueSchedule } = require("../utils/scheduleGenerator");
 const { createBotTeam } = require("../utils/botGenerator");
 const { replaceBotTeam } = require("../utils/replaceBotTeam");
 const { selectTrainerFormation } = require("../utils/selectTrainerFormation");
-const { generateStarterCoach } = require("../utils/generateStarterCoach");
 const Coach = require("../models/Coach");
 const News = require("../models/News");
 
@@ -208,16 +207,6 @@ currentMatchday:1
 
 await newTeam.save();
 
-/* ================= START TRAINER ================= */
-
-const coach = await generateStarterCoach(newTeam._id);
-
-res.status(201).json({
-message:"Team erfolgreich erstellt.",
-team:newTeam,
-coach
-});
-
 /* ================= BOT ERSETZEN ================= */
 
 await replaceBotTeam(newTeam);
@@ -369,8 +358,7 @@ router.post("/bid/:playerId", auth, async (req,res)=>{
 try{
 
 const { amount } = req.body;
-const team = await Team.findOne({ owner:req.user.userId });
-const teamId = team._id;
+const teamId = req.user.userId;
 
 const player = await Player.findById(req.params.playerId);
 
