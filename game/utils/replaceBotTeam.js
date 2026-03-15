@@ -1,27 +1,20 @@
 const Team = require("../models/Team");
 
-async function replaceBotTeam(userTeam){
-
-if(!userTeam.owner){
-throw new Error("User Team hat keinen Besitzer");
-}
+async function replaceBotTeam(data){
 
 const bot = await Team.findOne({
-league: userTeam.league,
+league: data.league,
 isBot: true
 });
 
 if(!bot){
 console.log("Kein Bot Team verfügbar");
-return;   // <- wichtig: nicht crashen
+return;
 }
-
-/* Bot löschen */
 
 await Team.deleteOne({ _id: bot._id });
 
 console.log(`Bot Team ${bot.name} ersetzt`);
-
 }
 
 module.exports = { replaceBotTeam };

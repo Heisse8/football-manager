@@ -183,6 +183,10 @@ fanBase = 0.9;
 
 const league = await getNextLeague();
 
+/* ================= BOT ERSETZEN ================= */
+
+await replaceBotTeam({ league });
+
 /* ================= TEAM ================= */
 
 const newTeam = new Team({
@@ -201,10 +205,6 @@ currentMatchday:1
 });
 
 await newTeam.save();
-
-/* ================= BOT ERSETZEN ================= */
-
-await replaceBotTeam(newTeam);
 
 /* ================= SPIELER ================= */
 
