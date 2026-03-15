@@ -69,13 +69,13 @@ index: true
 
 playstyle: {
 type: String,
-required: true,
 enum: [
 "Ballbesitz",
 "Kontern",
 "Gegenpressing",
 "Mauern"
 ],
+default: "Ballbesitz",
 index: true
 },
 
