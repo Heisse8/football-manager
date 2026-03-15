@@ -9,6 +9,8 @@ require("dotenv").config();
 
 const app = express();
 
+app.set("trust proxy", 1);
+
 /* =====================================================
 SECURITY MIDDLEWARE
 ===================================================== */
@@ -117,7 +119,7 @@ const clientPath = path.join(__dirname, "../client/dist");
 
 app.use(express.static(clientPath));
 
-app.use((req,res)=>{
+app.get("*",(req,res)=>{
 res.sendFile(path.join(clientPath,"index.html"));
 });
 
@@ -140,16 +142,13 @@ DATABASE CONNECTION
 ===================================================== */
 
 mongoose.connect(process.env.MONGO_URI)
-.then(()=>{
+.then(async ()=>{
 
 console.log("MongoDB verbunden");
 
-/* =====================================================
-LIGEN MIT BOTS ERSTELLEN
-===================================================== */
+/* Ligen erstellen */
 
-seedLeagues();
-
+await seedLeagues();
 /* =====================================================
 CRON JOBS STARTEN
 ===================================================== */
