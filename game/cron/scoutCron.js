@@ -9,7 +9,7 @@ function startScoutCron(){
 
 /* jede Stunde */
 
-cron.schedule("0 * * * *", async ()=>{
+cron.schedule("*/10 * * * *", async ()=>{
 
 console.log("🕵️ Scout Mission Check gestartet");
 

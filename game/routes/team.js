@@ -16,6 +16,7 @@ const { replaceBotTeam } = require("../utils/replaceBotTeam");
 const { selectTrainerFormation } = require("../utils/selectTrainerFormation");
 const { generateStarterCoach } = require("../utils/generateStarterCoach");
 const Coach = require("../models/Coach");
+const News = require("../models/News");
 
 /* =====================================================
 FORMATIONEN
@@ -350,6 +351,99 @@ coach
 }catch(err){
 
 console.error("Get Team Fehler:",err);
+
+res.status(500).json({
+message:"Serverfehler"
+});
+
+}
+
+});
+
+/* =====================================================
+BID ON PLAYER
+===================================================== */
+
+router.post("/bid/:playerId", auth, async (req,res)=>{
+
+try{
+
+const { amount } = req.body;
+const team = await Team.findOne({ owner:req.user.userId });
+const teamId = team._id;
+
+const player = await Player.findById(req.params.playerId);
+
+if(!player){
+return res.status(404).json({message:"Spieler nicht gefunden"});
+}
+
+/* =====================================================
+MINDESTGEBOT
+===================================================== */
+
+const currentBid = player.highestBid || player.marketValue || 0;
+
+if(amount <= currentBid){
+return res.status(400).json({message:"Gebot zu niedrig"});
+}
+
+/* =====================================================
+VORHERIGER BIETER
+===================================================== */
+
+const previousBidder = player.highestBidder;
+
+/* =====================================================
+ANTI SNIPING (AUKTION VERLÄNGERN)
+===================================================== */
+
+const now = new Date();
+
+if(player.auctionEnd){
+
+const remaining = player.auctionEnd - now;
+
+if(remaining < 120000){ // 2 Minuten
+
+player.auctionEnd = new Date(now.getTime() + 120000);
+
+}
+
+}
+
+/* =====================================================
+GEBOT SETZEN
+===================================================== */
+
+player.highestBid = amount;
+player.highestBidder = teamId;
+
+await player.save();
+
+/* =====================================================
+ÜBERBOTEN BENACHRICHTIGUNG
+===================================================== */
+
+if(previousBidder && previousBidder.toString() !== teamId.toString()){
+
+await News.create({
+
+team: previousBidder,
+
+title:"Du wurdest überboten",
+
+content:`Ein anderes Team hat dich für ${player.firstName} ${player.lastName} überboten.`
+
+});
+
+}
+
+res.json({success:true});
+
+}catch(err){
+
+console.error("Bid Fehler:",err);
 
 res.status(500).json({
 message:"Serverfehler"

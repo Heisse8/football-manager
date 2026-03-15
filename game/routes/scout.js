@@ -3,6 +3,8 @@ const router = express.Router();
 
 const Scout = require("../models/Scout");
 const Team = require("../models/Team");
+const ScoutMission = require("../models/ScoutMission");
+const Player = require("../models/Player");
 
 const auth = require("../middleware/auth");
 
@@ -105,6 +107,19 @@ region,
 duration
 };
 
+/* ================= MISSION ERSTELLEN ================= */
+
+await ScoutMission.create({
+
+scout: scout._id,
+region,
+duration,
+endsAt: end,
+isResolved:false,
+results:[]
+
+});
+
 /* ================= SAVE ================= */
 
 await Promise.all([
@@ -122,6 +137,146 @@ missionEnds:end
 }catch(err){
 
 console.error("Scout Mission Fehler:", err);
+
+res.status(500).json({
+message:"Serverfehler"
+});
+
+}
+
+});
+
+/* =====================================================
+SCOUT NETWORK
+GET /api/scout/network
+===================================================== */
+
+router.get("/network", auth, async (req,res)=>{
+
+try{
+
+const team = await Team.findOne({ owner:req.user.userId });
+
+if(!team){
+return res.status(404).json({
+message:"Team nicht gefunden"
+});
+}
+
+/* fertige Missionen laden */
+
+const missions = await ScoutMission.find({
+isResolved:true
+}).populate("scout");
+
+res.json(missions);
+
+}catch(err){
+
+console.error("Scout Network Fehler:", err);
+
+res.status(500).json({
+message:"Serverfehler"
+});
+
+}
+
+});
+
+/* =====================================================
+SCOUT PLAYER SIGN
+POST /api/scout/sign
+===================================================== */
+
+router.post("/sign", auth, async (req,res)=>{
+
+try{
+
+const { missionId, playerIndex } = req.body;
+
+const team = await Team.findOne({ owner:req.user.userId });
+
+if(!team){
+return res.status(404).json({
+message:"Team nicht gefunden"
+});
+}
+
+const mission = await ScoutMission.findById(missionId);
+
+if(!mission){
+return res.status(404).json({
+message:"Mission nicht gefunden"
+});
+}
+
+const playerData = mission.results[playerIndex];
+
+if(!playerData){
+return res.status(404).json({
+message:"Spieler nicht gefunden"
+});
+}
+
+/* Spieler erstellen */
+
+const player = await Player.create({
+
+...playerData,
+team: team._id
+
+});
+
+/* Spieler aus Scout Liste entfernen */
+
+mission.results.splice(playerIndex,1);
+
+await mission.save();
+
+res.json(player);
+
+}catch(err){
+
+console.error("Scout Sign Fehler:",err);
+
+res.status(500).json({
+message:"Serverfehler"
+});
+
+}
+
+});
+
+/* =====================================================
+SCOUT PLAYER REJECT
+POST /api/scout/reject
+===================================================== */
+
+router.post("/reject", auth, async (req,res)=>{
+
+try{
+
+const { missionId, playerIndex } = req.body;
+
+const mission = await ScoutMission.findById(missionId);
+
+if(!mission){
+return res.status(404).json({
+message:"Mission nicht gefunden"
+});
+}
+
+mission.results.splice(playerIndex,1);
+
+await mission.save();
+
+res.json({
+success:true
+});
+
+}catch(err){
+
+console.error("Scout Reject Fehler:",err);
 
 res.status(500).json({
 message:"Serverfehler"

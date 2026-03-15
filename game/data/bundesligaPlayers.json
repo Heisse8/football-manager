@@ -1,0 +1,6990 @@
+[
+  {
+    "firstName": "Finn",
+    "lastName": "Dahmen",
+    "nationality": "Germany",
+    "age": 26,
+    "stars": 3.5,
+    "potential": 4,
+    "positions": [
+      "GK"
+    ],
+    "playstyles": [
+      "shot_stopper"
+    ],
+    "fitness": 94,
+    "form": 7.18,
+    "value": 4200000
+  },
+  {
+    "firstName": "Mads",
+    "lastName": "Pedersen",
+    "nationality": "Germany",
+    "age": 24,
+    "stars": 1.5,
+    "potential": 2,
+    "positions": [
+      "RB",
+      "LB"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 96,
+    "form": 7.01,
+    "value": 1800000
+  },
+  {
+    "firstName": "Chrislain",
+    "lastName": "Matsima",
+    "nationality": "Germany",
+    "age": 22,
+    "stars": 2.5,
+    "potential": 3.5,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "ball_playing_cb"
+    ],
+    "fitness": 94,
+    "form": 7.43,
+    "value": 3000000
+  },
+  {
+    "firstName": "Jeffrey",
+    "lastName": "Gouweleeuw",
+    "nationality": "Germany",
+    "age": 24,
+    "stars": 2.5,
+    "potential": 2.5,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 94,
+    "form": 6.85,
+    "value": 3000000
+  },
+  {
+    "firstName": "Dimitrios",
+    "lastName": "Giannoulis",
+    "nationality": "Germany",
+    "age": 19,
+    "stars": 2.5,
+    "potential": 2.5,
+    "positions": [
+      "LB",
+      "LWB"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 98,
+    "form": 6.54,
+    "value": 3000000
+  },
+  {
+    "firstName": "Cedric",
+    "lastName": "Zesiger",
+    "nationality": "Germany",
+    "age": 22,
+    "stars": 2.5,
+    "potential": 2.5,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "ball_playing_cb"
+    ],
+    "fitness": 98,
+    "form": 7.25,
+    "value": 3000000
+  },
+  {
+    "firstName": "Marius",
+    "lastName": "Wolf",
+    "nationality": "Germany",
+    "age": 25,
+    "stars": 2.5,
+    "potential": 2.5,
+    "positions": [
+      "RB",
+      "RWB"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 97,
+    "form": 6.1,
+    "value": 3000000
+  },
+  {
+    "firstName": "Keven",
+    "lastName": "Schlotterbeck",
+    "nationality": "Germany",
+    "age": 19,
+    "stars": 2.5,
+    "potential": 2.5,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "ball_playing_cb"
+    ],
+    "fitness": 94,
+    "form": 6.97,
+    "value": 3000000
+  },
+  {
+    "firstName": "Arthur",
+    "lastName": "Chaves",
+    "nationality": "Germany",
+    "age": 21,
+    "stars": 2.5,
+    "potential": 3,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "ball_playing_cb"
+    ],
+    "fitness": 95,
+    "form": 6.77,
+    "value": 3000000
+  },
+  {
+    "firstName": "Noahkai",
+    "lastName": "Banks",
+    "nationality": "Germany",
+    "age": 22,
+    "stars": 2.5,
+    "potential": 4,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "ball_playing_cb"
+    ],
+    "fitness": 93,
+    "form": 7.47,
+    "value": 3000000
+  },
+  {
+    "firstName": "Han-Noah",
+    "lastName": "Massengo",
+    "nationality": "Germany",
+    "age": 19,
+    "stars": 2.5,
+    "potential": 3,
+    "positions": [
+      "CDM",
+      "CM"
+    ],
+    "playstyles": [
+      "anchor_man"
+    ],
+    "fitness": 90,
+    "form": 6.53,
+    "value": 3000000
+  },
+  {
+    "firstName": "Elvis",
+    "lastName": "Rexhbecaj",
+    "nationality": "Germany",
+    "age": 18,
+    "stars": 2,
+    "potential": 2.5,
+    "positions": [
+      "CDM",
+      "CM",
+      "RWB",
+      "LWB"
+    ],
+    "playstyles": [
+      "anchor_man",
+      "box_to_box",
+      "wingback"
+    ],
+    "fitness": 94,
+    "form": 7.68,
+    "value": 2400000
+  },
+  {
+    "firstName": "Yannik",
+    "lastName": "Keitel",
+    "nationality": "Germany",
+    "age": 20,
+    "stars": 1.5,
+    "potential": 2,
+    "positions": [
+      "CB",
+      "CDM"
+    ],
+    "playstyles": [
+      "interceptor_cb",
+      "anchor_man"
+    ],
+    "fitness": 91,
+    "form": 7.33,
+    "value": 1800000
+  },
+  {
+    "firstName": "Kristijan",
+    "lastName": "Jakic",
+    "nationality": "Germany",
+    "age": 19,
+    "stars": 2.5,
+    "potential": 3,
+    "positions": [
+      "CDM"
+    ],
+    "playstyles": [
+      "anchor_man"
+    ],
+    "fitness": 99,
+    "form": 7.71,
+    "value": 3000000
+  },
+  {
+    "firstName": "Robin",
+    "lastName": "Fellhauer",
+    "nationality": "Germany",
+    "age": 21,
+    "stars": 2.5,
+    "potential": 3,
+    "positions": [
+      "CM",
+      "RWB",
+      "LWB"
+    ],
+    "playstyles": [
+      "box_to_box",
+      "wingback"
+    ],
+    "fitness": 90,
+    "form": 7.56,
+    "value": 3000000
+  },
+  {
+    "firstName": "Alexis",
+    "lastName": "Claude-Maurice",
+    "nationality": "Germany",
+    "age": 24,
+    "stars": 3,
+    "potential": 3.5,
+    "positions": [
+      "CAM"
+    ],
+    "playstyles": [
+      "playmaker_cam"
+    ],
+    "fitness": 92,
+    "form": 7.16,
+    "value": 3600000
+  },
+  {
+    "firstName": "Anton",
+    "lastName": "Kade",
+    "nationality": "Germany",
+    "age": 21,
+    "stars": 2.5,
+    "potential": 3,
+    "positions": [
+      "ST",
+      "RWB",
+      "LWB"
+    ],
+    "playstyles": [
+      "speed_striker",
+      "wingback"
+    ],
+    "fitness": 97,
+    "form": 6.34,
+    "value": 3000000
+  },
+  {
+    "firstName": "Fabian",
+    "lastName": "Rieder",
+    "nationality": "Germany",
+    "age": 25,
+    "stars": 2.5,
+    "potential": 3,
+    "positions": [
+      "CAM"
+    ],
+    "playstyles": [
+      "playmaker_cam"
+    ],
+    "fitness": 99,
+    "form": 7.85,
+    "value": 3000000
+  },
+  {
+    "firstName": "Mert",
+    "lastName": "Kömür",
+    "nationality": "Germany",
+    "age": 25,
+    "stars": 2,
+    "potential": 3,
+    "positions": [
+      "CAM"
+    ],
+    "playstyles": [
+      "playmaker_cam"
+    ],
+    "fitness": 94,
+    "form": 7.85,
+    "value": 2400000
+  },
+  {
+    "firstName": "Rodrigo",
+    "lastName": "Ribeiro",
+    "nationality": "Germany",
+    "age": 23,
+    "stars": 1.5,
+    "potential": 3,
+    "positions": [
+      "ST"
+    ],
+    "playstyles": [
+      "poacher"
+    ],
+    "fitness": 99,
+    "form": 6.07,
+    "value": 1800000
+  },
+  {
+    "firstName": "Michael",
+    "lastName": "Gregoritsch",
+    "nationality": "Germany",
+    "age": 20,
+    "stars": 2.5,
+    "potential": 2.5,
+    "positions": [
+      "ST"
+    ],
+    "playstyles": [
+      "target_man"
+    ],
+    "fitness": 98,
+    "form": 7.96,
+    "value": 3000000
+  },
+  {
+    "firstName": "Frederik",
+    "lastName": "Rönnow",
+    "nationality": "Germany",
+    "age": 24,
+    "stars": 3,
+    "potential": 3,
+    "positions": [
+      "GK"
+    ],
+    "playstyles": [
+      "shot_stopper"
+    ],
+    "fitness": 91,
+    "form": 7.31,
+    "value": 3600000
+  },
+  {
+    "firstName": "Diogo",
+    "lastName": "Leite",
+    "nationality": "Germany",
+    "age": 19,
+    "stars": 2.5,
+    "potential": 3,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "ball_playing_cb"
+    ],
+    "fitness": 99,
+    "form": 6.3,
+    "value": 3000000
+  },
+  {
+    "firstName": "Danilho",
+    "lastName": "Doekhi",
+    "nationality": "Germany",
+    "age": 23,
+    "stars": 2.5,
+    "potential": 3,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 92,
+    "form": 6.83,
+    "value": 3000000
+  },
+  {
+    "firstName": "Leopold",
+    "lastName": "Querfeld",
+    "nationality": "Germany",
+    "age": 18,
+    "stars": 2.5,
+    "potential": 3,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "ball_playing_cb"
+    ],
+    "fitness": 91,
+    "form": 6.71,
+    "value": 3000000
+  },
+  {
+    "firstName": "Tom",
+    "lastName": "Rothe",
+    "nationality": "Germany",
+    "age": 18,
+    "stars": 2,
+    "potential": 3,
+    "positions": [
+      "LB",
+      "LWB"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 93,
+    "form": 6.05,
+    "value": 2400000
+  },
+  {
+    "firstName": "Josip",
+    "lastName": "Juranovic",
+    "nationality": "Germany",
+    "age": 24,
+    "stars": 2,
+    "potential": 2.5,
+    "positions": [
+      "RB",
+      "LB",
+      "RWB",
+      "LWB"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 94,
+    "form": 6.94,
+    "value": 2400000
+  },
+  {
+    "firstName": "Christopher",
+    "lastName": "Trimmel",
+    "nationality": "Germany",
+    "age": 22,
+    "stars": 2,
+    "potential": 2,
+    "positions": [
+      "RB",
+      "RWB"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 98,
+    "form": 7.24,
+    "value": 2400000
+  },
+  {
+    "firstName": "Stanley",
+    "lastName": "Nsoki",
+    "nationality": "Germany",
+    "age": 18,
+    "stars": 1.5,
+    "potential": 2,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 90,
+    "form": 6.48,
+    "value": 1800000
+  },
+  {
+    "firstName": "Derrick",
+    "lastName": "Köhn",
+    "nationality": "Germany",
+    "age": 25,
+    "stars": 2,
+    "potential": 2.5,
+    "positions": [
+      "LB",
+      "LWB"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 98,
+    "form": 7.65,
+    "value": 2400000
+  },
+  {
+    "firstName": "Aljoscha",
+    "lastName": "Kemlein",
+    "nationality": "Germany",
+    "age": 19,
+    "stars": 2,
+    "potential": 3,
+    "positions": [
+      "CDM"
+    ],
+    "playstyles": [
+      "deep_playmaker"
+    ],
+    "fitness": 94,
+    "form": 7.02,
+    "value": 2400000
+  },
+  {
+    "firstName": "Rani",
+    "lastName": "Khedira",
+    "nationality": "Germany",
+    "age": 18,
+    "stars": 2.5,
+    "potential": 2.5,
+    "positions": [
+      "CM",
+      "CDM"
+    ],
+    "playstyles": [
+      "box_to_box",
+      "anchor_man"
+    ],
+    "fitness": 99,
+    "form": 6.72,
+    "value": 3000000
+  },
+  {
+    "firstName": "Wooyeong",
+    "lastName": "Jeong",
+    "nationality": "Germany",
+    "age": 20,
+    "stars": 2,
+    "potential": 2,
+    "positions": [
+      "CAM"
+    ],
+    "playstyles": [
+      "playmaker_cam"
+    ],
+    "fitness": 90,
+    "form": 7.42,
+    "value": 2400000
+  },
+  {
+    "firstName": "Andras",
+    "lastName": "Schäfer",
+    "nationality": "Germany",
+    "age": 18,
+    "stars": 1.5,
+    "potential": 2,
+    "positions": [
+      "CM"
+    ],
+    "playstyles": [
+      "box_to_box"
+    ],
+    "fitness": 91,
+    "form": 6.18,
+    "value": 1800000
+  },
+  {
+    "firstName": "Janik",
+    "lastName": "Haberer",
+    "nationality": "Germany",
+    "age": 25,
+    "stars": 1.5,
+    "potential": 1.5,
+    "positions": [
+      "RWB",
+      "CM"
+    ],
+    "playstyles": [
+      "wingback",
+      "box_to_box"
+    ],
+    "fitness": 95,
+    "form": 7.57,
+    "value": 1800000
+  },
+  {
+    "firstName": "Tim",
+    "lastName": "Skarke",
+    "nationality": "Germany",
+    "age": 22,
+    "stars": 1,
+    "potential": 2,
+    "positions": [
+      "LW",
+      "RW",
+      "ST"
+    ],
+    "playstyles": [
+      "speed_striker"
+    ],
+    "fitness": 93,
+    "form": 6.41,
+    "value": 1200000
+  },
+  {
+    "firstName": "Robert",
+    "lastName": "Skov",
+    "nationality": "Germany",
+    "age": 22,
+    "stars": 1.5,
+    "potential": 1.5,
+    "positions": [
+      "LWB",
+      "RWB"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 94,
+    "form": 6.06,
+    "value": 1800000
+  },
+  {
+    "firstName": "Alex",
+    "lastName": "Kral",
+    "nationality": "Germany",
+    "age": 24,
+    "stars": 1,
+    "potential": 1,
+    "positions": [
+      "CDM",
+      "CM"
+    ],
+    "playstyles": [
+      "anchor_man",
+      "box_to_box"
+    ],
+    "fitness": 97,
+    "form": 6.31,
+    "value": 1200000
+  },
+  {
+    "firstName": "Oliver",
+    "lastName": "Burke",
+    "nationality": "Germany",
+    "age": 18,
+    "stars": 2,
+    "potential": 2,
+    "positions": [
+      "ST"
+    ],
+    "playstyles": [
+      "speed_striker"
+    ],
+    "fitness": 91,
+    "form": 6.05,
+    "value": 2400000
+  },
+  {
+    "firstName": "Livan",
+    "lastName": "Burcu",
+    "nationality": "Germany",
+    "age": 25,
+    "stars": 1.5,
+    "potential": 2,
+    "positions": [
+      "CAM"
+    ],
+    "playstyles": [
+      "dribbling_cam"
+    ],
+    "fitness": 99,
+    "form": 7.1,
+    "value": 1800000
+  },
+  {
+    "firstName": "Ilyas",
+    "lastName": "Ansah",
+    "nationality": "Germany",
+    "age": 21,
+    "stars": 2,
+    "potential": 3,
+    "positions": [
+      "ST"
+    ],
+    "playstyles": [
+      "poacher"
+    ],
+    "fitness": 90,
+    "form": 7.76,
+    "value": 2400000
+  },
+  {
+    "firstName": "Andrej",
+    "lastName": "Ilic",
+    "nationality": "Germany",
+    "age": 23,
+    "stars": 2,
+    "potential": 2.5,
+    "positions": [
+      "ST"
+    ],
+    "playstyles": [
+      "target_man"
+    ],
+    "fitness": 93,
+    "form": 6.09,
+    "value": 2400000
+  },
+  {
+    "firstName": "Peter",
+    "lastName": "Gulasci",
+    "nationality": "Germany",
+    "age": 24,
+    "stars": 3,
+    "potential": 3,
+    "positions": [
+      "GK"
+    ],
+    "playstyles": [
+      "shot_stopper"
+    ],
+    "fitness": 94,
+    "form": 7.42,
+    "value": 3600000
+  },
+  {
+    "firstName": "Maarten",
+    "lastName": "Vandevoordt",
+    "nationality": "Germany",
+    "age": 25,
+    "stars": 2,
+    "potential": 3,
+    "positions": [
+      "GK"
+    ],
+    "playstyles": [
+      "shot_stopper"
+    ],
+    "fitness": 95,
+    "form": 6.25,
+    "value": 2400000
+  },
+  {
+    "firstName": "Willi",
+    "lastName": "Orban",
+    "nationality": "Germany",
+    "age": 27,
+    "stars": 3.5,
+    "potential": 3.5,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 99,
+    "form": 6.32,
+    "value": 4200000
+  },
+  {
+    "firstName": "El",
+    "lastName": "Chadaille Bithiabu",
+    "nationality": "Germany",
+    "age": 24,
+    "stars": 1.5,
+    "potential": 3,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "ball_playing_cb"
+    ],
+    "fitness": 99,
+    "form": 8,
+    "value": 1800000
+  },
+  {
+    "firstName": "Lukas",
+    "lastName": "Klostermann",
+    "nationality": "Germany",
+    "age": 19,
+    "stars": 1.5,
+    "potential": 1.5,
+    "positions": [
+      "RB",
+      "CB"
+    ],
+    "playstyles": [
+      "defensive_fullback",
+      "stopper_cb"
+    ],
+    "fitness": 99,
+    "form": 6.87,
+    "value": 1800000
+  },
+  {
+    "firstName": "Kosta",
+    "lastName": "Nedeljkovic",
+    "nationality": "Germany",
+    "age": 20,
+    "stars": 1.5,
+    "potential": 2.5,
+    "positions": [
+      "RB"
+    ],
+    "playstyles": [
+      "defensive_fullback"
+    ],
+    "fitness": 90,
+    "form": 6.13,
+    "value": 1800000
+  },
+  {
+    "firstName": "David",
+    "lastName": "Raum",
+    "nationality": "Germany",
+    "age": 26,
+    "stars": 3,
+    "potential": 3.5,
+    "positions": [
+      "LB",
+      "LWB"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 92,
+    "form": 6.01,
+    "value": 3600000
+  },
+  {
+    "firstName": "Castello",
+    "lastName": "Lukeba",
+    "nationality": "Germany",
+    "age": 26,
+    "stars": 3.5,
+    "potential": 5,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "ball_playing_cb"
+    ],
+    "fitness": 93,
+    "form": 7.78,
+    "value": 4200000
+  },
+  {
+    "firstName": "Max",
+    "lastName": "Finkgräfe",
+    "nationality": "Germany",
+    "age": 19,
+    "stars": 1.5,
+    "potential": 3,
+    "positions": [
+      "LB",
+      "LWB"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 90,
+    "form": 7.45,
+    "value": 1800000
+  },
+  {
+    "firstName": "Benjamin",
+    "lastName": "Henrichs",
+    "nationality": "Germany",
+    "age": 21,
+    "stars": 2.5,
+    "potential": 3,
+    "positions": [
+      "RB"
+    ],
+    "playstyles": [
+      "inverted_fullback"
+    ],
+    "fitness": 90,
+    "form": 7.8,
+    "value": 3000000
+  },
+  {
+    "firstName": "Ezechiel",
+    "lastName": "Banzuzi",
+    "nationality": "Germany",
+    "age": 18,
+    "stars": 2,
+    "potential": 3,
+    "positions": [
+      "CM"
+    ],
+    "playstyles": [
+      "box_to_box"
+    ],
+    "fitness": 91,
+    "form": 6.01,
+    "value": 2400000
+  },
+  {
+    "firstName": "Brajan",
+    "lastName": "Gruda",
+    "nationality": "Germany",
+    "age": 22,
+    "stars": 2.5,
+    "potential": 4,
+    "positions": [
+      "CAM",
+      "RW"
+    ],
+    "playstyles": [
+      "dribbling_cam"
+    ],
+    "fitness": 97,
+    "form": 7.45,
+    "value": 3000000
+  },
+  {
+    "firstName": "Nicolas",
+    "lastName": "Seiwald",
+    "nationality": "Germany",
+    "age": 26,
+    "stars": 3,
+    "potential": 3.5,
+    "positions": [
+      "CDM",
+      "CB"
+    ],
+    "playstyles": [
+      "anchor_man",
+      "interceptor_cb"
+    ],
+    "fitness": 90,
+    "form": 6.57,
+    "value": 3600000
+  },
+  {
+    "firstName": "Christoph",
+    "lastName": "Baumgarter",
+    "nationality": "Germany",
+    "age": 23,
+    "stars": 3.5,
+    "potential": 3.5,
+    "positions": [
+      "CAM",
+      "ST"
+    ],
+    "playstyles": [
+      "shadow_striker",
+      "poacher"
+    ],
+    "fitness": 92,
+    "form": 7.23,
+    "value": 4200000
+  },
+  {
+    "firstName": "Ridle",
+    "lastName": "Baku",
+    "nationality": "Germany",
+    "age": 25,
+    "stars": 3,
+    "potential": 3.5,
+    "positions": [
+      "RB",
+      "RWB"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 94,
+    "form": 6.51,
+    "value": 3600000
+  },
+  {
+    "firstName": "Assan",
+    "lastName": "Ouedraogo",
+    "nationality": "Germany",
+    "age": 24,
+    "stars": 3,
+    "potential": 5,
+    "positions": [
+      "CM",
+      "CAM"
+    ],
+    "playstyles": [
+      "box_to_box",
+      "dribbling_cam"
+    ],
+    "fitness": 98,
+    "form": 7.22,
+    "value": 3600000
+  },
+  {
+    "firstName": "Xaver",
+    "lastName": "Schlager",
+    "nationality": "Germany",
+    "age": 26,
+    "stars": 3,
+    "potential": 3.5,
+    "positions": [
+      "CDM",
+      "CM"
+    ],
+    "playstyles": [
+      "deep_playmaker",
+      "box_to_box"
+    ],
+    "fitness": 90,
+    "form": 6.36,
+    "value": 3600000
+  },
+  {
+    "firstName": "Antonio",
+    "lastName": "Nusa",
+    "nationality": "Germany",
+    "age": 23,
+    "stars": 3,
+    "potential": 4,
+    "positions": [
+      "LW",
+      "CAM"
+    ],
+    "playstyles": [
+      "dribble_winger",
+      "dribbling_cam"
+    ],
+    "fitness": 92,
+    "form": 6.23,
+    "value": 3600000
+  },
+  {
+    "firstName": "Johan",
+    "lastName": "Bakayoko",
+    "nationality": "Germany",
+    "age": 22,
+    "stars": 2,
+    "potential": 3,
+    "positions": [
+      "RW"
+    ],
+    "playstyles": [
+      "inside_forward"
+    ],
+    "fitness": 97,
+    "form": 6.52,
+    "value": 2400000
+  },
+  {
+    "firstName": "Conrad",
+    "lastName": "Harder",
+    "nationality": "Germany",
+    "age": 19,
+    "stars": 2,
+    "potential": 3,
+    "positions": [
+      "ST"
+    ],
+    "playstyles": [
+      "speed_striker"
+    ],
+    "fitness": 96,
+    "form": 6.8,
+    "value": 2400000
+  },
+  {
+    "firstName": "Romulo",
+    "lastName": "Romulo",
+    "nationality": "Germany",
+    "age": 25,
+    "stars": 3,
+    "potential": 3.5,
+    "positions": [
+      "ST"
+    ],
+    "playstyles": [
+      "poacher"
+    ],
+    "fitness": 94,
+    "form": 7.03,
+    "value": 3600000
+  },
+  {
+    "firstName": "Yan",
+    "lastName": "Diomande",
+    "nationality": "Germany",
+    "age": 27,
+    "stars": 3.5,
+    "potential": 5,
+    "positions": [
+      "LW",
+      "RW"
+    ],
+    "playstyles": [
+      "dribble_winger"
+    ],
+    "fitness": 98,
+    "form": 6.86,
+    "value": 4200000
+  },
+  {
+    "firstName": "Mark",
+    "lastName": "Flekken",
+    "nationality": "Germany",
+    "age": 23,
+    "stars": 3,
+    "potential": 3,
+    "positions": [
+      "GK"
+    ],
+    "playstyles": [
+      "shot_stopper"
+    ],
+    "fitness": 90,
+    "form": 7.62,
+    "value": 3600000
+  },
+  {
+    "firstName": "Jonas",
+    "lastName": "Omlin",
+    "nationality": "Germany",
+    "age": 24,
+    "stars": 2,
+    "potential": 2,
+    "positions": [
+      "GK"
+    ],
+    "playstyles": [
+      "shot_stopper"
+    ],
+    "fitness": 93,
+    "form": 7.74,
+    "value": 2400000
+  },
+  {
+    "firstName": "Janis",
+    "lastName": "Blaswich",
+    "nationality": "Germany",
+    "age": 25,
+    "stars": 2.5,
+    "potential": 2.5,
+    "positions": [
+      "GK"
+    ],
+    "playstyles": [
+      "shot_stopper"
+    ],
+    "fitness": 93,
+    "form": 7.75,
+    "value": 3000000
+  },
+  {
+    "firstName": "Jarell",
+    "lastName": "Quansah",
+    "nationality": "Germany",
+    "age": 23,
+    "stars": 3,
+    "potential": 4,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "ball_playing_cb"
+    ],
+    "fitness": 91,
+    "form": 7.02,
+    "value": 3600000
+  },
+  {
+    "firstName": "Loic",
+    "lastName": "Bade",
+    "nationality": "Germany",
+    "age": 22,
+    "stars": 3,
+    "potential": 3.5,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 98,
+    "form": 6.65,
+    "value": 3600000
+  },
+  {
+    "firstName": "Edmond",
+    "lastName": "Tapsoba",
+    "nationality": "Germany",
+    "age": 26,
+    "stars": 4,
+    "potential": 4.5,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 98,
+    "form": 7.19,
+    "value": 4800000
+  },
+  {
+    "firstName": "Arthur",
+    "lastName": "Arthur",
+    "nationality": "Germany",
+    "age": 20,
+    "stars": 2,
+    "potential": 3,
+    "positions": [
+      "RB",
+      "RWB"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 98,
+    "form": 6.78,
+    "value": 2400000
+  },
+  {
+    "firstName": "Tim",
+    "lastName": "Oermann",
+    "nationality": "Germany",
+    "age": 21,
+    "stars": 1.5,
+    "potential": 3,
+    "positions": [
+      "RB"
+    ],
+    "playstyles": [
+      "defensive_fullback"
+    ],
+    "fitness": 94,
+    "form": 7.5,
+    "value": 1800000
+  },
+  {
+    "firstName": "Axel",
+    "lastName": "Tape",
+    "nationality": "Germany",
+    "age": 18,
+    "stars": 1.5,
+    "potential": 3,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "ball_playing_cb"
+    ],
+    "fitness": 95,
+    "form": 7.31,
+    "value": 1800000
+  },
+  {
+    "firstName": "Alejandro",
+    "lastName": "Grimaldo",
+    "nationality": "Germany",
+    "age": 27,
+    "stars": 4,
+    "potential": 4,
+    "positions": [
+      "LB",
+      "LWB"
+    ],
+    "playstyles": [
+      "inverted_fullback"
+    ],
+    "fitness": 97,
+    "form": 7.55,
+    "value": 4800000
+  },
+  {
+    "firstName": "Lucas",
+    "lastName": "Vazquez",
+    "nationality": "Germany",
+    "age": 21,
+    "stars": 2.5,
+    "potential": 2.5,
+    "positions": [
+      "RB",
+      "RWB"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 95,
+    "form": 7.15,
+    "value": 3000000
+  },
+  {
+    "firstName": "Ezequiel",
+    "lastName": "Fernandez",
+    "nationality": "Germany",
+    "age": 23,
+    "stars": 2.5,
+    "potential": 3,
+    "positions": [
+      "CDM",
+      "CM"
+    ],
+    "playstyles": [
+      "anchor_man",
+      "deep_playmaker"
+    ],
+    "fitness": 96,
+    "form": 6.03,
+    "value": 3000000
+  },
+  {
+    "firstName": "Jonas",
+    "lastName": "Hofmann",
+    "nationality": "Germany",
+    "age": 26,
+    "stars": 3,
+    "potential": 3,
+    "positions": [
+      "RWB",
+      "CAM"
+    ],
+    "playstyles": [
+      "wingback",
+      "shadow_striker"
+    ],
+    "fitness": 90,
+    "form": 7.28,
+    "value": 3600000
+  },
+  {
+    "firstName": "Robert",
+    "lastName": "Andrich",
+    "nationality": "Germany",
+    "age": 25,
+    "stars": 3,
+    "potential": 3,
+    "positions": [
+      "CB",
+      "CDM"
+    ],
+    "playstyles": [
+      "anchor_man"
+    ],
+    "fitness": 92,
+    "form": 6.87,
+    "value": 3600000
+  },
+  {
+    "firstName": "Malik",
+    "lastName": "Tillman",
+    "nationality": "Germany",
+    "age": 25,
+    "stars": 3,
+    "potential": 4,
+    "positions": [
+      "CAM"
+    ],
+    "playstyles": [
+      "playmaker_cam"
+    ],
+    "fitness": 97,
+    "form": 6.4,
+    "value": 3600000
+  },
+  {
+    "firstName": "Aleix",
+    "lastName": "Garcia",
+    "nationality": "Germany",
+    "age": 26,
+    "stars": 4,
+    "potential": 4,
+    "positions": [
+      "CM",
+      "CDM"
+    ],
+    "playstyles": [
+      "control_cm",
+      "deep_playmaker"
+    ],
+    "fitness": 91,
+    "form": 7.92,
+    "value": 4800000
+  },
+  {
+    "firstName": "Exequiel",
+    "lastName": "Palacios",
+    "nationality": "Germany",
+    "age": 25,
+    "stars": 3.5,
+    "potential": 4,
+    "positions": [
+      "CM",
+      "CDM"
+    ],
+    "playstyles": [
+      "control_cm",
+      "deep_playmaker"
+    ],
+    "fitness": 97,
+    "form": 7.29,
+    "value": 4200000
+  },
+  {
+    "firstName": "Ibrahim",
+    "lastName": "Maza",
+    "nationality": "Germany",
+    "age": 24,
+    "stars": 2.5,
+    "potential": 4.5,
+    "positions": [
+      "CAM",
+      "CM"
+    ],
+    "playstyles": [
+      "playmaker_cam"
+    ],
+    "fitness": 97,
+    "form": 6.18,
+    "value": 3000000
+  },
+  {
+    "firstName": "Martin",
+    "lastName": "Terrier",
+    "nationality": "Germany",
+    "age": 20,
+    "stars": 2,
+    "potential": 2.5,
+    "positions": [
+      "ST",
+      "RW",
+      "LW"
+    ],
+    "playstyles": [
+      "poacher"
+    ],
+    "fitness": 96,
+    "form": 6.06,
+    "value": 2400000
+  },
+  {
+    "firstName": "Patrik",
+    "lastName": "Schick",
+    "nationality": "Germany",
+    "age": 28,
+    "stars": 4,
+    "potential": 4,
+    "positions": [
+      "ST",
+      "RW",
+      "LW"
+    ],
+    "playstyles": [
+      "target_man"
+    ],
+    "fitness": 97,
+    "form": 6.21,
+    "value": 4800000
+  },
+  {
+    "firstName": "Eliesse",
+    "lastName": "Ben Seghir",
+    "nationality": "Germany",
+    "age": 20,
+    "stars": 1.5,
+    "potential": 3.5,
+    "positions": [
+      "CAM"
+    ],
+    "playstyles": [
+      "dribbling_cam"
+    ],
+    "fitness": 91,
+    "form": 7.22,
+    "value": 1800000
+  },
+  {
+    "firstName": "Ernest",
+    "lastName": "Poku",
+    "nationality": "Germany",
+    "age": 23,
+    "stars": 2.5,
+    "potential": 4,
+    "positions": [
+      "LW",
+      "RW"
+    ],
+    "playstyles": [
+      "dribble_winger"
+    ],
+    "fitness": 96,
+    "form": 7.85,
+    "value": 3000000
+  },
+  {
+    "firstName": "Nathan",
+    "lastName": "Tella",
+    "nationality": "Germany",
+    "age": 22,
+    "stars": 2.5,
+    "potential": 3.5,
+    "positions": [
+      "LWB",
+      "RWB",
+      "LW",
+      "RW"
+    ],
+    "playstyles": [
+      "wingback",
+      "dribble_winger"
+    ],
+    "fitness": 91,
+    "form": 7.15,
+    "value": 3000000
+  },
+  {
+    "firstName": "Christian",
+    "lastName": "Kofane",
+    "nationality": "Germany",
+    "age": 21,
+    "stars": 2,
+    "potential": 4.5,
+    "positions": [
+      "ST"
+    ],
+    "playstyles": [
+      "target_man"
+    ],
+    "fitness": 96,
+    "form": 7.65,
+    "value": 2400000
+  },
+  {
+    "firstName": "Montrell",
+    "lastName": "Culbreath",
+    "nationality": "Germany",
+    "age": 20,
+    "stars": 1.5,
+    "potential": 4,
+    "positions": [
+      "CAM"
+    ],
+    "playstyles": [
+      "playmaker_cam"
+    ],
+    "fitness": 90,
+    "form": 6.57,
+    "value": 1800000
+  },
+  {
+    "firstName": "Robin",
+    "lastName": "Zentner",
+    "nationality": "Germany",
+    "age": 24,
+    "stars": 3,
+    "potential": 3,
+    "positions": [
+      "GK"
+    ],
+    "playstyles": [
+      "shot_stopper"
+    ],
+    "fitness": 93,
+    "form": 7.26,
+    "value": 3600000
+  },
+  {
+    "firstName": "Daniel",
+    "lastName": "Batz",
+    "nationality": "Germany",
+    "age": 25,
+    "stars": 3,
+    "potential": 3,
+    "positions": [
+      "GK"
+    ],
+    "playstyles": [
+      "shot_stopper"
+    ],
+    "fitness": 97,
+    "form": 6.75,
+    "value": 3600000
+  },
+  {
+    "firstName": "Philipp",
+    "lastName": "Mwene",
+    "nationality": "Germany",
+    "age": 20,
+    "stars": 2,
+    "potential": 2,
+    "positions": [
+      "LB",
+      "LWB"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 94,
+    "form": 6.09,
+    "value": 2400000
+  },
+  {
+    "firstName": "Stefan",
+    "lastName": "Posch",
+    "nationality": "Germany",
+    "age": 24,
+    "stars": 3,
+    "potential": 3,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 90,
+    "form": 7.34,
+    "value": 3600000
+  },
+  {
+    "firstName": "Maxim",
+    "lastName": "Leitsch",
+    "nationality": "Germany",
+    "age": 22,
+    "stars": 2,
+    "potential": 2,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 90,
+    "form": 6.57,
+    "value": 2400000
+  },
+  {
+    "firstName": "Stefan",
+    "lastName": "Bell",
+    "nationality": "Germany",
+    "age": 22,
+    "stars": 2,
+    "potential": 2,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 91,
+    "form": 6.3,
+    "value": 2400000
+  },
+  {
+    "firstName": "Anthony",
+    "lastName": "Caci",
+    "nationality": "Germany",
+    "age": 23,
+    "stars": 2.5,
+    "potential": 3,
+    "positions": [
+      "RB",
+      "RWB"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 92,
+    "form": 7.98,
+    "value": 3000000
+  },
+  {
+    "firstName": "Dann",
+    "lastName": "da Costa",
+    "nationality": "Germany",
+    "age": 24,
+    "stars": 2,
+    "potential": 2,
+    "positions": [
+      "CB",
+      "RB",
+      "RWB"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 95,
+    "form": 7.26,
+    "value": 2400000
+  },
+  {
+    "firstName": "Andreas",
+    "lastName": "Hanche-Olsen",
+    "nationality": "Germany",
+    "age": 23,
+    "stars": 2,
+    "potential": 2,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 91,
+    "form": 6.06,
+    "value": 2400000
+  },
+  {
+    "firstName": "Silvan",
+    "lastName": "Widmer",
+    "nationality": "Germany",
+    "age": 20,
+    "stars": 2,
+    "potential": 2,
+    "positions": [
+      "LB",
+      "RB",
+      "LWB",
+      "RWB"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 92,
+    "form": 7.86,
+    "value": 2400000
+  },
+  {
+    "firstName": "Dominik",
+    "lastName": "Kohr",
+    "nationality": "Germany",
+    "age": 23,
+    "stars": 2,
+    "potential": 2,
+    "positions": [
+      "CB",
+      "CDM"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 98,
+    "form": 7.73,
+    "value": 2400000
+  },
+  {
+    "firstName": "Kacper",
+    "lastName": "Potulski",
+    "nationality": "Germany",
+    "age": 25,
+    "stars": 1.5,
+    "potential": 3.5,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 99,
+    "form": 7.02,
+    "value": 1800000
+  },
+  {
+    "firstName": "Kaishu",
+    "lastName": "Sano",
+    "nationality": "Germany",
+    "age": 25,
+    "stars": 3,
+    "potential": 3,
+    "positions": [
+      "CDM"
+    ],
+    "playstyles": [
+      "anchor_man"
+    ],
+    "fitness": 99,
+    "form": 6.57,
+    "value": 3600000
+  },
+  {
+    "firstName": "Jase-sung",
+    "lastName": "Lee",
+    "nationality": "Germany",
+    "age": 26,
+    "stars": 3,
+    "potential": 3,
+    "positions": [
+      "CM",
+      "CAM"
+    ],
+    "playstyles": [
+      "box_to_box"
+    ],
+    "fitness": 94,
+    "form": 6.12,
+    "value": 3600000
+  },
+  {
+    "firstName": "Paul",
+    "lastName": "Nebel",
+    "nationality": "Germany",
+    "age": 24,
+    "stars": 2.5,
+    "potential": 3,
+    "positions": [
+      "CAM"
+    ],
+    "playstyles": [
+      "playmaker_cam"
+    ],
+    "fitness": 95,
+    "form": 7.03,
+    "value": 3000000
+  },
+  {
+    "firstName": "Nadiem",
+    "lastName": "Amiri",
+    "nationality": "Germany",
+    "age": 25,
+    "stars": 3.5,
+    "potential": 3.5,
+    "positions": [
+      "CM",
+      "CAM"
+    ],
+    "playstyles": [
+      "box_to_box"
+    ],
+    "fitness": 92,
+    "form": 7.91,
+    "value": 4200000
+  },
+  {
+    "firstName": "Lennard",
+    "lastName": "Maloney",
+    "nationality": "Germany",
+    "age": 24,
+    "stars": 1.5,
+    "potential": 2,
+    "positions": [
+      "CB",
+      "CDM"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 97,
+    "form": 6.2,
+    "value": 1800000
+  },
+  {
+    "firstName": "Nikolas",
+    "lastName": "Veratschnig",
+    "nationality": "Germany",
+    "age": 22,
+    "stars": 2,
+    "potential": 2.5,
+    "positions": [
+      "RWB",
+      "LWB"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 92,
+    "form": 6.2,
+    "value": 2400000
+  },
+  {
+    "firstName": "Silas",
+    "lastName": "Silas",
+    "nationality": "Germany",
+    "age": 19,
+    "stars": 2.5,
+    "potential": 3,
+    "positions": [
+      "ST",
+      "LW",
+      "RW"
+    ],
+    "playstyles": [
+      "poacher"
+    ],
+    "fitness": 93,
+    "form": 6.16,
+    "value": 3000000
+  },
+  {
+    "firstName": "Benedict",
+    "lastName": "Hollerbach",
+    "nationality": "Germany",
+    "age": 23,
+    "stars": 2,
+    "potential": 2.5,
+    "positions": [
+      "ST",
+      "LW",
+      "RW"
+    ],
+    "playstyles": [
+      "poacher"
+    ],
+    "fitness": 94,
+    "form": 7.02,
+    "value": 2400000
+  },
+  {
+    "firstName": "Phillip",
+    "lastName": "Tietz",
+    "nationality": "Germany",
+    "age": 20,
+    "stars": 2.5,
+    "potential": 2.5,
+    "positions": [
+      "ST"
+    ],
+    "playstyles": [
+      "poacher"
+    ],
+    "fitness": 90,
+    "form": 7.67,
+    "value": 3000000
+  },
+  {
+    "firstName": "Sheraldo",
+    "lastName": "Becker",
+    "nationality": "Germany",
+    "age": 21,
+    "stars": 2.5,
+    "potential": 3,
+    "positions": [
+      "ST",
+      "LW",
+      "RW"
+    ],
+    "playstyles": [
+      "poacher"
+    ],
+    "fitness": 93,
+    "form": 7.33,
+    "value": 3000000
+  },
+  {
+    "firstName": "Nelson",
+    "lastName": "Weiper",
+    "nationality": "Germany",
+    "age": 19,
+    "stars": 1.5,
+    "potential": 3,
+    "positions": [
+      "ST"
+    ],
+    "playstyles": [
+      "poacher"
+    ],
+    "fitness": 90,
+    "form": 7.12,
+    "value": 1800000
+  },
+  {
+    "firstName": "Gladbach",
+    "lastName": "Gladbach",
+    "nationality": "Germany",
+    "age": 23,
+    "stars": 3.6,
+    "potential": 4.7,
+    "positions": [
+      "CM"
+    ],
+    "playstyles": [
+      "box_to_box"
+    ],
+    "fitness": 98,
+    "form": 6.79,
+    "value": 4320000
+  },
+  {
+    "firstName": "Nicolas",
+    "lastName": "Nicolas",
+    "nationality": "Germany",
+    "age": 24,
+    "stars": 3,
+    "potential": 3,
+    "positions": [
+      "GK"
+    ],
+    "playstyles": [
+      "shot_stopper"
+    ],
+    "fitness": 99,
+    "form": 7.49,
+    "value": 3600000
+  },
+  {
+    "firstName": "Olschowsky",
+    "lastName": "Olschowsky",
+    "nationality": "Germany",
+    "age": 24,
+    "stars": 2,
+    "potential": 3,
+    "positions": [
+      "GK"
+    ],
+    "playstyles": [
+      "shot_stopper"
+    ],
+    "fitness": 95,
+    "form": 6.41,
+    "value": 2400000
+  },
+  {
+    "firstName": "Chiarodia",
+    "lastName": "Chiarodia",
+    "nationality": "Germany",
+    "age": 24,
+    "stars": 2,
+    "potential": 3,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 90,
+    "form": 6.35,
+    "value": 2400000
+  },
+  {
+    "firstName": "Kevin",
+    "lastName": "Diks",
+    "nationality": "Germany",
+    "age": 26,
+    "stars": 3,
+    "potential": 3.5,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 93,
+    "form": 7.22,
+    "value": 3600000
+  },
+  {
+    "firstName": "Kota",
+    "lastName": "Takai",
+    "nationality": "Germany",
+    "age": 18,
+    "stars": 2,
+    "potential": 2.5,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 98,
+    "form": 6.12,
+    "value": 2400000
+  },
+  {
+    "firstName": "Lukas",
+    "lastName": "Ulrich",
+    "nationality": "Germany",
+    "age": 22,
+    "stars": 2,
+    "potential": 3,
+    "positions": [
+      "LB",
+      "LWB"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 92,
+    "form": 6.95,
+    "value": 2400000
+  },
+  {
+    "firstName": "Joe",
+    "lastName": "Scally",
+    "nationality": "Germany",
+    "age": 23,
+    "stars": 2.5,
+    "potential": 3,
+    "positions": [
+      "RB",
+      "RWB"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 96,
+    "form": 7.32,
+    "value": 3000000
+  },
+  {
+    "firstName": "Nico",
+    "lastName": "Elvedi",
+    "nationality": "Germany",
+    "age": 24,
+    "stars": 3,
+    "potential": 3,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 96,
+    "form": 7.36,
+    "value": 3600000
+  },
+  {
+    "firstName": "Yannik",
+    "lastName": "Engelhardt",
+    "nationality": "Germany",
+    "age": 20,
+    "stars": 2,
+    "potential": 3,
+    "positions": [
+      "CDM"
+    ],
+    "playstyles": [
+      "anchor_man"
+    ],
+    "fitness": 90,
+    "form": 7.85,
+    "value": 2400000
+  },
+  {
+    "firstName": "Kevin",
+    "lastName": "Stöger",
+    "nationality": "Germany",
+    "age": 25,
+    "stars": 2.5,
+    "potential": 2.5,
+    "positions": [
+      "CAM",
+      "RW"
+    ],
+    "playstyles": [
+      "playmaker_cam"
+    ],
+    "fitness": 95,
+    "form": 6.82,
+    "value": 3000000
+  },
+  {
+    "firstName": "Franck",
+    "lastName": "Honorat",
+    "nationality": "Germany",
+    "age": 27,
+    "stars": 3,
+    "potential": 3,
+    "positions": [
+      "RWB",
+      "RW"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 92,
+    "form": 6.66,
+    "value": 3600000
+  },
+  {
+    "firstName": "Florian",
+    "lastName": "Neuhaus",
+    "nationality": "Germany",
+    "age": 18,
+    "stars": 2.5,
+    "potential": 3,
+    "positions": [
+      "CAM",
+      "CM"
+    ],
+    "playstyles": [
+      "playmaker_cam"
+    ],
+    "fitness": 91,
+    "form": 6.23,
+    "value": 3000000
+  },
+  {
+    "firstName": "Giovanni",
+    "lastName": "Reyna",
+    "nationality": "Germany",
+    "age": 19,
+    "stars": 2,
+    "potential": 3,
+    "positions": [
+      "CAM"
+    ],
+    "playstyles": [
+      "playmaker_cam"
+    ],
+    "fitness": 99,
+    "form": 6.01,
+    "value": 2400000
+  },
+  {
+    "firstName": "Phillip",
+    "lastName": "Sander",
+    "nationality": "Germany",
+    "age": 22,
+    "stars": 2.5,
+    "potential": 2.5,
+    "positions": [
+      "CB",
+      "CDM"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 91,
+    "form": 6.39,
+    "value": 3000000
+  },
+  {
+    "firstName": "Jens",
+    "lastName": "Castrop",
+    "nationality": "Germany",
+    "age": 20,
+    "stars": 2,
+    "potential": 3,
+    "positions": [
+      "LW",
+      "RW"
+    ],
+    "playstyles": [
+      "inside_forward"
+    ],
+    "fitness": 99,
+    "form": 7.41,
+    "value": 2400000
+  },
+  {
+    "firstName": "Robin",
+    "lastName": "Hack",
+    "nationality": "Germany",
+    "age": 18,
+    "stars": 2.5,
+    "potential": 3.5,
+    "positions": [
+      "CAM",
+      "RW",
+      "LW"
+    ],
+    "playstyles": [
+      "playmaker_cam"
+    ],
+    "fitness": 98,
+    "form": 7.34,
+    "value": 3000000
+  },
+  {
+    "firstName": "Rocco",
+    "lastName": "Reitz",
+    "nationality": "Germany",
+    "age": 27,
+    "stars": 3,
+    "potential": 4,
+    "positions": [
+      "CDM",
+      "CM"
+    ],
+    "playstyles": [
+      "dribbling_cm"
+    ],
+    "fitness": 98,
+    "form": 6.38,
+    "value": 3600000
+  },
+  {
+    "firstName": "Wael",
+    "lastName": "Mohya",
+    "nationality": "Germany",
+    "age": 23,
+    "stars": 1.5,
+    "potential": 4,
+    "positions": [
+      "CAM",
+      "LW",
+      "RW"
+    ],
+    "playstyles": [
+      "playmaker_cam"
+    ],
+    "fitness": 95,
+    "form": 7.27,
+    "value": 1800000
+  },
+  {
+    "firstName": "Hugo",
+    "lastName": "Bolin",
+    "nationality": "Germany",
+    "age": 22,
+    "stars": 1.5,
+    "potential": 3,
+    "positions": [
+      "LW",
+      "RW",
+      "CAM"
+    ],
+    "playstyles": [
+      "inside_forward"
+    ],
+    "fitness": 98,
+    "form": 6.4,
+    "value": 1800000
+  },
+  {
+    "firstName": "Tim",
+    "lastName": "Kleindienst",
+    "nationality": "Germany",
+    "age": 24,
+    "stars": 3,
+    "potential": 3,
+    "positions": [
+      "ST"
+    ],
+    "playstyles": [
+      "target_man"
+    ],
+    "fitness": 94,
+    "form": 6.81,
+    "value": 3600000
+  },
+  {
+    "firstName": "Haris",
+    "lastName": "Tabakovic",
+    "nationality": "Germany",
+    "age": 20,
+    "stars": 2.5,
+    "potential": 3,
+    "positions": [
+      "ST"
+    ],
+    "playstyles": [
+      "target_man"
+    ],
+    "fitness": 90,
+    "form": 7.89,
+    "value": 3000000
+  },
+  {
+    "firstName": "FC",
+    "lastName": "Bayern",
+    "nationality": "Germany",
+    "age": 23,
+    "stars": 1.9,
+    "potential": 3.1,
+    "positions": [
+      "CM"
+    ],
+    "playstyles": [
+      "box_to_box"
+    ],
+    "fitness": 97,
+    "form": 7.18,
+    "value": 2280000
+  },
+  {
+    "firstName": "Manuel",
+    "lastName": "Neuer",
+    "nationality": "Germany",
+    "age": 27,
+    "stars": 4.5,
+    "potential": 4.5,
+    "positions": [
+      "GK"
+    ],
+    "playstyles": [
+      "shot_stopper"
+    ],
+    "fitness": 97,
+    "form": 7.51,
+    "value": 5400000
+  },
+  {
+    "firstName": "Urbig",
+    "lastName": "Urbig",
+    "nationality": "Germany",
+    "age": 25,
+    "stars": 3,
+    "potential": 4,
+    "positions": [
+      "GK"
+    ],
+    "playstyles": [
+      "shot_stopper"
+    ],
+    "fitness": 98,
+    "form": 7.44,
+    "value": 3600000
+  },
+  {
+    "firstName": "Upamecano",
+    "lastName": "Upamecano",
+    "nationality": "Germany",
+    "age": 29,
+    "stars": 4.5,
+    "potential": 5,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "ball_playing_cb"
+    ],
+    "fitness": 90,
+    "form": 7.31,
+    "value": 5400000
+  },
+  {
+    "firstName": "Kim",
+    "lastName": "Kim",
+    "nationality": "Germany",
+    "age": 23,
+    "stars": 3,
+    "potential": 3,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 90,
+    "form": 6.96,
+    "value": 3600000
+  },
+  {
+    "firstName": "Tah",
+    "lastName": "Tah",
+    "nationality": "Germany",
+    "age": 29,
+    "stars": 4,
+    "potential": 4.5,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "ball_playing_cb"
+    ],
+    "fitness": 99,
+    "form": 7.94,
+    "value": 4800000
+  },
+  {
+    "firstName": "Davies",
+    "lastName": "Davies",
+    "nationality": "Germany",
+    "age": 22,
+    "stars": 3.5,
+    "potential": 4.5,
+    "positions": [
+      "LB",
+      "LWB"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 91,
+    "form": 6.04,
+    "value": 4200000
+  },
+  {
+    "firstName": "Ito",
+    "lastName": "Ito",
+    "nationality": "Germany",
+    "age": 20,
+    "stars": 2.5,
+    "potential": 3,
+    "positions": [
+      "LB",
+      "CB"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 93,
+    "form": 6.19,
+    "value": 3000000
+  },
+  {
+    "firstName": "Guerreiro",
+    "lastName": "Guerreiro",
+    "nationality": "Germany",
+    "age": 22,
+    "stars": 2.5,
+    "potential": 3,
+    "positions": [
+      "LB",
+      "LWB",
+      "CM",
+      "CAM"
+    ],
+    "playstyles": [
+      "inverted_fullback",
+      "control_cm",
+      "free_roamer"
+    ],
+    "fitness": 92,
+    "form": 6.58,
+    "value": 3000000
+  },
+  {
+    "firstName": "Stanisic",
+    "lastName": "Stanisic",
+    "nationality": "Germany",
+    "age": 25,
+    "stars": 3,
+    "potential": 4,
+    "positions": [
+      "CB",
+      "LB",
+      "RB"
+    ],
+    "playstyles": [
+      "stopper_cb",
+      "defensive_fullback"
+    ],
+    "fitness": 95,
+    "form": 7.77,
+    "value": 3600000
+  },
+  {
+    "firstName": "Kimmich",
+    "lastName": "Kimmich",
+    "nationality": "Germany",
+    "age": 29,
+    "stars": 5,
+    "potential": 5,
+    "positions": [
+      "CDM",
+      "RB"
+    ],
+    "playstyles": [
+      "deep_playmaker",
+      "inverted_fullback"
+    ],
+    "fitness": 93,
+    "form": 6.56,
+    "value": 6000000
+  },
+  {
+    "firstName": "Goretzka",
+    "lastName": "Goretzka",
+    "nationality": "Germany",
+    "age": 26,
+    "stars": 3,
+    "potential": 3,
+    "positions": [
+      "CDM",
+      "CM"
+    ],
+    "playstyles": [
+      "anchor_man",
+      "box_to_box"
+    ],
+    "fitness": 92,
+    "form": 6.21,
+    "value": 3600000
+  },
+  {
+    "firstName": "Musiala",
+    "lastName": "Musiala",
+    "nationality": "Germany",
+    "age": 27,
+    "stars": 4,
+    "potential": 5,
+    "positions": [
+      "CAM",
+      "LW"
+    ],
+    "playstyles": [
+      "dribbling_cam",
+      "inside_forward"
+    ],
+    "fitness": 99,
+    "form": 7.77,
+    "value": 4800000
+  },
+  {
+    "firstName": "Olise",
+    "lastName": "Olise",
+    "nationality": "Germany",
+    "age": 28,
+    "stars": 5,
+    "potential": 5,
+    "positions": [
+      "RW",
+      "CAM"
+    ],
+    "playstyles": [
+      "inside_forward",
+      "dribbling_cam"
+    ],
+    "fitness": 98,
+    "form": 6.95,
+    "value": 6000000
+  },
+  {
+    "firstName": "Bischof",
+    "lastName": "Bischof",
+    "nationality": "Germany",
+    "age": 20,
+    "stars": 2.5,
+    "potential": 4,
+    "positions": [
+      "LB",
+      "CM"
+    ],
+    "playstyles": [
+      "inverted_fullback",
+      "control_cm"
+    ],
+    "fitness": 97,
+    "form": 6.48,
+    "value": 3000000
+  },
+  {
+    "firstName": "Laimer",
+    "lastName": "Laimer",
+    "nationality": "Germany",
+    "age": 27,
+    "stars": 3.5,
+    "potential": 4,
+    "positions": [
+      "RB",
+      "CDM"
+    ],
+    "playstyles": [
+      "wingback",
+      "anchor_man"
+    ],
+    "fitness": 90,
+    "form": 7.12,
+    "value": 4200000
+  },
+  {
+    "firstName": "Karl",
+    "lastName": "Karl",
+    "nationality": "Germany",
+    "age": 26,
+    "stars": 3,
+    "potential": 4.5,
+    "positions": [
+      "RW",
+      "CAM"
+    ],
+    "playstyles": [
+      "dribbling_cam"
+    ],
+    "fitness": 90,
+    "form": 6.13,
+    "value": 3600000
+  },
+  {
+    "firstName": "Pavlovic",
+    "lastName": "Pavlovic",
+    "nationality": "Germany",
+    "age": 25,
+    "stars": 3.5,
+    "potential": 5,
+    "positions": [
+      "CDM",
+      "CM"
+    ],
+    "playstyles": [
+      "deep_playmaker",
+      "deep_playmaker"
+    ],
+    "fitness": 98,
+    "form": 6.72,
+    "value": 4200000
+  },
+  {
+    "firstName": "Gnabry",
+    "lastName": "Gnabry",
+    "nationality": "Germany",
+    "age": 29,
+    "stars": 4,
+    "potential": 4.5,
+    "positions": [
+      "ST",
+      "LW",
+      "CAM"
+    ],
+    "playstyles": [
+      "poacher",
+      "shadow_striker"
+    ],
+    "fitness": 97,
+    "form": 7.74,
+    "value": 4800000
+  },
+  {
+    "firstName": "Kane",
+    "lastName": "Kane",
+    "nationality": "Germany",
+    "age": 26,
+    "stars": 5,
+    "potential": 5,
+    "positions": [
+      "ST",
+      "CAM"
+    ],
+    "playstyles": [
+      "poacher",
+      "shadow_striker"
+    ],
+    "fitness": 96,
+    "form": 7.61,
+    "value": 6000000
+  },
+  {
+    "firstName": "Jackson",
+    "lastName": "Jackson",
+    "nationality": "Germany",
+    "age": 20,
+    "stars": 2.5,
+    "potential": 3.5,
+    "positions": [
+      "ST"
+    ],
+    "playstyles": [
+      "target_man"
+    ],
+    "fitness": 97,
+    "form": 6.99,
+    "value": 3000000
+  },
+  {
+    "firstName": "Diaz",
+    "lastName": "Diaz",
+    "nationality": "Germany",
+    "age": 27,
+    "stars": 5,
+    "potential": 5,
+    "positions": [
+      "LW"
+    ],
+    "playstyles": [
+      "dribble_winger"
+    ],
+    "fitness": 91,
+    "form": 6.63,
+    "value": 6000000
+  },
+  {
+    "firstName": "St",
+    "lastName": "Pauli",
+    "nationality": "Germany",
+    "age": 25,
+    "stars": 1.7,
+    "potential": 2.4,
+    "positions": [
+      "CM"
+    ],
+    "playstyles": [
+      "box_to_box"
+    ],
+    "fitness": 96,
+    "form": 7.84,
+    "value": 2040000
+  },
+  {
+    "firstName": "Vasilj",
+    "lastName": "Vasilj",
+    "nationality": "Germany",
+    "age": 19,
+    "stars": 2.5,
+    "potential": 3.2,
+    "positions": [
+      "GK"
+    ],
+    "playstyles": [
+      "shot_stopper"
+    ],
+    "fitness": 95,
+    "form": 6.91,
+    "value": 3000000
+  },
+  {
+    "firstName": "Saliakas",
+    "lastName": "Saliakas",
+    "nationality": "Germany",
+    "age": 19,
+    "stars": 2.3,
+    "potential": 3.2,
+    "positions": [
+      "RB",
+      "RWB"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 93,
+    "form": 6.44,
+    "value": 2760000
+  },
+  {
+    "firstName": "Mets",
+    "lastName": "Mets",
+    "nationality": "Germany",
+    "age": 25,
+    "stars": 2.1,
+    "potential": 2.8,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 99,
+    "form": 7.04,
+    "value": 2520000
+  },
+  {
+    "firstName": "Nemeth",
+    "lastName": "Nemeth",
+    "nationality": "Germany",
+    "age": 23,
+    "stars": 2.3,
+    "potential": 3.2,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 93,
+    "form": 7.98,
+    "value": 2760000
+  },
+  {
+    "firstName": "Wahl",
+    "lastName": "Wahl",
+    "nationality": "Germany",
+    "age": 25,
+    "stars": 2.2,
+    "potential": 2.6,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 91,
+    "form": 6.31,
+    "value": 2640000
+  },
+  {
+    "firstName": "Smith",
+    "lastName": "Smith",
+    "nationality": "Germany",
+    "age": 25,
+    "stars": 3,
+    "potential": 3,
+    "positions": [
+      "CB",
+      "CDM"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 90,
+    "form": 7.7,
+    "value": 3600000
+  },
+  {
+    "firstName": "Pyrka",
+    "lastName": "Pyrka",
+    "nationality": "Germany",
+    "age": 26,
+    "stars": 3.3,
+    "potential": 3.9,
+    "positions": [
+      "LB",
+      "LWB"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 90,
+    "form": 7.12,
+    "value": 3960000
+  },
+  {
+    "firstName": "Ando",
+    "lastName": "Ando",
+    "nationality": "Germany",
+    "age": 25,
+    "stars": 2.3,
+    "potential": 3.4,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 92,
+    "form": 6.29,
+    "value": 2760000
+  },
+  {
+    "firstName": "Ritzka",
+    "lastName": "Ritzka",
+    "nationality": "Germany",
+    "age": 23,
+    "stars": 3.7,
+    "potential": 4.3,
+    "positions": [
+      "CB",
+      "LB"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 93,
+    "form": 6.78,
+    "value": 4440000
+  },
+  {
+    "firstName": "Oppie",
+    "lastName": "Oppie",
+    "nationality": "Germany",
+    "age": 25,
+    "stars": 2.8,
+    "potential": 3.8,
+    "positions": [
+      "LWB",
+      "RWB"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 92,
+    "form": 6.79,
+    "value": 3360000
+  },
+  {
+    "firstName": "Dzwigala",
+    "lastName": "Dzwigala",
+    "nationality": "Germany",
+    "age": 21,
+    "stars": 2.3,
+    "potential": 3.1,
+    "positions": [
+      "CM"
+    ],
+    "playstyles": [
+      "box_to_box"
+    ],
+    "fitness": 90,
+    "form": 7.14,
+    "value": 2760000
+  },
+  {
+    "firstName": "sands",
+    "lastName": "sands",
+    "nationality": "Germany",
+    "age": 25,
+    "stars": 3.7,
+    "potential": 3.9,
+    "positions": [
+      "CM"
+    ],
+    "playstyles": [
+      "box_to_box"
+    ],
+    "fitness": 93,
+    "form": 7.21,
+    "value": 4440000
+  },
+  {
+    "firstName": "Irvine",
+    "lastName": "Irvine",
+    "nationality": "Germany",
+    "age": 25,
+    "stars": 3.8,
+    "potential": 4.5,
+    "positions": [
+      "CM"
+    ],
+    "playstyles": [
+      "box_to_box"
+    ],
+    "fitness": 98,
+    "form": 6.17,
+    "value": 4560000
+  },
+  {
+    "firstName": "Fujita",
+    "lastName": "Fujita",
+    "nationality": "Germany",
+    "age": 27,
+    "stars": 3.8,
+    "potential": 4.4,
+    "positions": [
+      "CM"
+    ],
+    "playstyles": [
+      "box_to_box"
+    ],
+    "fitness": 95,
+    "form": 7.32,
+    "value": 4560000
+  },
+  {
+    "firstName": "Metcalfe",
+    "lastName": "Metcalfe",
+    "nationality": "Germany",
+    "age": 25,
+    "stars": 3.4,
+    "potential": 3.6,
+    "positions": [
+      "CM"
+    ],
+    "playstyles": [
+      "box_to_box"
+    ],
+    "fitness": 99,
+    "form": 6.77,
+    "value": 4080000
+  },
+  {
+    "firstName": "Sinani",
+    "lastName": "Sinani",
+    "nationality": "Germany",
+    "age": 22,
+    "stars": 3.4,
+    "potential": 3.6,
+    "positions": [
+      "CM"
+    ],
+    "playstyles": [
+      "box_to_box"
+    ],
+    "fitness": 94,
+    "form": 6.24,
+    "value": 4080000
+  },
+  {
+    "firstName": "Kaars",
+    "lastName": "Kaars",
+    "nationality": "Germany",
+    "age": 19,
+    "stars": 2.7,
+    "potential": 3.7,
+    "positions": [
+      "CM"
+    ],
+    "playstyles": [
+      "box_to_box"
+    ],
+    "fitness": 95,
+    "form": 6.88,
+    "value": 3240000
+  },
+  {
+    "firstName": "Pereira",
+    "lastName": "Lage",
+    "nationality": "Germany",
+    "age": 19,
+    "stars": 2.1,
+    "potential": 3,
+    "positions": [
+      "CM"
+    ],
+    "playstyles": [
+      "box_to_box"
+    ],
+    "fitness": 97,
+    "form": 7.93,
+    "value": 2520000
+  },
+  {
+    "firstName": "Hountondji",
+    "lastName": "Hountondji",
+    "nationality": "Germany",
+    "age": 18,
+    "stars": 1.6,
+    "potential": 2.8,
+    "positions": [
+      "CM"
+    ],
+    "playstyles": [
+      "box_to_box"
+    ],
+    "fitness": 90,
+    "form": 6.98,
+    "value": 1920000
+  },
+  {
+    "firstName": "VFB",
+    "lastName": "Stuttgart",
+    "nationality": "Germany",
+    "age": 22,
+    "stars": 3.1,
+    "potential": 4.4,
+    "positions": [
+      "CM"
+    ],
+    "playstyles": [
+      "box_to_box"
+    ],
+    "fitness": 90,
+    "form": 7.27,
+    "value": 3720000
+  },
+  {
+    "firstName": "Alex",
+    "lastName": "Nübel",
+    "nationality": "Germany",
+    "age": 24,
+    "stars": 3.5,
+    "potential": 3.5,
+    "positions": [
+      "GK"
+    ],
+    "playstyles": [
+      "shot_stopper"
+    ],
+    "fitness": 99,
+    "form": 6.74,
+    "value": 4200000
+  },
+  {
+    "firstName": "Al-Dakhil",
+    "lastName": "Al-Dakhil",
+    "nationality": "Germany",
+    "age": 23,
+    "stars": 2,
+    "potential": 3,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 96,
+    "form": 7.36,
+    "value": 2400000
+  },
+  {
+    "firstName": "Hendriks",
+    "lastName": "Hendriks",
+    "nationality": "Germany",
+    "age": 25,
+    "stars": 2.5,
+    "potential": 4,
+    "positions": [
+      "CB",
+      "LB"
+    ],
+    "playstyles": [
+      "defensive_fullback"
+    ],
+    "fitness": 94,
+    "form": 7.39,
+    "value": 3000000
+  },
+  {
+    "firstName": "Vagnoman",
+    "lastName": "Vagnoman",
+    "nationality": "Germany",
+    "age": 23,
+    "stars": 2.5,
+    "potential": 2.5,
+    "positions": [
+      "RB",
+      "RWB"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 95,
+    "form": 7.29,
+    "value": 3000000
+  },
+  {
+    "firstName": "Mittelstädt",
+    "lastName": "Mittelstädt",
+    "nationality": "Germany",
+    "age": 26,
+    "stars": 3.5,
+    "potential": 3.5,
+    "positions": [
+      "LB",
+      "LWB"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 98,
+    "form": 7.06,
+    "value": 4200000
+  },
+  {
+    "firstName": "Jaquez",
+    "lastName": "Jaquez",
+    "nationality": "Germany",
+    "age": 24,
+    "stars": 2.5,
+    "potential": 3.5,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 99,
+    "form": 7.43,
+    "value": 3000000
+  },
+  {
+    "firstName": "Assignon",
+    "lastName": "Assignon",
+    "nationality": "Germany",
+    "age": 20,
+    "stars": 2,
+    "potential": 2.5,
+    "positions": [
+      "RB",
+      "RWB"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 90,
+    "form": 7.77,
+    "value": 2400000
+  },
+  {
+    "firstName": "Zagadou",
+    "lastName": "Zagadou",
+    "nationality": "Germany",
+    "age": 19,
+    "stars": 2,
+    "potential": 3,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 99,
+    "form": 6.83,
+    "value": 2400000
+  },
+  {
+    "firstName": "Chabot",
+    "lastName": "Chabot",
+    "nationality": "Germany",
+    "age": 25,
+    "stars": 3.5,
+    "potential": 3.5,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 92,
+    "form": 6.82,
+    "value": 4200000
+  },
+  {
+    "firstName": "Jeltsch",
+    "lastName": "Jeltsch",
+    "nationality": "Germany",
+    "age": 23,
+    "stars": 3,
+    "potential": 4.5,
+    "positions": [
+      "CB",
+      "RB"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 95,
+    "form": 6.17,
+    "value": 3600000
+  },
+  {
+    "firstName": "Stiller",
+    "lastName": "Stiller",
+    "nationality": "Germany",
+    "age": 26,
+    "stars": 3.5,
+    "potential": 4,
+    "positions": [
+      "CDM",
+      "CM"
+    ],
+    "playstyles": [
+      "deep_playmaker"
+    ],
+    "fitness": 99,
+    "form": 7.89,
+    "value": 4200000
+  },
+  {
+    "firstName": "Führich",
+    "lastName": "Führich",
+    "nationality": "Germany",
+    "age": 26,
+    "stars": 3,
+    "potential": 3,
+    "positions": [
+      "LW"
+    ],
+    "playstyles": [
+      "inside_forward"
+    ],
+    "fitness": 99,
+    "form": 7.88,
+    "value": 3600000
+  },
+  {
+    "firstName": "El",
+    "lastName": "Khannouss",
+    "nationality": "Germany",
+    "age": 18,
+    "stars": 2.5,
+    "potential": 4,
+    "positions": [
+      "CAM"
+    ],
+    "playstyles": [
+      "playmaker_cam"
+    ],
+    "fitness": 90,
+    "form": 6.6,
+    "value": 3000000
+  },
+  {
+    "firstName": "Karazor",
+    "lastName": "Karazor",
+    "nationality": "Germany",
+    "age": 19,
+    "stars": 2.5,
+    "potential": 2.5,
+    "positions": [
+      "CDM"
+    ],
+    "playstyles": [
+      "anchor_man"
+    ],
+    "fitness": 95,
+    "form": 7.78,
+    "value": 3000000
+  },
+  {
+    "firstName": "Nartey",
+    "lastName": "Nartey",
+    "nationality": "Germany",
+    "age": 19,
+    "stars": 2.5,
+    "potential": 3.5,
+    "positions": [
+      "CM",
+      "CAM"
+    ],
+    "playstyles": [
+      "dribbling_cm",
+      "dribbling_cam"
+    ],
+    "fitness": 97,
+    "form": 7.59,
+    "value": 3000000
+  },
+  {
+    "firstName": "Andres",
+    "lastName": "Chema",
+    "nationality": "Germany",
+    "age": 18,
+    "stars": 2.5,
+    "potential": 3.5,
+    "positions": [
+      "CDM"
+    ],
+    "playstyles": [
+      "deep_playmaker"
+    ],
+    "fitness": 90,
+    "form": 7.41,
+    "value": 3000000
+  },
+  {
+    "firstName": "Tomas",
+    "lastName": "Tomas",
+    "nationality": "Germany",
+    "age": 22,
+    "stars": 2.5,
+    "potential": 3,
+    "positions": [
+      "CAM"
+    ],
+    "playstyles": [
+      "shadow_striker"
+    ],
+    "fitness": 91,
+    "form": 7.83,
+    "value": 3000000
+  },
+  {
+    "firstName": "Demirovic",
+    "lastName": "Demirovic",
+    "nationality": "Germany",
+    "age": 24,
+    "stars": 3.5,
+    "potential": 3.5,
+    "positions": [
+      "ST"
+    ],
+    "playstyles": [
+      "target_man"
+    ],
+    "fitness": 99,
+    "form": 6.81,
+    "value": 4200000
+  },
+  {
+    "firstName": "Leweling",
+    "lastName": "Leweling",
+    "nationality": "Germany",
+    "age": 22,
+    "stars": 3.5,
+    "potential": 4,
+    "positions": [
+      "RWB",
+      "LWB",
+      "RW",
+      "LW"
+    ],
+    "playstyles": [
+      "wingback",
+      "inside_forward"
+    ],
+    "fitness": 91,
+    "form": 7.99,
+    "value": 4200000
+  },
+  {
+    "firstName": "Undav",
+    "lastName": "Undav",
+    "nationality": "Germany",
+    "age": 26,
+    "stars": 4,
+    "potential": 4,
+    "positions": [
+      "ST",
+      "CAM"
+    ],
+    "playstyles": [
+      "false_9",
+      "shadow_striker"
+    ],
+    "fitness": 91,
+    "form": 7.59,
+    "value": 4800000
+  },
+  {
+    "firstName": "Bounani",
+    "lastName": "Bounani",
+    "nationality": "Germany",
+    "age": 21,
+    "stars": 1.5,
+    "potential": 2.5,
+    "positions": [
+      "CAM"
+    ],
+    "playstyles": [
+      "dribbling_cam"
+    ],
+    "fitness": 98,
+    "form": 6.8,
+    "value": 1800000
+  },
+  {
+    "firstName": "Wolfsburg",
+    "lastName": "Wolfsburg",
+    "nationality": "Germany",
+    "age": 23,
+    "stars": 3.4,
+    "potential": 3.8,
+    "positions": [
+      "CM"
+    ],
+    "playstyles": [
+      "box_to_box"
+    ],
+    "fitness": 99,
+    "form": 6.59,
+    "value": 4080000
+  },
+  {
+    "firstName": "Grabara",
+    "lastName": "Grabara",
+    "nationality": "Germany",
+    "age": 23,
+    "stars": 3.2,
+    "potential": 4.5,
+    "positions": [
+      "GK"
+    ],
+    "playstyles": [
+      "shot_stopper"
+    ],
+    "fitness": 94,
+    "form": 7.74,
+    "value": 3840000
+  },
+  {
+    "firstName": "Fischer",
+    "lastName": "Fischer",
+    "nationality": "Germany",
+    "age": 19,
+    "stars": 2.8,
+    "potential": 3.1,
+    "positions": [
+      "RB"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 97,
+    "form": 6.79,
+    "value": 3360000
+  },
+  {
+    "firstName": "Vavro",
+    "lastName": "Vavro",
+    "nationality": "Germany",
+    "age": 26,
+    "stars": 3.5,
+    "potential": 4,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 93,
+    "form": 7.02,
+    "value": 4200000
+  },
+  {
+    "firstName": "Koulerakis",
+    "lastName": "Koulerakis",
+    "nationality": "Germany",
+    "age": 19,
+    "stars": 1.9,
+    "potential": 3.3,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 97,
+    "form": 7.94,
+    "value": 2280000
+  },
+  {
+    "firstName": "Belocian",
+    "lastName": "Belocian",
+    "nationality": "Germany",
+    "age": 25,
+    "stars": 1.9,
+    "potential": 2.8,
+    "positions": [
+      "LB",
+      "CB"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 98,
+    "form": 6.47,
+    "value": 2280000
+  },
+  {
+    "firstName": "Seelt",
+    "lastName": "Seelt",
+    "nationality": "Germany",
+    "age": 19,
+    "stars": 2.6,
+    "potential": 3.2,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 94,
+    "form": 7.14,
+    "value": 3120000
+  },
+  {
+    "firstName": "Jenz",
+    "lastName": "Jenz",
+    "nationality": "Germany",
+    "age": 21,
+    "stars": 2.7,
+    "potential": 3.7,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 98,
+    "form": 7.44,
+    "value": 3240000
+  },
+  {
+    "firstName": "Adjetey",
+    "lastName": "Adjetey",
+    "nationality": "Germany",
+    "age": 19,
+    "stars": 2.2,
+    "potential": 3.6,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 91,
+    "form": 6.62,
+    "value": 2640000
+  },
+  {
+    "firstName": "Maehle",
+    "lastName": "Maehle",
+    "nationality": "Germany",
+    "age": 25,
+    "stars": 2.8,
+    "potential": 3.3,
+    "positions": [
+      "LWB",
+      "LB"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 93,
+    "form": 7.42,
+    "value": 3360000
+  },
+  {
+    "firstName": "Kumbedi",
+    "lastName": "Kumbedi",
+    "nationality": "Germany",
+    "age": 22,
+    "stars": 1.9,
+    "potential": 2.6,
+    "positions": [
+      "RB"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 98,
+    "form": 7.25,
+    "value": 2280000
+  },
+  {
+    "firstName": "Majer",
+    "lastName": "Majer",
+    "nationality": "Germany",
+    "age": 19,
+    "stars": 2.7,
+    "potential": 3.9,
+    "positions": [
+      "CAM",
+      "CM"
+    ],
+    "playstyles": [
+      "playmaker_cam"
+    ],
+    "fitness": 99,
+    "form": 7.5,
+    "value": 3240000
+  },
+  {
+    "firstName": "Lindström",
+    "lastName": "Lindström",
+    "nationality": "Germany",
+    "age": 24,
+    "stars": 3.6,
+    "potential": 4.1,
+    "positions": [
+      "LW"
+    ],
+    "playstyles": [
+      "inside_forward"
+    ],
+    "fitness": 98,
+    "form": 7.42,
+    "value": 4320000
+  },
+  {
+    "firstName": "Eriksen",
+    "lastName": "Eriksen",
+    "nationality": "Germany",
+    "age": 22,
+    "stars": 3.5,
+    "potential": 3.9,
+    "positions": [
+      "CAM",
+      "CM"
+    ],
+    "playstyles": [
+      "playmaker_cam"
+    ],
+    "fitness": 91,
+    "form": 7.7,
+    "value": 4200000
+  },
+  {
+    "firstName": "Zehnter",
+    "lastName": "Zehnter",
+    "nationality": "Germany",
+    "age": 22,
+    "stars": 3.9,
+    "potential": 4.1,
+    "positions": [
+      "LB",
+      "LWB"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 94,
+    "form": 7.42,
+    "value": 4680000
+  },
+  {
+    "firstName": "Arnold",
+    "lastName": "Arnold",
+    "nationality": "Germany",
+    "age": 23,
+    "stars": 2.4,
+    "potential": 2.9,
+    "positions": [
+      "CDM",
+      "CM"
+    ],
+    "playstyles": [
+      "anchor_man"
+    ],
+    "fitness": 91,
+    "form": 6.39,
+    "value": 2880000
+  },
+  {
+    "firstName": "Gerhardt",
+    "lastName": "Gerhardt",
+    "nationality": "Germany",
+    "age": 26,
+    "stars": 3.4,
+    "potential": 4,
+    "positions": [
+      "LB",
+      "LWB",
+      "CDM",
+      "CM"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 96,
+    "form": 6.83,
+    "value": 4080000
+  },
+  {
+    "firstName": "Svanberg",
+    "lastName": "Svanberg",
+    "nationality": "Germany",
+    "age": 27,
+    "stars": 3.9,
+    "potential": 4.3,
+    "positions": [
+      "CM"
+    ],
+    "playstyles": [
+      "box_to_box"
+    ],
+    "fitness": 96,
+    "form": 7.78,
+    "value": 4680000
+  },
+  {
+    "firstName": "Werder",
+    "lastName": "Bremen",
+    "nationality": "Germany",
+    "age": 24,
+    "stars": 3.2,
+    "potential": 4.5,
+    "positions": [
+      "CM"
+    ],
+    "playstyles": [
+      "box_to_box"
+    ],
+    "fitness": 95,
+    "form": 7.17,
+    "value": 3840000
+  },
+  {
+    "firstName": "Backhaus",
+    "lastName": "Backhaus",
+    "nationality": "Germany",
+    "age": 24,
+    "stars": 2.5,
+    "potential": 3.5,
+    "positions": [
+      "GK"
+    ],
+    "playstyles": [
+      "shot_stopper"
+    ],
+    "fitness": 98,
+    "form": 7.03,
+    "value": 3000000
+  },
+  {
+    "firstName": "Deman",
+    "lastName": "Deman",
+    "nationality": "Germany",
+    "age": 25,
+    "stars": 2,
+    "potential": 3,
+    "positions": [
+      "LB",
+      "LWB"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 93,
+    "form": 6.42,
+    "value": 2400000
+  },
+  {
+    "firstName": "Sugawara",
+    "lastName": "Sugawara",
+    "nationality": "Germany",
+    "age": 23,
+    "stars": 2.5,
+    "potential": 2.5,
+    "positions": [
+      "RB",
+      "RWB"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 99,
+    "form": 6.27,
+    "value": 3000000
+  },
+  {
+    "firstName": "Stark",
+    "lastName": "Stark",
+    "nationality": "Germany",
+    "age": 22,
+    "stars": 2.5,
+    "potential": 2.5,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 99,
+    "form": 7.64,
+    "value": 3000000
+  },
+  {
+    "firstName": "Pieper",
+    "lastName": "Pieper",
+    "nationality": "Germany",
+    "age": 20,
+    "stars": 2.5,
+    "potential": 3,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 92,
+    "form": 7.6,
+    "value": 3000000
+  },
+  {
+    "firstName": "Weiser",
+    "lastName": "Weiser",
+    "nationality": "Germany",
+    "age": 24,
+    "stars": 3,
+    "potential": 3,
+    "positions": [
+      "RB",
+      "RWB"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 95,
+    "form": 6.01,
+    "value": 3600000
+  },
+  {
+    "firstName": "Malatini",
+    "lastName": "Malatini",
+    "nationality": "Germany",
+    "age": 25,
+    "stars": 1.5,
+    "potential": 3,
+    "positions": [
+      "RB"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 96,
+    "form": 6.86,
+    "value": 1800000
+  },
+  {
+    "firstName": "Schmidt",
+    "lastName": "Schmidt",
+    "nationality": "Germany",
+    "age": 18,
+    "stars": 1.5,
+    "potential": 1.5,
+    "positions": [
+      "LB",
+      "LWB"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 95,
+    "form": 6.54,
+    "value": 1800000
+  },
+  {
+    "firstName": "Agu",
+    "lastName": "Agu",
+    "nationality": "Germany",
+    "age": 21,
+    "stars": 2.5,
+    "potential": 2.5,
+    "positions": [
+      "LB",
+      "LWB"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 96,
+    "form": 6.42,
+    "value": 3000000
+  },
+  {
+    "firstName": "Coulibaly",
+    "lastName": "Coulibaly",
+    "nationality": "Germany",
+    "age": 25,
+    "stars": 2,
+    "potential": 4,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 98,
+    "form": 6.18,
+    "value": 2400000
+  },
+  {
+    "firstName": "Friedl",
+    "lastName": "Friedl",
+    "nationality": "Germany",
+    "age": 27,
+    "stars": 3,
+    "potential": 3,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 91,
+    "form": 6.54,
+    "value": 3600000
+  },
+  {
+    "firstName": "Wöber",
+    "lastName": "Wöber",
+    "nationality": "Germany",
+    "age": 25,
+    "stars": 2.5,
+    "potential": 2.5,
+    "positions": [
+      "CB",
+      "LB"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 91,
+    "form": 7,
+    "value": 3000000
+  },
+  {
+    "firstName": "Stage",
+    "lastName": "Stage",
+    "nationality": "Germany",
+    "age": 22,
+    "stars": 3,
+    "potential": 3,
+    "positions": [
+      "CDM",
+      "CM"
+    ],
+    "playstyles": [
+      "anchor_man"
+    ],
+    "fitness": 92,
+    "form": 7.14,
+    "value": 3600000
+  },
+  {
+    "firstName": "Bittencourt",
+    "lastName": "Bittencourt",
+    "nationality": "Germany",
+    "age": 19,
+    "stars": 2,
+    "potential": 2,
+    "positions": [
+      "CM"
+    ],
+    "playstyles": [
+      "box_to_box"
+    ],
+    "fitness": 94,
+    "form": 6.07,
+    "value": 2400000
+  },
+  {
+    "firstName": "Lynen",
+    "lastName": "Lynen",
+    "nationality": "Germany",
+    "age": 21,
+    "stars": 2,
+    "potential": 2.5,
+    "positions": [
+      "CM",
+      "CDM"
+    ],
+    "playstyles": [
+      "box_to_box"
+    ],
+    "fitness": 99,
+    "form": 7.96,
+    "value": 2400000
+  },
+  {
+    "firstName": "Puertas",
+    "lastName": "Puertas",
+    "nationality": "Germany",
+    "age": 18,
+    "stars": 2,
+    "potential": 2,
+    "positions": [
+      "CM",
+      "CAM"
+    ],
+    "playstyles": [
+      "box_to_box"
+    ],
+    "fitness": 99,
+    "form": 6.51,
+    "value": 2400000
+  },
+  {
+    "firstName": "Covic",
+    "lastName": "Covic",
+    "nationality": "Germany",
+    "age": 21,
+    "stars": 1.5,
+    "potential": 3,
+    "positions": [
+      "CM"
+    ],
+    "playstyles": [
+      "box_to_box"
+    ],
+    "fitness": 91,
+    "form": 7.91,
+    "value": 1800000
+  },
+  {
+    "firstName": "Mbangula",
+    "lastName": "Mbangula",
+    "nationality": "Germany",
+    "age": 22,
+    "stars": 1.5,
+    "potential": 3,
+    "positions": [
+      "LW"
+    ],
+    "playstyles": [
+      "inside_forward"
+    ],
+    "fitness": 95,
+    "form": 7.84,
+    "value": 1800000
+  },
+  {
+    "firstName": "Topp",
+    "lastName": "Topp",
+    "nationality": "Germany",
+    "age": 23,
+    "stars": 1.5,
+    "potential": 2,
+    "positions": [
+      "ST"
+    ],
+    "playstyles": [
+      "poacher"
+    ],
+    "fitness": 94,
+    "form": 6.24,
+    "value": 1800000
+  },
+  {
+    "firstName": "Njinmah",
+    "lastName": "Njinmah",
+    "nationality": "Germany",
+    "age": 18,
+    "stars": 2,
+    "potential": 2.5,
+    "positions": [
+      "RW",
+      "ST"
+    ],
+    "playstyles": [
+      "inside_forward"
+    ],
+    "fitness": 90,
+    "form": 6.49,
+    "value": 2400000
+  },
+  {
+    "firstName": "Grüll",
+    "lastName": "Grüll",
+    "nationality": "Germany",
+    "age": 19,
+    "stars": 2,
+    "potential": 2.5,
+    "positions": [
+      "LWB",
+      "RWB",
+      "ST"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 93,
+    "form": 7.05,
+    "value": 2400000
+  },
+  {
+    "firstName": "Milosevic",
+    "lastName": "Milosevic",
+    "nationality": "Germany",
+    "age": 20,
+    "stars": 2,
+    "potential": 3,
+    "positions": [
+      "ST"
+    ],
+    "playstyles": [
+      "poacher"
+    ],
+    "fitness": 92,
+    "form": 7.22,
+    "value": 2400000
+  },
+  {
+    "firstName": "Boniface",
+    "lastName": "Boniface",
+    "nationality": "Germany",
+    "age": 24,
+    "stars": 2.5,
+    "potential": 3,
+    "positions": [
+      "ST"
+    ],
+    "playstyles": [
+      "poacher"
+    ],
+    "fitness": 95,
+    "form": 7.58,
+    "value": 3000000
+  },
+  {
+    "firstName": "Dortmund",
+    "lastName": "Dortmund",
+    "nationality": "Germany",
+    "age": 22,
+    "stars": 1.6,
+    "potential": 2.3,
+    "positions": [
+      "CM"
+    ],
+    "playstyles": [
+      "box_to_box"
+    ],
+    "fitness": 97,
+    "form": 7.88,
+    "value": 1920000
+  },
+  {
+    "firstName": "Kobel",
+    "lastName": "Kobel",
+    "nationality": "Germany",
+    "age": 27,
+    "stars": 4.5,
+    "potential": 4.5,
+    "positions": [
+      "GK"
+    ],
+    "playstyles": [
+      "shot_stopper"
+    ],
+    "fitness": 98,
+    "form": 6.83,
+    "value": 5400000
+  },
+  {
+    "firstName": "Meyer",
+    "lastName": "Meyer",
+    "nationality": "Germany",
+    "age": 23,
+    "stars": 2,
+    "potential": 2,
+    "positions": [
+      "GK"
+    ],
+    "playstyles": [
+      "shot_stopper"
+    ],
+    "fitness": 92,
+    "form": 6.19,
+    "value": 2400000
+  },
+  {
+    "firstName": "Couto",
+    "lastName": "Couto",
+    "nationality": "Germany",
+    "age": 25,
+    "stars": 2.5,
+    "potential": 3.5,
+    "positions": [
+      "RWB",
+      "RB"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 92,
+    "form": 6.61,
+    "value": 3000000
+  },
+  {
+    "firstName": "Anton",
+    "lastName": "Anton",
+    "nationality": "Germany",
+    "age": 29,
+    "stars": 4,
+    "potential": 4,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 97,
+    "form": 7.54,
+    "value": 4800000
+  },
+  {
+    "firstName": "Schlotterbeck",
+    "lastName": "Schlotterbeck",
+    "nationality": "Germany",
+    "age": 28,
+    "stars": 4.5,
+    "potential": 5,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "ball_playing_cb"
+    ],
+    "fitness": 98,
+    "form": 6.79,
+    "value": 5400000
+  },
+  {
+    "firstName": "Bensebaini",
+    "lastName": "Bensebaini",
+    "nationality": "Germany",
+    "age": 19,
+    "stars": 2.5,
+    "potential": 2.5,
+    "positions": [
+      "CB",
+      "LB"
+    ],
+    "playstyles": [
+      "defensive_fullback"
+    ],
+    "fitness": 94,
+    "form": 6.15,
+    "value": 3000000
+  },
+  {
+    "firstName": "Svensson",
+    "lastName": "Svensson",
+    "nationality": "Germany",
+    "age": 24,
+    "stars": 3,
+    "potential": 3.5,
+    "positions": [
+      "LB",
+      "LWB"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 95,
+    "form": 6.43,
+    "value": 3600000
+  },
+  {
+    "firstName": "Süle",
+    "lastName": "Süle",
+    "nationality": "Germany",
+    "age": 22,
+    "stars": 3,
+    "potential": 3,
+    "positions": [
+      "CB",
+      "RB"
+    ],
+    "playstyles": [
+      "ball_playing_cb",
+      "defensive_fullback"
+    ],
+    "fitness": 93,
+    "form": 7.85,
+    "value": 3600000
+  },
+  {
+    "firstName": "Ryerson",
+    "lastName": "Ryerson",
+    "nationality": "Germany",
+    "age": 23,
+    "stars": 3.5,
+    "potential": 3.5,
+    "positions": [
+      "CM"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 90,
+    "form": 7.25,
+    "value": 4200000
+  },
+  {
+    "firstName": "Mane",
+    "lastName": "Mane",
+    "nationality": "Germany",
+    "age": 25,
+    "stars": 1.5,
+    "potential": 4,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "ball_playing_cb"
+    ],
+    "fitness": 91,
+    "form": 7.28,
+    "value": 1800000
+  },
+  {
+    "firstName": "Reggiani",
+    "lastName": "Reggiani",
+    "nationality": "Germany",
+    "age": 19,
+    "stars": 1,
+    "potential": 3.5,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "ball_playing_cb"
+    ],
+    "fitness": 95,
+    "form": 6.24,
+    "value": 1200000
+  },
+  {
+    "firstName": "Özcan",
+    "lastName": "Özcan",
+    "nationality": "Germany",
+    "age": 20,
+    "stars": 1.5,
+    "potential": 1.5,
+    "positions": [
+      "CM",
+      "CDM"
+    ],
+    "playstyles": [
+      "anchor_man"
+    ],
+    "fitness": 91,
+    "form": 6.58,
+    "value": 1800000
+  },
+  {
+    "firstName": "Bellingham",
+    "lastName": "Bellingham",
+    "nationality": "Germany",
+    "age": 27,
+    "stars": 3,
+    "potential": 4,
+    "positions": [
+      "CDM",
+      "CM"
+    ],
+    "playstyles": [
+      "anchor_man",
+      "box_to_box"
+    ],
+    "fitness": 99,
+    "form": 7.49,
+    "value": 3600000
+  },
+  {
+    "firstName": "Nmecha",
+    "lastName": "Nmecha",
+    "nationality": "Germany",
+    "age": 25,
+    "stars": 3.5,
+    "potential": 5,
+    "positions": [
+      "CDM",
+      "CM"
+    ],
+    "playstyles": [
+      "control_cm"
+    ],
+    "fitness": 99,
+    "form": 6.24,
+    "value": 4200000
+  },
+  {
+    "firstName": "Brandt",
+    "lastName": "Brandt",
+    "nationality": "Germany",
+    "age": 27,
+    "stars": 3.5,
+    "potential": 3.5,
+    "positions": [
+      "CAM"
+    ],
+    "playstyles": [
+      "free_roamer"
+    ],
+    "fitness": 90,
+    "form": 6.19,
+    "value": 4200000
+  },
+  {
+    "firstName": "Chukwuemeka",
+    "lastName": "Chukwuemeka",
+    "nationality": "Germany",
+    "age": 24,
+    "stars": 2.5,
+    "potential": 4,
+    "positions": [
+      "CM",
+      "CAM"
+    ],
+    "playstyles": [
+      "dribbling_cm",
+      "dribbling_cam"
+    ],
+    "fitness": 97,
+    "form": 6.93,
+    "value": 3000000
+  },
+  {
+    "firstName": "Sabitzer",
+    "lastName": "Sabitzer",
+    "nationality": "Germany",
+    "age": 24,
+    "stars": 3,
+    "potential": 3,
+    "positions": [
+      "CM",
+      "CDM"
+    ],
+    "playstyles": [
+      "box_to_box",
+      "anchor_man"
+    ],
+    "fitness": 98,
+    "form": 6.73,
+    "value": 3600000
+  },
+  {
+    "firstName": "Can",
+    "lastName": "Can",
+    "nationality": "Germany",
+    "age": 20,
+    "stars": 2.5,
+    "potential": 3,
+    "positions": [
+      "CB",
+      "CDM"
+    ],
+    "playstyles": [
+      "anchor_man"
+    ],
+    "fitness": 97,
+    "form": 7.78,
+    "value": 3000000
+  },
+  {
+    "firstName": "Guirassy",
+    "lastName": "Guirassy",
+    "nationality": "Germany",
+    "age": 26,
+    "stars": 4.5,
+    "potential": 4.5,
+    "positions": [
+      "ST"
+    ],
+    "playstyles": [
+      "target_man"
+    ],
+    "fitness": 96,
+    "form": 6.55,
+    "value": 5400000
+  },
+  {
+    "firstName": "Beier",
+    "lastName": "Beier",
+    "nationality": "Germany",
+    "age": 26,
+    "stars": 3,
+    "potential": 3.5,
+    "positions": [
+      "ST",
+      "RW"
+    ],
+    "playstyles": [
+      "speed_striker",
+      "inside_forward"
+    ],
+    "fitness": 96,
+    "form": 6.61,
+    "value": 3600000
+  },
+  {
+    "firstName": "Silva",
+    "lastName": "Silva",
+    "nationality": "Germany",
+    "age": 22,
+    "stars": 2.5,
+    "potential": 3.5,
+    "positions": [
+      "ST",
+      "CAM"
+    ],
+    "playstyles": [
+      "poacher",
+      "shadow_striker"
+    ],
+    "fitness": 97,
+    "form": 6.91,
+    "value": 3000000
+  },
+  {
+    "firstName": "Adeyemii",
+    "lastName": "Adeyemii",
+    "nationality": "Germany",
+    "age": 23,
+    "stars": 3,
+    "potential": 3.5,
+    "positions": [
+      "ST",
+      "RW",
+      "LW"
+    ],
+    "playstyles": [
+      "speed_striker",
+      "inside_forward"
+    ],
+    "fitness": 98,
+    "form": 6.63,
+    "value": 3600000
+  },
+  {
+    "firstName": "Inacio",
+    "lastName": "Inacio",
+    "nationality": "Germany",
+    "age": 20,
+    "stars": 1,
+    "potential": 4,
+    "positions": [
+      "CAM"
+    ],
+    "playstyles": [
+      "playmaker_cam"
+    ],
+    "fitness": 98,
+    "form": 7.49,
+    "value": 1200000
+  },
+  {
+    "firstName": "Frankfurt",
+    "lastName": "Frankfurt",
+    "nationality": "Germany",
+    "age": 26,
+    "stars": 3.9,
+    "potential": 4.9,
+    "positions": [
+      "CM"
+    ],
+    "playstyles": [
+      "box_to_box"
+    ],
+    "fitness": 94,
+    "form": 6.37,
+    "value": 4680000
+  },
+  {
+    "firstName": "Zetterer",
+    "lastName": "Zetterer",
+    "nationality": "Germany",
+    "age": 23,
+    "stars": 2.5,
+    "potential": 2.5,
+    "positions": [
+      "GK"
+    ],
+    "playstyles": [
+      "shot_stopper"
+    ],
+    "fitness": 99,
+    "form": 7.58,
+    "value": 3000000
+  },
+  {
+    "firstName": "Santos",
+    "lastName": "Santos",
+    "nationality": "Germany",
+    "age": 18,
+    "stars": 2.5,
+    "potential": 3.5,
+    "positions": [
+      "GK"
+    ],
+    "playstyles": [
+      "shot_stopper"
+    ],
+    "fitness": 98,
+    "form": 7.64,
+    "value": 3000000
+  },
+  {
+    "firstName": "Theate",
+    "lastName": "Theate",
+    "nationality": "Germany",
+    "age": 26,
+    "stars": 3.5,
+    "potential": 3.5,
+    "positions": [
+      "CB",
+      "LB"
+    ],
+    "playstyles": [
+      "ball_playing_cb"
+    ],
+    "fitness": 96,
+    "form": 7.74,
+    "value": 4200000
+  },
+  {
+    "firstName": "Koch",
+    "lastName": "Koch",
+    "nationality": "Germany",
+    "age": 24,
+    "stars": 3,
+    "potential": 3,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 97,
+    "form": 6.05,
+    "value": 3600000
+  },
+  {
+    "firstName": "Amenda",
+    "lastName": "Amenda",
+    "nationality": "Germany",
+    "age": 25,
+    "stars": 2.5,
+    "potential": 3.5,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 96,
+    "form": 6.14,
+    "value": 3000000
+  },
+  {
+    "firstName": "Kristensen",
+    "lastName": "Kristensen",
+    "nationality": "Germany",
+    "age": 26,
+    "stars": 3.5,
+    "potential": 3.5,
+    "positions": [
+      "RB",
+      "RWB"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 90,
+    "form": 7.22,
+    "value": 4200000
+  },
+  {
+    "firstName": "Brown",
+    "lastName": "Brown",
+    "nationality": "Germany",
+    "age": 27,
+    "stars": 3,
+    "potential": 4.5,
+    "positions": [
+      "LB",
+      "LWB"
+    ],
+    "playstyles": [
+      "inverted_fullback"
+    ],
+    "fitness": 96,
+    "form": 7.63,
+    "value": 3600000
+  },
+  {
+    "firstName": "Collins",
+    "lastName": "Collins",
+    "nationality": "Germany",
+    "age": 20,
+    "stars": 2.5,
+    "potential": 3.5,
+    "positions": [
+      "RB",
+      "CB"
+    ],
+    "playstyles": [
+      "defensive_fullback"
+    ],
+    "fitness": 96,
+    "form": 6.72,
+    "value": 3000000
+  },
+  {
+    "firstName": "Höjlund",
+    "lastName": "Höjlund",
+    "nationality": "Germany",
+    "age": 21,
+    "stars": 2.5,
+    "potential": 3.5,
+    "positions": [
+      "CDM",
+      "CM"
+    ],
+    "playstyles": [
+      "anchor_man"
+    ],
+    "fitness": 99,
+    "form": 6.31,
+    "value": 3000000
+  },
+  {
+    "firstName": "Chaibi",
+    "lastName": "Chaibi",
+    "nationality": "Germany",
+    "age": 24,
+    "stars": 2.5,
+    "potential": 3.5,
+    "positions": [
+      "CAM",
+      "CM"
+    ],
+    "playstyles": [
+      "playmaker_cam"
+    ],
+    "fitness": 99,
+    "form": 7.73,
+    "value": 3000000
+  },
+  {
+    "firstName": "Skhiri",
+    "lastName": "Skhiri",
+    "nationality": "Germany",
+    "age": 24,
+    "stars": 2.5,
+    "potential": 2.5,
+    "positions": [
+      "CB",
+      "CDM"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 92,
+    "form": 7.67,
+    "value": 3000000
+  },
+  {
+    "firstName": "Larsson",
+    "lastName": "Larsson",
+    "nationality": "Germany",
+    "age": 24,
+    "stars": 2.5,
+    "potential": 3.5,
+    "positions": [
+      "CDM",
+      "CM"
+    ],
+    "playstyles": [
+      "anchor_man"
+    ],
+    "fitness": 98,
+    "form": 6.96,
+    "value": 3000000
+  },
+  {
+    "firstName": "Dahoud",
+    "lastName": "Dahoud",
+    "nationality": "Germany",
+    "age": 24,
+    "stars": 2.5,
+    "potential": 2.5,
+    "positions": [
+      "CDM",
+      "CM"
+    ],
+    "playstyles": [
+      "anchor_man"
+    ],
+    "fitness": 91,
+    "form": 6.93,
+    "value": 3000000
+  },
+  {
+    "firstName": "Doan",
+    "lastName": "Doan",
+    "nationality": "Germany",
+    "age": 23,
+    "stars": 3,
+    "potential": 3,
+    "positions": [
+      "RWB",
+      "RW"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 98,
+    "form": 7.2,
+    "value": 3600000
+  },
+  {
+    "firstName": "Götze",
+    "lastName": "Götze",
+    "nationality": "Germany",
+    "age": 27,
+    "stars": 3,
+    "potential": 3,
+    "positions": [
+      "CM",
+      "CAM"
+    ],
+    "playstyles": [
+      "box_to_box"
+    ],
+    "fitness": 95,
+    "form": 7.27,
+    "value": 3600000
+  },
+  {
+    "firstName": "Uzun",
+    "lastName": "Uzun",
+    "nationality": "Germany",
+    "age": 23,
+    "stars": 3,
+    "potential": 4,
+    "positions": [
+      "ST",
+      "CAM"
+    ],
+    "playstyles": [
+      "false_9",
+      "shadow_striker"
+    ],
+    "fitness": 98,
+    "form": 7.03,
+    "value": 3600000
+  },
+  {
+    "firstName": "Knauff",
+    "lastName": "Knauff",
+    "nationality": "Germany",
+    "age": 23,
+    "stars": 3,
+    "potential": 3,
+    "positions": [
+      "RWB",
+      "RW",
+      "LWB",
+      "LW",
+      "ST"
+    ],
+    "playstyles": [
+      "wingback",
+      "crossing_winger"
+    ],
+    "fitness": 96,
+    "form": 6.07,
+    "value": 3600000
+  },
+  {
+    "firstName": "Burkardt",
+    "lastName": "Burkardt",
+    "nationality": "Germany",
+    "age": 23,
+    "stars": 3.5,
+    "potential": 4,
+    "positions": [
+      "ST"
+    ],
+    "playstyles": [
+      "poacher"
+    ],
+    "fitness": 93,
+    "form": 7.2,
+    "value": 4200000
+  },
+  {
+    "firstName": "Ebnoutalib",
+    "lastName": "Ebnoutalib",
+    "nationality": "Germany",
+    "age": 23,
+    "stars": 3,
+    "potential": 3,
+    "positions": [
+      "ST",
+      "CAM"
+    ],
+    "playstyles": [
+      "poacher",
+      "shadow_striker"
+    ],
+    "fitness": 96,
+    "form": 7.4,
+    "value": 3600000
+  },
+  {
+    "firstName": "Bahoya",
+    "lastName": "Bahoya",
+    "nationality": "Germany",
+    "age": 22,
+    "stars": 2.5,
+    "potential": 4,
+    "positions": [
+      "LW"
+    ],
+    "playstyles": [
+      "dribble_winger"
+    ],
+    "fitness": 97,
+    "form": 7.97,
+    "value": 3000000
+  },
+  {
+    "firstName": "Kalimuendo",
+    "lastName": "Kalimuendo",
+    "nationality": "Germany",
+    "age": 22,
+    "stars": 3,
+    "potential": 3.5,
+    "positions": [
+      "ST",
+      "RW"
+    ],
+    "playstyles": [
+      "speed_striker"
+    ],
+    "fitness": 98,
+    "form": 7.56,
+    "value": 3600000
+  },
+  {
+    "firstName": "Amaimouni",
+    "lastName": "Amaimouni",
+    "nationality": "Germany",
+    "age": 25,
+    "stars": 2,
+    "potential": 3.5,
+    "positions": [
+      "RW"
+    ],
+    "playstyles": [
+      "dribble_winger"
+    ],
+    "fitness": 95,
+    "form": 7.53,
+    "value": 2400000
+  },
+  {
+    "firstName": "Freiburg",
+    "lastName": "Freiburg",
+    "nationality": "Germany",
+    "age": 19,
+    "stars": 1.8,
+    "potential": 2.9,
+    "positions": [
+      "CM"
+    ],
+    "playstyles": [
+      "box_to_box"
+    ],
+    "fitness": 96,
+    "form": 6.94,
+    "value": 2160000
+  },
+  {
+    "firstName": "Atubolu",
+    "lastName": "Atubolu",
+    "nationality": "Germany",
+    "age": 25,
+    "stars": 3,
+    "potential": 4.5,
+    "positions": [
+      "GK"
+    ],
+    "playstyles": [
+      "shot_stopper"
+    ],
+    "fitness": 96,
+    "form": 7.49,
+    "value": 3600000
+  },
+  {
+    "firstName": "Lienhart",
+    "lastName": "Lienhart",
+    "nationality": "Germany",
+    "age": 27,
+    "stars": 3,
+    "potential": 3,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 90,
+    "form": 6.1,
+    "value": 3600000
+  },
+  {
+    "firstName": "Jung",
+    "lastName": "Jung",
+    "nationality": "Germany",
+    "age": 25,
+    "stars": 2,
+    "potential": 2,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 93,
+    "form": 6.31,
+    "value": 2400000
+  },
+  {
+    "firstName": "Kübler",
+    "lastName": "Kübler",
+    "nationality": "Germany",
+    "age": 26,
+    "stars": 3,
+    "potential": 3,
+    "positions": [
+      "RB",
+      "RWB"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 93,
+    "form": 6.29,
+    "value": 3600000
+  },
+  {
+    "firstName": "Ginter",
+    "lastName": "Ginter",
+    "nationality": "Germany",
+    "age": 25,
+    "stars": 3.5,
+    "potential": 3.5,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 99,
+    "form": 7.71,
+    "value": 4200000
+  },
+  {
+    "firstName": "Treu",
+    "lastName": "Treu",
+    "nationality": "Germany",
+    "age": 25,
+    "stars": 3,
+    "potential": 3,
+    "positions": [
+      "LW",
+      "RW",
+      "LWB",
+      "RWB"
+    ],
+    "playstyles": [
+      "inside_forward"
+    ],
+    "fitness": 96,
+    "form": 7.03,
+    "value": 3600000
+  },
+  {
+    "firstName": "Günter",
+    "lastName": "Günter",
+    "nationality": "Germany",
+    "age": 25,
+    "stars": 3,
+    "potential": 3,
+    "positions": [
+      "LB",
+      "LWB"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 91,
+    "form": 7.12,
+    "value": 3600000
+  },
+  {
+    "firstName": "Makengo",
+    "lastName": "Makengo",
+    "nationality": "Germany",
+    "age": 18,
+    "stars": 1.5,
+    "potential": 3,
+    "positions": [
+      "LB",
+      "LWB"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 94,
+    "form": 6.78,
+    "value": 1800000
+  },
+  {
+    "firstName": "Rosenfelder",
+    "lastName": "Rosenfelder",
+    "nationality": "Germany",
+    "age": 20,
+    "stars": 1.5,
+    "potential": 3,
+    "positions": [
+      "RB",
+      "CB"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 99,
+    "form": 6.87,
+    "value": 1800000
+  },
+  {
+    "firstName": "Ogbus",
+    "lastName": "Ogbus",
+    "nationality": "Germany",
+    "age": 23,
+    "stars": 1.5,
+    "potential": 3,
+    "positions": [
+      "CB",
+      "RB"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 95,
+    "form": 6.68,
+    "value": 1800000
+  },
+  {
+    "firstName": "Osterhage",
+    "lastName": "Osterhage",
+    "nationality": "Germany",
+    "age": 18,
+    "stars": 2,
+    "potential": 2,
+    "positions": [
+      "CDM"
+    ],
+    "playstyles": [
+      "anchor_man"
+    ],
+    "fitness": 97,
+    "form": 6.59,
+    "value": 2400000
+  },
+  {
+    "firstName": "Eggestein",
+    "lastName": "Eggestein",
+    "nationality": "Germany",
+    "age": 19,
+    "stars": 2.5,
+    "potential": 2.5,
+    "positions": [
+      "CM"
+    ],
+    "playstyles": [
+      "box_to_box"
+    ],
+    "fitness": 97,
+    "form": 7.2,
+    "value": 3000000
+  },
+  {
+    "firstName": "Suzuki",
+    "lastName": "Suzuki",
+    "nationality": "Germany",
+    "age": 20,
+    "stars": 2.5,
+    "potential": 3,
+    "positions": [
+      "CAM"
+    ],
+    "playstyles": [
+      "playmaker_cam"
+    ],
+    "fitness": 93,
+    "form": 7.53,
+    "value": 3000000
+  },
+  {
+    "firstName": "Beste",
+    "lastName": "Beste",
+    "nationality": "Germany",
+    "age": 22,
+    "stars": 2.5,
+    "potential": 2.5,
+    "positions": [
+      "RW",
+      "RWB"
+    ],
+    "playstyles": [
+      "inside_forward"
+    ],
+    "fitness": 97,
+    "form": 7.94,
+    "value": 3000000
+  },
+  {
+    "firstName": "Höfler",
+    "lastName": "Höfler",
+    "nationality": "Germany",
+    "age": 19,
+    "stars": 1.5,
+    "potential": 1.5,
+    "positions": [
+      "CDM"
+    ],
+    "playstyles": [
+      "anchor_man"
+    ],
+    "fitness": 96,
+    "form": 6.1,
+    "value": 1800000
+  },
+  {
+    "firstName": "Grifo",
+    "lastName": "Grifo",
+    "nationality": "Germany",
+    "age": 26,
+    "stars": 3.5,
+    "potential": 3.5,
+    "positions": [
+      "LW",
+      "CAM"
+    ],
+    "playstyles": [
+      "inside_forward"
+    ],
+    "fitness": 90,
+    "form": 6.56,
+    "value": 4200000
+  },
+  {
+    "firstName": "Manzambi",
+    "lastName": "Manzambi",
+    "nationality": "Germany",
+    "age": 21,
+    "stars": 2.5,
+    "potential": 4,
+    "positions": [
+      "LW",
+      "CAM",
+      "CM"
+    ],
+    "playstyles": [
+      "inside_forward"
+    ],
+    "fitness": 95,
+    "form": 7.17,
+    "value": 3000000
+  },
+  {
+    "firstName": "Scherhant",
+    "lastName": "Scherhant",
+    "nationality": "Germany",
+    "age": 19,
+    "stars": 2,
+    "potential": 3,
+    "positions": [
+      "LW"
+    ],
+    "playstyles": [
+      "inside_forward"
+    ],
+    "fitness": 94,
+    "form": 6.58,
+    "value": 2400000
+  },
+  {
+    "firstName": "Höler",
+    "lastName": "Höler",
+    "nationality": "Germany",
+    "age": 22,
+    "stars": 2.5,
+    "potential": 2.5,
+    "positions": [
+      "ST"
+    ],
+    "playstyles": [
+      "poacher"
+    ],
+    "fitness": 90,
+    "form": 6.7,
+    "value": 3000000
+  },
+  {
+    "firstName": "Irie",
+    "lastName": "Irie",
+    "nationality": "Germany",
+    "age": 25,
+    "stars": 1.5,
+    "potential": 2.5,
+    "positions": [
+      "RW"
+    ],
+    "playstyles": [
+      "inside_forward"
+    ],
+    "fitness": 93,
+    "form": 6.61,
+    "value": 1800000
+  },
+  {
+    "firstName": "Matanovic",
+    "lastName": "Matanovic",
+    "nationality": "Germany",
+    "age": 22,
+    "stars": 2.5,
+    "potential": 3,
+    "positions": [
+      "ST"
+    ],
+    "playstyles": [
+      "poacher"
+    ],
+    "fitness": 93,
+    "form": 6.08,
+    "value": 3000000
+  },
+  {
+    "firstName": "HSV",
+    "lastName": "HSV",
+    "nationality": "Germany",
+    "age": 21,
+    "stars": 1.5,
+    "potential": 2.1,
+    "positions": [
+      "CM"
+    ],
+    "playstyles": [
+      "box_to_box"
+    ],
+    "fitness": 95,
+    "form": 7.7,
+    "value": 1800000
+  },
+  {
+    "firstName": "Heuer",
+    "lastName": "Fernandes",
+    "nationality": "Germany",
+    "age": 24,
+    "stars": 3,
+    "potential": 3,
+    "positions": [
+      "GK"
+    ],
+    "playstyles": [
+      "shot_stopper"
+    ],
+    "fitness": 98,
+    "form": 6.19,
+    "value": 3600000
+  },
+  {
+    "firstName": "Mikelbrencis",
+    "lastName": "Mikelbrencis",
+    "nationality": "Germany",
+    "age": 23,
+    "stars": 2.5,
+    "potential": 3,
+    "positions": [
+      "CM"
+    ],
+    "playstyles": [
+      "box_to_box"
+    ],
+    "fitness": 91,
+    "form": 6.33,
+    "value": 3000000
+  },
+  {
+    "firstName": "Gocholeishvili",
+    "lastName": "Gocholeishvili",
+    "nationality": "Germany",
+    "age": 20,
+    "stars": 2.5,
+    "potential": 2.6,
+    "positions": [
+      "RWB"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 97,
+    "form": 7.8,
+    "value": 3000000
+  },
+  {
+    "firstName": "Torunarigha",
+    "lastName": "Torunarigha",
+    "nationality": "Germany",
+    "age": 19,
+    "stars": 2.5,
+    "potential": 3.5,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 92,
+    "form": 7.63,
+    "value": 3000000
+  },
+  {
+    "firstName": "Muheim",
+    "lastName": "Muheim",
+    "nationality": "Germany",
+    "age": 22,
+    "stars": 3,
+    "potential": 3.5,
+    "positions": [
+      "LB",
+      "LWB"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 92,
+    "form": 7.95,
+    "value": 3600000
+  },
+  {
+    "firstName": "Vuskovic",
+    "lastName": "Vuskovic",
+    "nationality": "Germany",
+    "age": 22,
+    "stars": 3.5,
+    "potential": 5,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 94,
+    "form": 6.25,
+    "value": 4200000
+  },
+  {
+    "firstName": "Lokonga",
+    "lastName": "Lokonga",
+    "nationality": "Germany",
+    "age": 23,
+    "stars": 3.3,
+    "potential": 4.7,
+    "positions": [
+      "CDM",
+      "CM"
+    ],
+    "playstyles": [
+      "anchor_man"
+    ],
+    "fitness": 97,
+    "form": 7.87,
+    "value": 3960000
+  },
+  {
+    "firstName": "Elfadli",
+    "lastName": "Elfadli",
+    "nationality": "Germany",
+    "age": 24,
+    "stars": 2.8,
+    "potential": 2.9,
+    "positions": [
+      "CDM",
+      "CB"
+    ],
+    "playstyles": [
+      "anchor_man"
+    ],
+    "fitness": 98,
+    "form": 6.71,
+    "value": 3360000
+  },
+  {
+    "firstName": "Vieira",
+    "lastName": "Vieira",
+    "nationality": "Germany",
+    "age": 23,
+    "stars": 3.5,
+    "potential": 4,
+    "positions": [
+      "CM",
+      "CAM",
+      "RW"
+    ],
+    "playstyles": [
+      "box_to_box"
+    ],
+    "fitness": 96,
+    "form": 7.6,
+    "value": 4200000
+  },
+  {
+    "firstName": "Remberg",
+    "lastName": "Remberg",
+    "nationality": "Germany",
+    "age": 20,
+    "stars": 2.2,
+    "potential": 2.9,
+    "positions": [
+      "CDM"
+    ],
+    "playstyles": [
+      "anchor_man"
+    ],
+    "fitness": 97,
+    "form": 7.82,
+    "value": 2640000
+  },
+  {
+    "firstName": "Capaldo",
+    "lastName": "Capaldo",
+    "nationality": "Germany",
+    "age": 25,
+    "stars": 3.2,
+    "potential": 3.5,
+    "positions": [
+      "CB",
+      "CDM",
+      "RB"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 99,
+    "form": 6.25,
+    "value": 3840000
+  },
+  {
+    "firstName": "Dompe",
+    "lastName": "Dompe",
+    "nationality": "Germany",
+    "age": 22,
+    "stars": 3.9,
+    "potential": 4.6,
+    "positions": [
+      "LW"
+    ],
+    "playstyles": [
+      "inside_forward"
+    ],
+    "fitness": 95,
+    "form": 7.8,
+    "value": 4680000
+  },
+  {
+    "firstName": "Glatzel",
+    "lastName": "Glatzel",
+    "nationality": "Germany",
+    "age": 25,
+    "stars": 3.3,
+    "potential": 4.6,
+    "positions": [
+      "ST"
+    ],
+    "playstyles": [
+      "poacher"
+    ],
+    "fitness": 96,
+    "form": 6.46,
+    "value": 3960000
+  },
+  {
+    "firstName": "Königsdörffer",
+    "lastName": "Königsdörffer",
+    "nationality": "Germany",
+    "age": 24,
+    "stars": 3.2,
+    "potential": 3.9,
+    "positions": [
+      "ST",
+      "LW"
+    ],
+    "playstyles": [
+      "poacher"
+    ],
+    "fitness": 92,
+    "form": 6.55,
+    "value": 3840000
+  },
+  {
+    "firstName": "Phillipe",
+    "lastName": "Phillipe",
+    "nationality": "Germany",
+    "age": 24,
+    "stars": 3.9,
+    "potential": 5,
+    "positions": [
+      "RW",
+      "LW",
+      "ST"
+    ],
+    "playstyles": [
+      "inside_forward"
+    ],
+    "fitness": 96,
+    "form": 6.4,
+    "value": 4680000
+  },
+  {
+    "firstName": "Poulsen",
+    "lastName": "Poulsen",
+    "nationality": "Germany",
+    "age": 24,
+    "stars": 1.7,
+    "potential": 2.9,
+    "positions": [
+      "ST"
+    ],
+    "playstyles": [
+      "poacher"
+    ],
+    "fitness": 99,
+    "form": 6.39,
+    "value": 2040000
+  },
+  {
+    "firstName": "Jatta",
+    "lastName": "Jatta",
+    "nationality": "Germany",
+    "age": 24,
+    "stars": 3.7,
+    "potential": 3.9,
+    "positions": [
+      "RWB",
+      "RW"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 91,
+    "form": 6.73,
+    "value": 4440000
+  },
+  {
+    "firstName": "Downs",
+    "lastName": "Downs",
+    "nationality": "Germany",
+    "age": 26,
+    "stars": 3.6,
+    "potential": 4.7,
+    "positions": [
+      "ST"
+    ],
+    "playstyles": [
+      "poacher"
+    ],
+    "fitness": 90,
+    "form": 6.35,
+    "value": 4320000
+  },
+  {
+    "firstName": "Otele",
+    "lastName": "Otele",
+    "nationality": "Germany",
+    "age": 27,
+    "stars": 3.4,
+    "potential": 4.1,
+    "positions": [
+      "LW"
+    ],
+    "playstyles": [
+      "inside_forward"
+    ],
+    "fitness": 97,
+    "form": 6.8,
+    "value": 4080000
+  },
+  {
+    "firstName": "Rössing-Lelesiit",
+    "lastName": "Rössing-Lelesiit",
+    "nationality": "Germany",
+    "age": 24,
+    "stars": 2.5,
+    "potential": 2.5,
+    "positions": [
+      "LW",
+      "RW"
+    ],
+    "playstyles": [
+      "inside_forward"
+    ],
+    "fitness": 91,
+    "form": 6.15,
+    "value": 3000000
+  },
+  {
+    "firstName": "Balde",
+    "lastName": "Balde",
+    "nationality": "Germany",
+    "age": 24,
+    "stars": 3.6,
+    "potential": 4.2,
+    "positions": [
+      "LW",
+      "RW"
+    ],
+    "playstyles": [
+      "inside_forward"
+    ],
+    "fitness": 94,
+    "form": 7.49,
+    "value": 4320000
+  },
+  {
+    "firstName": "Stange",
+    "lastName": "Stange",
+    "nationality": "Germany",
+    "age": 24,
+    "stars": 3.3,
+    "potential": 4.7,
+    "positions": [
+      "ST"
+    ],
+    "playstyles": [
+      "poacher"
+    ],
+    "fitness": 97,
+    "form": 6.17,
+    "value": 3960000
+  },
+  {
+    "firstName": "Heidenheim",
+    "lastName": "Heidenheim",
+    "nationality": "Germany",
+    "age": 23,
+    "stars": 2.8,
+    "potential": 3.2,
+    "positions": [
+      "CM"
+    ],
+    "playstyles": [
+      "box_to_box"
+    ],
+    "fitness": 91,
+    "form": 7.72,
+    "value": 3360000
+  },
+  {
+    "firstName": "Ramaj",
+    "lastName": "Ramaj",
+    "nationality": "Germany",
+    "age": 20,
+    "stars": 2.9,
+    "potential": 4.2,
+    "positions": [
+      "GK"
+    ],
+    "playstyles": [
+      "shot_stopper"
+    ],
+    "fitness": 96,
+    "form": 6.2,
+    "value": 3480000
+  },
+  {
+    "firstName": "Busch",
+    "lastName": "Busch",
+    "nationality": "Germany",
+    "age": 21,
+    "stars": 2.6,
+    "potential": 3.9,
+    "positions": [
+      "RB",
+      "RWB"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 98,
+    "form": 7.63,
+    "value": 3120000
+  },
+  {
+    "firstName": "Gimber",
+    "lastName": "Gimber",
+    "nationality": "Germany",
+    "age": 24,
+    "stars": 3.1,
+    "potential": 3.6,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 96,
+    "form": 7.32,
+    "value": 3720000
+  },
+  {
+    "firstName": "Mainka",
+    "lastName": "Mainka",
+    "nationality": "Germany",
+    "age": 21,
+    "stars": 2,
+    "potential": 2,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 98,
+    "form": 6.68,
+    "value": 2400000
+  },
+  {
+    "firstName": "Föhrenbach",
+    "lastName": "Föhrenbach",
+    "nationality": "Germany",
+    "age": 21,
+    "stars": 2.8,
+    "potential": 2.9,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 92,
+    "form": 7.28,
+    "value": 3360000
+  },
+  {
+    "firstName": "Traoroe",
+    "lastName": "Traoroe",
+    "nationality": "Germany",
+    "age": 27,
+    "stars": 3.9,
+    "potential": 4.7,
+    "positions": [
+      "RB",
+      "RWB"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 93,
+    "form": 7.94,
+    "value": 4680000
+  },
+  {
+    "firstName": "Stergiou",
+    "lastName": "Stergiou",
+    "nationality": "Germany",
+    "age": 23,
+    "stars": 2.5,
+    "potential": 3.2,
+    "positions": [
+      "RB",
+      "RWB"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 91,
+    "form": 6.27,
+    "value": 3000000
+  },
+  {
+    "firstName": "Behrens",
+    "lastName": "Behrens",
+    "nationality": "Germany",
+    "age": 25,
+    "stars": 3.5,
+    "potential": 4.3,
+    "positions": [
+      "LB",
+      "LWB"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 98,
+    "form": 6.81,
+    "value": 4200000
+  },
+  {
+    "firstName": "Niehues",
+    "lastName": "Niehues",
+    "nationality": "Germany",
+    "age": 24,
+    "stars": 3.5,
+    "potential": 3.6,
+    "positions": [
+      "CDM"
+    ],
+    "playstyles": [
+      "anchor_man"
+    ],
+    "fitness": 96,
+    "form": 6.92,
+    "value": 4200000
+  },
+  {
+    "firstName": "Honsak",
+    "lastName": "Honsak",
+    "nationality": "Germany",
+    "age": 22,
+    "stars": 2.6,
+    "potential": 3.9,
+    "positions": [
+      "ST",
+      "CAM"
+    ],
+    "playstyles": [
+      "poacher"
+    ],
+    "fitness": 95,
+    "form": 7.26,
+    "value": 3120000
+  },
+  {
+    "firstName": "Kerber",
+    "lastName": "Kerber",
+    "nationality": "Germany",
+    "age": 25,
+    "stars": 3.8,
+    "potential": 4.5,
+    "positions": [
+      "CM"
+    ],
+    "playstyles": [
+      "box_to_box"
+    ],
+    "fitness": 94,
+    "form": 7.93,
+    "value": 4560000
+  },
+  {
+    "firstName": "Beck",
+    "lastName": "Beck",
+    "nationality": "Germany",
+    "age": 20,
+    "stars": 2.1,
+    "potential": 2.3,
+    "positions": [
+      "CM"
+    ],
+    "playstyles": [
+      "box_to_box"
+    ],
+    "fitness": 96,
+    "form": 7.29,
+    "value": 2520000
+  },
+  {
+    "firstName": "Ibrahimovic",
+    "lastName": "Ibrahimovic",
+    "nationality": "Germany",
+    "age": 27,
+    "stars": 3.3,
+    "potential": 4.7,
+    "positions": [
+      "CM"
+    ],
+    "playstyles": [
+      "box_to_box"
+    ],
+    "fitness": 95,
+    "form": 7.69,
+    "value": 3960000
+  },
+  {
+    "firstName": "Dorsch",
+    "lastName": "Dorsch",
+    "nationality": "Germany",
+    "age": 22,
+    "stars": 3,
+    "potential": 3.2,
+    "positions": [
+      "CM"
+    ],
+    "playstyles": [
+      "box_to_box"
+    ],
+    "fitness": 92,
+    "form": 7.35,
+    "value": 3600000
+  },
+  {
+    "firstName": "Conteh",
+    "lastName": "Conteh",
+    "nationality": "Germany",
+    "age": 27,
+    "stars": 3,
+    "potential": 3.8,
+    "positions": [
+      "CM"
+    ],
+    "playstyles": [
+      "box_to_box"
+    ],
+    "fitness": 95,
+    "form": 7.14,
+    "value": 3600000
+  },
+  {
+    "firstName": "Dinkci",
+    "lastName": "Dinkci",
+    "nationality": "Germany",
+    "age": 25,
+    "stars": 2.2,
+    "potential": 3.1,
+    "positions": [
+      "CM"
+    ],
+    "playstyles": [
+      "box_to_box"
+    ],
+    "fitness": 92,
+    "form": 7.66,
+    "value": 2640000
+  },
+  {
+    "firstName": "Schimmer",
+    "lastName": "Schimmer",
+    "nationality": "Germany",
+    "age": 19,
+    "stars": 1.8,
+    "potential": 2,
+    "positions": [
+      "CM"
+    ],
+    "playstyles": [
+      "box_to_box"
+    ],
+    "fitness": 90,
+    "form": 6.63,
+    "value": 2160000
+  },
+  {
+    "firstName": "Conteh",
+    "lastName": "Conteh",
+    "nationality": "Germany",
+    "age": 24,
+    "stars": 3.5,
+    "potential": 4.8,
+    "positions": [
+      "CM"
+    ],
+    "playstyles": [
+      "box_to_box"
+    ],
+    "fitness": 92,
+    "form": 6.04,
+    "value": 4200000
+  },
+  {
+    "firstName": "Zivzivadze",
+    "lastName": "Zivzivadze",
+    "nationality": "Germany",
+    "age": 23,
+    "stars": 2.1,
+    "potential": 2.9,
+    "positions": [
+      "CM"
+    ],
+    "playstyles": [
+      "box_to_box"
+    ],
+    "fitness": 91,
+    "form": 6.78,
+    "value": 2520000
+  },
+  {
+    "firstName": "Pieringer",
+    "lastName": "Pieringer",
+    "nationality": "Germany",
+    "age": 18,
+    "stars": 1.6,
+    "potential": 1.7,
+    "positions": [
+      "CM"
+    ],
+    "playstyles": [
+      "box_to_box"
+    ],
+    "fitness": 93,
+    "form": 6.21,
+    "value": 1920000
+  },
+  {
+    "firstName": "Kaufmann",
+    "lastName": "Kaufmann",
+    "nationality": "Germany",
+    "age": 21,
+    "stars": 2.9,
+    "potential": 3.4,
+    "positions": [
+      "CM"
+    ],
+    "playstyles": [
+      "box_to_box"
+    ],
+    "fitness": 97,
+    "form": 6.73,
+    "value": 3480000
+  },
+  {
+    "firstName": "Hoffenhiem",
+    "lastName": "Hoffenhiem",
+    "nationality": "Germany",
+    "age": 24,
+    "stars": 2.8,
+    "potential": 3.6,
+    "positions": [
+      "CM"
+    ],
+    "playstyles": [
+      "box_to_box"
+    ],
+    "fitness": 98,
+    "form": 7.02,
+    "value": 3360000
+  },
+  {
+    "firstName": "Baumann",
+    "lastName": "Baumann",
+    "nationality": "Germany",
+    "age": 29,
+    "stars": 4.5,
+    "potential": 4.5,
+    "positions": [
+      "GK"
+    ],
+    "playstyles": [
+      "shot_stopper"
+    ],
+    "fitness": 90,
+    "form": 6.86,
+    "value": 5400000
+  },
+  {
+    "firstName": "Hranac",
+    "lastName": "Hranac",
+    "nationality": "Germany",
+    "age": 25,
+    "stars": 2.5,
+    "potential": 2.5,
+    "positions": [
+      "CB",
+      "RB"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 91,
+    "form": 7.29,
+    "value": 3000000
+  },
+  {
+    "firstName": "Kabak",
+    "lastName": "Kabak",
+    "nationality": "Germany",
+    "age": 26,
+    "stars": 3,
+    "potential": 3.5,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 98,
+    "form": 7.19,
+    "value": 3600000
+  },
+  {
+    "firstName": "Bernardo",
+    "lastName": "Bernardo",
+    "nationality": "Germany",
+    "age": 25,
+    "stars": 3,
+    "potential": 3,
+    "positions": [
+      "LB",
+      "CB"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 93,
+    "form": 7.11,
+    "value": 3600000
+  },
+  {
+    "firstName": "Gendrey",
+    "lastName": "Gendrey",
+    "nationality": "Germany",
+    "age": 18,
+    "stars": 2,
+    "potential": 2,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 92,
+    "form": 6.28,
+    "value": 2400000
+  },
+  {
+    "firstName": "Hajdrai",
+    "lastName": "Hajdrai",
+    "nationality": "Germany",
+    "age": 19,
+    "stars": 2.5,
+    "potential": 3.5,
+    "positions": [
+      "LB",
+      "CB"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 93,
+    "form": 7.08,
+    "value": 3000000
+  },
+  {
+    "firstName": "Akpoguma",
+    "lastName": "Akpoguma",
+    "nationality": "Germany",
+    "age": 22,
+    "stars": 1.5,
+    "potential": 2,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 92,
+    "form": 7.84,
+    "value": 1800000
+  },
+  {
+    "firstName": "Coufal",
+    "lastName": "Coufal",
+    "nationality": "Germany",
+    "age": 24,
+    "stars": 3.5,
+    "potential": 3.5,
+    "positions": [
+      "RB",
+      "RWB"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 92,
+    "form": 7.42,
+    "value": 4200000
+  },
+  {
+    "firstName": "Prömel",
+    "lastName": "Prömel",
+    "nationality": "Germany",
+    "age": 26,
+    "stars": 3.5,
+    "potential": 3.5,
+    "positions": [
+      "CM",
+      "CDM",
+      "CAM"
+    ],
+    "playstyles": [
+      "box_to_box"
+    ],
+    "fitness": 94,
+    "form": 7.32,
+    "value": 4200000
+  },
+  {
+    "firstName": "Avdullahu",
+    "lastName": "Avdullahu",
+    "nationality": "Germany",
+    "age": 22,
+    "stars": 3,
+    "potential": 4,
+    "positions": [
+      "CDM",
+      "CM"
+    ],
+    "playstyles": [
+      "anchor_man"
+    ],
+    "fitness": 99,
+    "form": 6.3,
+    "value": 3600000
+  },
+  {
+    "firstName": "Burger",
+    "lastName": "Burger",
+    "nationality": "Germany",
+    "age": 27,
+    "stars": 3,
+    "potential": 3.5,
+    "positions": [
+      "CM"
+    ],
+    "playstyles": [
+      "box_to_box"
+    ],
+    "fitness": 98,
+    "form": 7.36,
+    "value": 3600000
+  },
+  {
+    "firstName": "Prass",
+    "lastName": "Prass",
+    "nationality": "Germany",
+    "age": 21,
+    "stars": 2.5,
+    "potential": 3,
+    "positions": [
+      "RWB",
+      "LWB",
+      "RW",
+      "LB"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 90,
+    "form": 7.68,
+    "value": 3000000
+  },
+  {
+    "firstName": "Kramaric",
+    "lastName": "Kramaric",
+    "nationality": "Germany",
+    "age": 22,
+    "stars": 3.5,
+    "potential": 3.5,
+    "positions": [
+      "CAM",
+      "ST"
+    ],
+    "playstyles": [
+      "playmaker_cam"
+    ],
+    "fitness": 92,
+    "form": 6.98,
+    "value": 4200000
+  },
+  {
+    "firstName": "Bebou",
+    "lastName": "Bebou",
+    "nationality": "Germany",
+    "age": 20,
+    "stars": 2,
+    "potential": 2,
+    "positions": [
+      "ST"
+    ],
+    "playstyles": [
+      "poacher"
+    ],
+    "fitness": 92,
+    "form": 7.5,
+    "value": 2400000
+  },
+  {
+    "firstName": "Asllani",
+    "lastName": "Asllani",
+    "nationality": "Germany",
+    "age": 21,
+    "stars": 2.5,
+    "potential": 4,
+    "positions": [
+      "ST"
+    ],
+    "playstyles": [
+      "poacher"
+    ],
+    "fitness": 96,
+    "form": 6.02,
+    "value": 3000000
+  },
+  {
+    "firstName": "Lemperle",
+    "lastName": "Lemperle",
+    "nationality": "Germany",
+    "age": 18,
+    "stars": 2.5,
+    "potential": 4,
+    "positions": [
+      "ST"
+    ],
+    "playstyles": [
+      "poacher"
+    ],
+    "fitness": 97,
+    "form": 6.92,
+    "value": 3000000
+  },
+  {
+    "firstName": "Hlozek",
+    "lastName": "Hlozek",
+    "nationality": "Germany",
+    "age": 20,
+    "stars": 2,
+    "potential": 2.5,
+    "positions": [
+      "CAM",
+      "ST"
+    ],
+    "playstyles": [
+      "playmaker_cam"
+    ],
+    "fitness": 91,
+    "form": 6.61,
+    "value": 2400000
+  },
+  {
+    "firstName": "Toure",
+    "lastName": "Toure",
+    "nationality": "Germany",
+    "age": 21,
+    "stars": 2.5,
+    "potential": 4,
+    "positions": [
+      "LW"
+    ],
+    "playstyles": [
+      "inside_forward"
+    ],
+    "fitness": 90,
+    "form": 6.3,
+    "value": 3000000
+  },
+  {
+    "firstName": "Moerstedt",
+    "lastName": "Moerstedt",
+    "nationality": "Germany",
+    "age": 25,
+    "stars": 1.5,
+    "potential": 3,
+    "positions": [
+      "ST"
+    ],
+    "playstyles": [
+      "poacher"
+    ],
+    "fitness": 97,
+    "form": 7.12,
+    "value": 1800000
+  },
+  {
+    "firstName": "Köln",
+    "lastName": "Köln",
+    "nationality": "Germany",
+    "age": 22,
+    "stars": 3.7,
+    "potential": 4.4,
+    "positions": [
+      "CM"
+    ],
+    "playstyles": [
+      "box_to_box"
+    ],
+    "fitness": 95,
+    "form": 7.82,
+    "value": 4440000
+  },
+  {
+    "firstName": "Schwäbe",
+    "lastName": "Schwäbe",
+    "nationality": "Germany",
+    "age": 20,
+    "stars": 2.6,
+    "potential": 3.6,
+    "positions": [
+      "GK"
+    ],
+    "playstyles": [
+      "shot_stopper"
+    ],
+    "fitness": 91,
+    "form": 7.34,
+    "value": 3120000
+  },
+  {
+    "firstName": "Hübers",
+    "lastName": "Hübers",
+    "nationality": "Germany",
+    "age": 18,
+    "stars": 2.9,
+    "potential": 3.1,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 93,
+    "form": 6.23,
+    "value": 3480000
+  },
+  {
+    "firstName": "Simpson-Pusey",
+    "lastName": "Simpson-Pusey",
+    "nationality": "Germany",
+    "age": 22,
+    "stars": 2.4,
+    "potential": 3.2,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 93,
+    "form": 6.21,
+    "value": 2880000
+  },
+  {
+    "firstName": "Sebulonsen",
+    "lastName": "Sebulonsen",
+    "nationality": "Germany",
+    "age": 18,
+    "stars": 1.9,
+    "potential": 3,
+    "positions": [
+      "CM"
+    ],
+    "playstyles": [
+      "box_to_box"
+    ],
+    "fitness": 92,
+    "form": 7.86,
+    "value": 2280000
+  },
+  {
+    "firstName": "Lund",
+    "lastName": "Lund",
+    "nationality": "Germany",
+    "age": 24,
+    "stars": 3,
+    "potential": 3.4,
+    "positions": [
+      "LB",
+      "LWB"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 95,
+    "form": 6.1,
+    "value": 3600000
+  },
+  {
+    "firstName": "Van",
+    "lastName": "den Berg",
+    "nationality": "Germany",
+    "age": 24,
+    "stars": 3.3,
+    "potential": 3.6,
+    "positions": [
+      "CM"
+    ],
+    "playstyles": [
+      "box_to_box"
+    ],
+    "fitness": 92,
+    "form": 7.35,
+    "value": 3960000
+  },
+  {
+    "firstName": "Özkacar",
+    "lastName": "Özkacar",
+    "nationality": "Germany",
+    "age": 27,
+    "stars": 3.5,
+    "potential": 4.9,
+    "positions": [
+      "CB"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 97,
+    "form": 7.73,
+    "value": 4200000
+  },
+  {
+    "firstName": "Krauss",
+    "lastName": "Krauss",
+    "nationality": "Germany",
+    "age": 27,
+    "stars": 3.3,
+    "potential": 3.7,
+    "positions": [
+      "CB",
+      "CDM"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 92,
+    "form": 6.74,
+    "value": 3960000
+  },
+  {
+    "firstName": "Martel",
+    "lastName": "Martel",
+    "nationality": "Germany",
+    "age": 26,
+    "stars": 3.3,
+    "potential": 4.5,
+    "positions": [
+      "CB",
+      "CDM"
+    ],
+    "playstyles": [
+      "stopper_cb"
+    ],
+    "fitness": 94,
+    "form": 6.28,
+    "value": 3960000
+  },
+  {
+    "firstName": "Huseinbasic",
+    "lastName": "Huseinbasic",
+    "nationality": "Germany",
+    "age": 22,
+    "stars": 3,
+    "potential": 3.3,
+    "positions": [
+      "CM",
+      "CAM"
+    ],
+    "playstyles": [
+      "box_to_box"
+    ],
+    "fitness": 91,
+    "form": 6.07,
+    "value": 3600000
+  },
+  {
+    "firstName": "Kainz",
+    "lastName": "Kainz",
+    "nationality": "Germany",
+    "age": 19,
+    "stars": 1.7,
+    "potential": 1.7,
+    "positions": [
+      "LW",
+      "CAM"
+    ],
+    "playstyles": [
+      "inside_forward"
+    ],
+    "fitness": 92,
+    "form": 6.88,
+    "value": 2040000
+  },
+  {
+    "firstName": "El",
+    "lastName": "Mala",
+    "nationality": "Germany",
+    "age": 24,
+    "stars": 2.5,
+    "potential": 4.5,
+    "positions": [
+      "LW"
+    ],
+    "playstyles": [
+      "inside_forward"
+    ],
+    "fitness": 98,
+    "form": 6.6,
+    "value": 3000000
+  },
+  {
+    "firstName": "Kaminski",
+    "lastName": "Kaminski",
+    "nationality": "Germany",
+    "age": 21,
+    "stars": 1.8,
+    "potential": 1.8,
+    "positions": [
+      "LW",
+      "RW",
+      "CAM",
+      "CM"
+    ],
+    "playstyles": [
+      "inside_forward"
+    ],
+    "fitness": 93,
+    "form": 6.62,
+    "value": 2160000
+  },
+  {
+    "firstName": "Castro-Montes",
+    "lastName": "Castro-Montes",
+    "nationality": "Germany",
+    "age": 22,
+    "stars": 2.5,
+    "potential": 3.9,
+    "positions": [
+      "LB",
+      "LWB"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 99,
+    "form": 7.52,
+    "value": 3000000
+  },
+  {
+    "firstName": "Johannesson",
+    "lastName": "Johannesson",
+    "nationality": "Germany",
+    "age": 22,
+    "stars": 2.4,
+    "potential": 2.5,
+    "positions": [
+      "CM",
+      "CAM"
+    ],
+    "playstyles": [
+      "box_to_box"
+    ],
+    "fitness": 97,
+    "form": 7.39,
+    "value": 2880000
+  },
+  {
+    "firstName": "Thielmann",
+    "lastName": "Thielmann",
+    "nationality": "Germany",
+    "age": 22,
+    "stars": 2.7,
+    "potential": 3,
+    "positions": [
+      "RWB",
+      "RB"
+    ],
+    "playstyles": [
+      "wingback"
+    ],
+    "fitness": 90,
+    "form": 7.99,
+    "value": 3240000
+  },
+  {
+    "firstName": "Maina",
+    "lastName": "Maina",
+    "nationality": "Germany",
+    "age": 19,
+    "stars": 2.5,
+    "potential": 3.7,
+    "positions": [
+      "LW",
+      "RW",
+      "ST"
+    ],
+    "playstyles": [
+      "inside_forward"
+    ],
+    "fitness": 98,
+    "form": 7.96,
+    "value": 3000000
+  },
+  {
+    "firstName": "waldschmidt",
+    "lastName": "waldschmidt",
+    "nationality": "Germany",
+    "age": 22,
+    "stars": 2.6,
+    "potential": 2.6,
+    "positions": [
+      "CAM",
+      "ST"
+    ],
+    "playstyles": [
+      "playmaker_cam"
+    ],
+    "fitness": 95,
+    "form": 6.92,
+    "value": 3120000
+  },
+  {
+    "firstName": "Ache",
+    "lastName": "Ache",
+    "nationality": "Germany",
+    "age": 29,
+    "stars": 4,
+    "potential": 5,
+    "positions": [
+      "ST"
+    ],
+    "playstyles": [
+      "poacher"
+    ],
+    "fitness": 98,
+    "form": 6.46,
+    "value": 4800000
+  },
+  {
+    "firstName": "Bülter",
+    "lastName": "Bülter",
+    "nationality": "Germany",
+    "age": 22,
+    "stars": 3.3,
+    "potential": 4.8,
+    "positions": [
+      "LW",
+      "RW",
+      "ST"
+    ],
+    "playstyles": [
+      "inside_forward"
+    ],
+    "fitness": 97,
+    "form": 6.21,
+    "value": 3960000
+  }
+]

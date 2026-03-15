@@ -1,0 +1,37 @@
+[
+{
+"name":"Harry Kane",
+"team":"Bayern",
+"position":"ST",
+"age":31,
+"nationality":"England"
+},
+{
+"name":"Jamal Musiala",
+"team":"Bayern",
+"position":"CAM",
+"age":22,
+"nationality":"Germany"
+},
+{
+"name":"Joshua Kimmich",
+"team":"Bayern",
+"position":"CM",
+"age":30,
+"nationality":"Germany"
+},
+{
+"name":"Florian Wirtz",
+"team":"Liverpool",
+"position":"CAM",
+"age":22,
+"nationality":"Germany"
+},
+{
+"name":"Jeremie Frimpong",
+"team":"Leverkusen",
+"position":"RB",
+"age":24,
+"nationality":"Netherlands"
+}
+]

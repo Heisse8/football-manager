@@ -1,8 +1,7 @@
 const Team = require("../models/Team");
 const Manager = require("../models/Manager");
 
-const cityNames = require("./cityNames");
-const { generatePlayersForTeam } = require("./playerGenerator");
+const { assignPlayersToTeam } = require("./playerPool");
 const { generateClubName } = require("./clubNameGenerator");
 
 /* =====================================================
@@ -19,29 +18,14 @@ BOT TEAM ERSTELLEN
 
 async function createBotTeam(league){
 
-let shortName;
-let exists = true;
-
-/* eindeutigen Shortname generieren */
-
-while(exists){
-
-shortName = `BOT${randomNumber()}`;
-
-const team = await Team.findOne({ shortName });
-
-if(!team) exists = false;
-
-}
-
 /* =====================================================
-CLUB NAME GENERIEREN
+CLUB NAME
 ===================================================== */
 
 const club = generateClubName();
 
 /* =====================================================
-LAND AUS LIGA ERKENNEN
+LAND ERMITTELN
 ===================================================== */
 
 let country = "Deutschland";
@@ -66,16 +50,9 @@ country,
 
 isBot:true,
 
-/* Finanzen */
-
 balance:5000000,
 
-/* Fanbase */
-
 fanBase:0.8,
-
-/* Heimvorteil */
-
 homeBonus:1
 
 });
@@ -83,20 +60,27 @@ homeBonus:1
 await botTeam.save();
 
 /* =====================================================
-SPIELER GENERIEREN
+SPIELER ZUTEILEN (GLEICH WIE USER)
 ===================================================== */
 
-await generatePlayersForTeam(botTeam);
+await assignPlayersToTeam(botTeam);
 
 /* =====================================================
 TRAINER ERSTELLEN
 ===================================================== */
 
 const styles = [
-"ballbesitz",
-"konter",
-"gegenpressing",
-"mauern"
+"Ballbesitz",
+"Kontern",
+"Gegenpressing",
+"Mauern"
+];
+
+const formations = [
+"4-3-3",
+"4-4-2",
+"4-2-3-1",
+"3-5-2"
 ];
 
 await Manager.create({
@@ -106,13 +90,13 @@ team: botTeam._id,
 firstName: "Bot",
 lastName: "Trainer",
 
-age: 45,
+age: 40 + Math.floor(Math.random()*15),
 
-rating: 2,
+rating: 2 + Math.random()*2,
 
-formation: "4-4-2",
+formation: formations[Math.floor(Math.random()*formations.length)],
 
-playStyle: styles[Math.floor(Math.random()*styles.length)]
+playstyle: styles[Math.floor(Math.random()*styles.length)]
 
 });
 

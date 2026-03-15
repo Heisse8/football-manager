@@ -1,106 +1,70 @@
-const mongoose = require("mongoose");
-require("dotenv").config();
+require("dotenv").config()
 
-const Coach = require("../models/Coach");
-const Team = require("../models/Team");
 
-async function seedCoaches(){
+const mongoose = require("mongoose")
+const Coach = require("../models/Coach")
+const coaches = require("../data/coaches")
 
-await mongoose.connect(process.env.MONGO_URI);
+const { generateCoachName } = require("../utils/coachNameMutator")
+const { calculateCoachPrice } = require("../utils/coachPriceCalculator")
+const { generateCoachDNA } = require("../utils/generateCoachDNA")
 
-const teams = await Team.find();
 
-for(const team of teams){
+async function seed(){
 
-let coachData = {
-name:"Generic Coach",
-playStyle:"ballbesitz",
-favoriteFormation:"433",
-stars:3
-};
+await mongoose.connect(process.env.MONGO_URI)
 
-/* ======================================================
- TEAM SPEZIFISCHE TRAINER
-====================================================== */
+for(const c of coaches){
 
-switch(team.name){
+/* Prüfen ob Trainer schon existiert */
 
-case "Bayern München":
+let coach = await Coach.findOne({
+originalFirstName: c.firstName,
+originalLastName: c.lastName
+})
 
-coachData = {
-name:"Vincent Kompany",
-playStyle:"gegenpressing",
-favoriteFormation:"433",
-stars:5
-};
+if(!coach){
 
-break;
+/* Name nur einmal generieren */
 
-case "Bayer Leverkusen":
+const name = generateCoachName(c.firstName, c.lastName)
 
-coachData = {
-name:"Xabi Alonso",
-playStyle:"ballbesitz",
-favoriteFormation:"3421",
-stars:5
-};
+coach = await Coach.create({
 
-break;
+originalFirstName: c.firstName,
+originalLastName: c.lastName,
 
-case "Borussia Dortmund":
+firstName: name.firstName,
+lastName: name.lastName,
 
-coachData = {
-name:"Edin Terzic",
-playStyle:"gegenpressing",
-favoriteFormation:"4231",
-stars:4.5
-};
+stars: c.stars,
 
-break;
+philosophy: c.style,
+preferredFormation: c.preferredFormation,
+personality: c.personality,
 
-case "RB Leipzig":
+tactics: c.tactics,
+motivation: c.motivation,
+discipline: c.discipline,
 
-coachData = {
-name:"Marco Rose",
-playStyle:"gegenpressing",
-favoriteFormation:"4222",
-stars:4.5
-};
+coachDNA: generateCoachDNA(c),
 
-break;
 
-case "Union Berlin":
 
-coachData = {
-name:"Union Coach",
-playStyle:"defensiv",
-favoriteFormation:"352",
-stars:3.5
-};
+transferPrice: calculateCoachPrice(c),
 
-break;
+isListed: true
+
+})
 
 }
 
-/* ======================================================
- COACH SPEICHERN
-====================================================== */
+}
 
-await Coach.create({
+console.log("Coaches seeded")
 
-...coachData,
-team:team._id
-
-});
-
-console.log("Coach created for:",team.name);
+process.exit()
 
 }
 
-console.log("All coaches created");
-
-process.exit();
-
-}
-
-seedCoaches();
+seed()

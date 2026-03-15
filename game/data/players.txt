@@ -1,0 +1,416 @@
+Finn Dahmen	3,5	4	TW	shot stopper
+Mads Pedersen	1,5	2	rv,lv	wingback
+Chrislain Matsima	2,5	3,5	iv	ball playing cb
+Jeffrey Gouweleeuw	2,5	2,5	iv	stopper_cb
+Dimitrios Giannoulis	2,5	2,5	lv,lwb	wingback
+Cedric Zesiger	2,5	2,5	iv	ball playing cb
+Marius Wolf	2,5	2,5	rv,rwb	wingback
+Keven Schlotterbeck	2,5	2,5	iv	ball playing cb
+Arthur Chaves	2,5	3	iv	ball playing cb
+Noahkai Banks	2,5	4	iv	ball playing cb
+Han-Noah Massengo	2,5	3	zdm,zm	anchor_man
+Elvis Rexhbecaj	2	2,5	zdm,zm,rwb,lwb	anchor_man,box to box, wingback
+Yannik Keitel	1,5	2	iv,zdm	interceptor_cb, anchor_man
+Kristijan Jakic	2,5	3	zdm	anchor_man
+Robin Fellhauer	2,5	3	zm,rwb,lwb	box to box, wingback
+Alexis Claude-Maurice	3	3,5	zom	playmaker_cam
+Anton Kade	2,5	3	st,rwb,lwb	speedstriker,wingback
+Fabian Rieder	2,5	3	zom	playmaker_cam
+Mert Kömür	2	3	zom	playmaker_cam
+Rodrigo Ribeiro	1,5	3	st	poacher
+Michael Gregoritsch	2,5	2,5	st	target_men
+
+Frederik Rönnow	3	3	tw	shot stopper
+Diogo Leite	2,5	3	iv	ball playing cb
+Danilho Doekhi	2,5	3	iv	stopper_cb
+Leopold Querfeld	2,5	3	iv	ball playing cb
+Tom Rothe	2	3	lv,lwb	wingback
+Josip Juranovic	2	2,5	rv,lv,rwb,lwb	wingback
+Christopher Trimmel	2	2	rv,rwb	wingback
+Stanley Nsoki	1,5	2	iv	stopper_cb
+Derrick Köhn	2	2,5	lv,lwb	wingback
+Aljoscha Kemlein	2	3	zdm	deep_playmaker
+Rani Khedira 	2,5	2,5	zm,zdm	box to box, anchor_man
+Wooyeong Jeong	2	2	zom	
+Andras Schäfer	1,5	2	zm	box to box
+Janik Haberer	1,5	1,5	rwb,zm	wingback,box to box
+Tim Skarke	1	2	lf,rf,st	inverted winger, speedstriker
+Robert Skov	1,5	1,5	lwb,rwb	wingback
+Alex Kral	1	1	zdm,zm	anchor_man, box to box
+Oliver Burke	2	2	st	speedstriker
+Livan Burcu	1,5	2	zom	dribble_cam
+Ilyas Ansah	2	3	st	poacher
+Andrej Ilic 	2	2,5	st	target_men
+
+Peter Gulasci	3	3	tw	shot stopper
+Maarten Vandevoordt	2	3	tw	mitspielender torwart
+Willi Orban	3,5	3,5	iv	stopper_cb
+El Chadaille Bithiabu	1,5	3	iv	ball playing cb
+Lukas Klostermann	1,5	1,5	rv,iv	defensive_fullback, stopper_cb
+Kosta Nedeljkovic	1,5	2,5	rv	defensive_fullback
+David Raum	3	3,5	lv,lwb	wingback
+Castello Lukeba	3,5	5	iv	ball playing cb
+Max Finkgräfe	1,5	3	lv,lwb	wingback
+Benjamin Henrichs	2,5	3	rv	inverted fullback
+Ezechiel Banzuzi	2	3	zm	box to box
+Brajan Gruda	2,5	4	zom,rf	dribbling cam, inverted winger
+Nicolas Seiwald	3	3,5	zdm,iv	anchor_man, interceptor_cb
+Christoph Baumgarter	3,5	3,5	zom,st	shadow striker, poacher
+Ridle Baku	3	3,5	rv,rwb	wingback
+Assan Ouedraogo	3	5	zm,zom	box to box, dribbling_cam
+Xaver Schlager	3	3,5	zdm,zm	deep_playmaker, box to box
+Antonio Nusa	3	4	lf,zom	dribble_winger, dribble_cam
+Johan Bakayoko	2	3	rf	inside forward
+Conrad Harder	2	3	st	speeD_striker
+Romulo	3	3,5	st	poacher
+Yan Diomande	3,5	5	lf,rf	dribble_winger
+
+Mark Flekken	3	3	tw	mitspielender torwart
+Jonas Omlin 	2	2	tw	shot stopper
+Janis Blaswich	2,5	2,5	tw	shot stopper
+Jarell Quansah	3	4	iv	ball playing cb
+Loic Bade	3	3,5	iv	stopper_cb
+Edmond Tapsoba	4	4,5	iv	stopper_cb
+Arthur	2	3	rv,rwb	wingback
+Tim Oermann	1,5	3	rv	defensive_fullback
+Axel Tape	1,5	3	iv	ball playing cb
+Alejandro Grimaldo	4	4	lv,lwb	inverted fullback
+Lucas Vazquez	2,5	2,5	rv,rwb	wingback
+Ezequiel Fernandez	2,5	3	zdm,zm	anchor_man, deep_playmaker
+Jonas Hofmann	3	3	rwb,zom	wingback, shadow striker
+Robert Andrich	3	3	iv,zdm	stopper, anchor_man
+Malik Tillman	3	4	zom	playmaker_cam
+Aleix Garcia	4	4	zm,zdm	control_cm,deep playmaker
+Exequiel Palacios	3,5	4	zm,zdm	control_cm,deep playmaker
+Ibrahim Maza	2,5	4,5	zom,zm	playmaker_cam, contrl_cm
+Martin Terrier	2	2,5	st,rf,lf	poacher, inverted winger
+Patrik Schick	4	4	st,rf,lf	target_men
+Eliesse Ben Seghir	1,5	3,5	zom	dribble_cam
+Ernest Poku	2,5	4	lf,rf	dribble_winger
+Nathan Tella	2,5	3,5	lwb,rwb,lf,rf	wingback,dribble winger
+Christian Kofane	2	4,5	st	target_men
+Montrell Culbreath	1,5	4	zom	playmaker_cam
+
+Robin Zentner	3	3	tw	shot stopper
+Daniel Batz	3	3	tw	shot stopper
+Philipp Mwene	2	2	lv,lwb	
+Stefan Posch	3	3	iv	
+Maxim Leitsch	2	2	iv	
+Stefan Bell	2	2	iv	
+Anthony Caci	2,5	3	rv,rwb	
+Dann da Costa	2	2	iv,rv,rwb	
+Andreas Hanche-Olsen	2	2	iv	
+Silvan Widmer	2	2	lv,rv,lwb,rwb	
+Dominik Kohr	2	2	iv,zdm	
+Kacper Potulski	1,5	3,5	iv	
+Kaishu Sano	3	3	zdm	
+Jase-sung Lee	3	3	zm,zom	
+Paul Nebel	2,5	3	zom	
+Nadiem Amiri	3,5	3,5	zm,zom	
+Lennard Maloney	1,5	2	iv,zdm	
+Nikolas Veratschnig	2	2,5	rwb,lwb	
+Silas	2,5	3	st,lf,rf	
+Benedict Hollerbach	2	2,5	st,lf,rf	
+Phillip Tietz	2,5	2,5	st	
+Sheraldo Becker	2,5	3	st,lf,rf	
+Nelson Weiper	1,5	3	st	
+
+Gladbach				
+Nicolas	3	3	tw	shot stopper
+Olschowsky	2	3	tw	shot stopper
+Chiarodia	2	3	iv	
+Kevin Diks	3	3,5	iv	
+Kota Takai	2	2,5	iv	
+Lukas Ulrich	2	3	lv,lwb	
+Joe Scally	2,5	3	rv,rwb	
+Nico Elvedi	3	3	iv	
+Yannik Engelhardt	2	3	zdm	
+Kevin Stöger	2,5	2,5	zom,rf	
+Franck Honorat	3	3	rwb,rf	
+Florian Neuhaus	2,5	3	zom,zm	
+Giovanni Reyna	2	3	zom	
+Phillip Sander	2,5	2,5	iv,zdm	
+Jens Castrop	2	3	lf,rf	
+Robin Hack	2,5	3,5	zom,rf,lf	
+Rocco Reitz	3	4	zdm,zm	dribbling cm
+Wael Mohya	1,5	4	zom,lf,rf	
+Hugo Bolin	1,5	3	lf,rf,zom	
+Tim Kleindienst	3	3	st	target_men
+Haris Tabakovic	2,5	3	st	target_men
+				
+FC Bayern				
+Manuel Neuer	4,5	4,5	tw	mitspielender torwart
+Urbig	3	4	tw	mitspielender torwart
+Upamecano	4,5	5	iv	ball playing cb
+Kim	3	3	iv	interceptor
+Tah	4	4,5	iv	ball playing cb
+Davies	3,5	4,5	lv,lwb	wingback
+Ito	2,5	3	lv,iv	defensive fullback / ball playing cb
+Guerreiro	2,5	3	lv,lwb,zm,zom	inverted fullback, control cm, free_roamer
+Stanisic	3	4	iv,lv,rv	stopper_cb,  defensive_fullback
+Kimmich	5	5	zdm,rv	deep_playmaker, inverted fullback
+Goretzka	3	3	zdm,zm	anchor_man, box to box
+Musiala	4	5	zom,lf	dribbling_cam, inside_forward
+Olise	5	5	rf, zom	inside_forward, dribbling_cam
+Bischof	2,5	4	lv,zm	inverted_fullback, control cm
+Laimer	3,5	4	rv,zdm	wingback, anchor_man
+Karl	3	4,5	rf,zom	inverted winger, dribbling_cam
+Pavlovic	3,5	5	zdm,zm	deep_playmaker, deep_playmaker
+Gnabry	4	4,5	st,lf,zom	poacher, inverted winger, shadow striker
+Kane	5	5	st,zom	poacher, shadow striker
+Jackson	2,5	3,5	st	target_men
+Diaz	5	5	lf	dribble_winger
+				
+St Pauli				
+Vasilj			tw	mitspielender torwart
+Saliakas			rv,rwb	
+Mets			iv	
+Nemeth			iv	
+Wahl			iv	
+Smith	3	3	iv,zdm	
+Pyrka			lv,lwb	
+Ando			iv	
+Ritzka			iv,lv	
+Oppie			lwb,rwb	
+Dzwigala				
+sands				
+Irvine				
+Fujita				
+Metcalfe				
+Sinani				
+Kaars				
+Pereira Lage				
+Hountondji				
+				
+VFB Stuttgart				
+Alex Nübel	3,5	3,5	tw	mitspielender torwart
+Al-Dakhil	2	3	iv	interceptor
+Hendriks	2,5	4	iv,lv	stopper, defensive_fullback
+Vagnoman	2,5	2,5	rv,rwb	wingback
+Mittelstädt	3,5	3,5	lv,lwb	wingback
+Jaquez	2,5	3,5	iv	stopper cb
+Assignon	2	2,5	rv,rwb	wingback
+Zagadou	2	3	iv	ballplaying cb
+Chabot	3,5	3,5	iv	stopper_cb
+Jeltsch	3	4,5	iv,rv	stopper_cb
+Stiller	3,5	4	zdm,zm	deep_playmaker, controll cm
+Führich	3	3	lf	inside_forward
+El Khannouss	2,5	4	zom	playmaker_cam
+Karazor	2,5	2,5	zdm	anchor_man
+Nartey	2,5	3,5	zm,zom	dribbling cm, dribbling_cam
+Andres Chema	2,5	3,5	zdm	deep_playmaker
+Tomas	2,5	3	zom	shadow_striker
+Demirovic	3,5	3,5	st	target_men
+Leweling	3,5	4	rwb,lwb,rf,lf	wingback, inside_forward
+Undav	4	4	st,zom	false 9, shadow striker
+Bounani	1,5	2,5	zom	dribble_cam
+				
+Wolfsburg				
+Grabara			tw	shot stopper
+Fischer			rv	
+Vavro			iv	
+Koulerakis			iv	
+Belocian			lv,iv	
+Seelt			iv	
+Jenz			iv	
+Adjetey			iv	
+Maehle			lwb,lv	
+Kumbedi			rv	
+Majer			zom,zm	
+Lindström			lf	
+Eriksen			zom,zm	
+Zehnter			lv,lwb	
+Arnold			zdm,zm	
+Gerhardt			lv,lwb,zdm,zm	
+Svanberg			zm	
+				
+Werder Bremen				
+Backhaus	2,5	3,5	tw	mitspielender torwart
+Deman	2	3	lv,lwb	
+Sugawara	2,5	2,5	rv,rwb	
+Stark	2,5	2,5	iv	
+Pieper	2,5	3	iv	
+Weiser	3	3	rv,rwb	
+Malatini	1,5	3	rv	
+Schmidt	1,5	1,5	lv,lwb	
+Agu	2,5	2,5	lv,lwb	
+Coulibaly	2	4	iv	
+Friedl	3	3	iv	
+Wöber	2,5	2,5	iv,lv	
+Stage	3	3	zdm,zm	
+Bittencourt	2	2	zm	
+Lynen	2	2,5	zm,zdm	
+Puertas	2	2	zm,zom	
+				
+Covic	1,5	3	zm	
+Mbangula	1,5	3	lf	
+Topp	1,5	2	st	
+Njinmah	2	2,5	rf,st	
+Grüll	2	2,5	lwb,rwb,st	
+Milosevic	2	3	st	
+Boniface	2,5	3	st	
+				
+Dortmund				
+Kobel	4,5	4,5	tw	shot stopper
+Meyer	2	2	tw	mitspielender torwart
+Couto	2,5	3,5	rwb,rv	wingback
+Anton	4	4	iv	stopper_cb
+Schlotterbeck	4,5	5	iv	ball playing cb
+Bensebaini	2,5	2,5	iv,lv	interceptor, defensive fullback
+Svensson	3	3,5	lv,lwb	wingback
+Süle	3	3	iv,rv	ball playing cb, defensive fullback
+Ryerson	3,5	3,5	rv.rwb	wingback
+Mane	1,5	4	iv	ball playing cb
+Reggiani	1	3,5	iv	ball playing cb
+Özcan	1,5	1,5	zm,zdm	box to botx, anchor_man
+Bellingham	3	4	zdm,zm	anchor_man, box to box
+Nmecha	3,5	5	zdm,zm	depp_playmaker, control cm
+Brandt	3,5	3,5	zom	free_roamer
+Chukwuemeka	2,5	4	zm,zom	dribbling cm, dribbling cam
+Sabitzer	3	3	zm,zdm	box to box, anchor man
+Can	2,5	3	iv,zdm	interceptor, anchor man
+Guirassy	4,5	4,5	st	target_man
+Beier	3	3,5	st,rf	speed_striker, inside_forward
+Silva	2,5	3,5	st,zom	poacher, shadow striker
+Adeyemii	3	3,5	st,rf,lf	speed_striker, inside_forward
+Inacio	1	4	zom	playmaker_cam
+				
+Frankfurt				
+Zetterer	2,5	2,5	tw	mitspielender torwart
+Santos	2,5	3,5	tw	mitspielender torwart
+Theate	3,5	3,5	iv,lv	ball playing cb
+Koch	3	3	iv	interceptor
+Amenda	2,5	3,5	iv	stopper_cb
+Kristensen	3,5	3,5	rv,rwb	wingback
+Brown	3	4,5	lv,lwb	inverted fullback
+Collins	2,5	3,5	rv,iv	defensive_fullback, intercepter
+Höjlund	2,5	3,5	zdm,zm	
+Chaibi	2,5	3,5	zom,zm	
+Skhiri	2,5	2,5	iv,zdm	
+Larsson	2,5	3,5	zdm,zm	
+Dahoud	2,5	2,5	zdm,zm	
+Doan	3	3	rwb,rf	
+Götze	3	3	zm,zom	
+Uzun	3	4	st,zom	false 9, shadow striker
+Knauff	3	3	rwb,rf,lwb,lf,st	wingback, crossing_winger
+Burkardt	3,5	4	st	poacher
+Ebnoutalib	3	3	st,zom	poacher, shadow striker
+Bahoya	2,5	4	lf	dribble_winger
+Kalimuendo	3	3,5	st,rf	speed_striker
+Amaimouni	2	3,5	rf	dribble_winger
+				
+Freiburg				
+Atubolu	3	4,5	tw	mitspielender torwart
+Lienhart	3	3	iv	
+Jung	2	2	iv	
+Kübler	3	3	rv,rwb	
+Ginter	3,5	3,5	iv	
+Treu	3	3	lf,rf,lwb,rwb	
+Günter	3	3	lv,lwb	
+Makengo	1,5	3	lv,lwb	
+Rosenfelder	1,5	3	rv,iv	
+Ogbus	1,5	3	iv,rv	
+Osterhage	2	2	zdm	
+Eggestein	2,5	2,5	zm	
+Suzuki	2,5	3	zom	
+Beste	2,5	2,5	rf,rwb	
+Höfler	1,5	1,5	zdm	
+Grifo	3,5	3,5	lf,zom	
+Manzambi	2,5	4	lf,zom,zm	
+Scherhant	2	3	lf	
+Höler	2,5	2,5	st	
+Irie	1,5	2,5	rf	
+Matanovic	2,5	3	st	
+				
+HSV				
+Heuer Fernandes	3	3	tw	mitspielender torwart
+Mikelbrencis	2,5	3		
+Gocholeishvili			rwb	
+Torunarigha	2,5	3,5	iv	
+Muheim	3	3,5	lv,lwb	
+Vuskovic	3,5	5	iv	
+Lokonga			zdm,zm	
+Elfadli			zdm,iv	
+Vieira	3,5	4	zm,zom,rf	
+Remberg			zdm	
+Capaldo			iv,zdm,rv	
+Dompe			lf	
+Glatzel			st	
+Königsdörffer			st,lf	
+Phillipe			rf,lf,st	
+Poulsen			st	
+Jatta			rwb,rf	
+Downs			st	
+Otele			lf	
+Rössing-Lelesiit			lf,rf	
+Balde			lf,rf	
+Stange			st	
+				
+Heidenheim				
+Ramaj			tw	mitspielender torwart
+Busch			rv,rwb	
+Gimber			iv	
+Mainka			iv	
+Föhrenbach			iv	
+Traoroe			rv,rwb	
+Stergiou			rv,rwb	
+Behrens			lv,lwb	
+Niehues			zdm	
+Honsak			st,zom	
+Kerber				
+Beck				
+Ibrahimovic				
+Dorsch				
+Conteh				
+Dinkci				
+Schimmer				
+Conteh				
+Zivzivadze				
+Pieringer				
+Kaufmann				
+				
+Hoffenhiem				
+Baumann	4,5	4,5	tw	shot stopper
+Hranac	2,5	2,5	iv,rv	
+Kabak	3	3,5	iv	
+Bernardo	3	3	lv,iv	
+Gendrey	2	2	iv	
+Hajdrai	2,5	3,5	lv,iv	
+Akpoguma	1,5	2	iv	
+Coufal	3,5	3,5	rv,rwb	
+Prömel	3,5	3,5	zm,zdm,zom	
+Avdullahu	3	4	zdm,zm	
+Burger	3	3,5	zm	
+Prass	2,5	3	rwb,lwb,rf,lv	
+Kramaric	3,5	3,5	zom,st	
+Bebou	2	2	st	
+Asllani	2,5	4	st	
+Lemperle	2,5	4	st	
+Hlozek	2	2,5	zom,st	
+Toure	2,5	4	lf	
+Moerstedt	1,5	3	st	
+				
+Köln				
+Schwäbe			tw	shot stopper
+Hübers			iv	
+Simpson-Pusey			iv	
+Sebulonsen				
+Lund			lv,lwb	
+Van den Berg				
+Özkacar			iv	
+Krauss			iv,zdm	
+Martel			iv,zdm	
+Huseinbasic			zm,zom	
+Kainz			lf,zom	
+El Mala	2,5	4,5	lf	
+Kaminski			lf,rf,zom,zm	
+Castro-Montes			lv,lwb	
+Johannesson			zm,zom	
+Thielmann			rwb,rv	
+Maina			lf,rf,st	
+waldschmidt			zom,st	
+Ache			st	
+Bülter			lf,rf,st	
+
+
+

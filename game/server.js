@@ -77,6 +77,7 @@ const marketRoutes = require("./routes/market");
 const sponsorRoutes = require("./routes/sponsor");
 const dashboardRoutes = require("./routes/dashboard");
 const simulationTestRoutes = require("./routes/simulationTest");
+const { seedLeagues } = require("./utils/leagueSeeder");
 
 /* =====================================================
 HEALTH CHECK
@@ -145,6 +146,12 @@ useUnifiedTopology:true
 .then(()=>{
 
 console.log("MongoDB verbunden");
+
+/* =====================================================
+LIGEN MIT BOTS ERSTELLEN
+===================================================== */
+
+seedLeagues();
 
 /* =====================================================
 CRON JOBS STARTEN

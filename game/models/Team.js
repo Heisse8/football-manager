@@ -8,19 +8,10 @@ BASIS
 
 name:{
 type:String,
-required:true,
-unique:true,
-trim:true
+required:true
 },
 
 shortName:{
-type:String,
-required:true,
-unique:true,
-trim:true
-},
-
-country:{
 type:String,
 required:true
 },
@@ -31,31 +22,19 @@ required:true,
 index:true
 },
 
-owner:{
+country:{
+type:String,
+required:true
+},
+
+/* =====================================================
+SQUAD
+===================================================== */
+
+players:[{
 type:mongoose.Schema.Types.ObjectId,
-ref:"User",
-default:null,
-index:true
-},
-
-createdAtLeague:{
-type:Date,
-default:Date.now
-},
-
-/* =====================================================
-BOT SYSTEM
-===================================================== */
-
-isBot:{
-type:Boolean,
-default:false,
-index:true
-},
-
-/* =====================================================
-TRAINER SYSTEM
-===================================================== */
+ref:"Player"
+}],
 
 coach:{
 type:mongoose.Schema.Types.ObjectId,
@@ -67,6 +46,16 @@ assistantCoach:{
 type:mongoose.Schema.Types.ObjectId,
 ref:"Coach",
 default:null
+},
+
+/* =====================================================
+BOT SYSTEM
+===================================================== */
+
+isBot:{
+type:Boolean,
+default:false,
+index:true
 },
 
 /* =====================================================
@@ -91,16 +80,6 @@ ref:"Scout"
 }],
 
 /* =====================================================
-CLUB IDENTITY
-===================================================== */
-
-clubIdentity:{
-type:String,
-enum:["love","commercial"],
-default:"love"
-},
-
-/* =====================================================
 STADIUM SYSTEM
 ===================================================== */
 
@@ -122,21 +101,6 @@ min:5,
 max:200
 },
 
-stadiumLevel:{
-type:Number,
-default:1
-},
-
-trainingLevel:{
-type:Number,
-default:1
-},
-
-medicalLevel:{
-type:Number,
-default:1
-},
-
 /* =====================================================
 FANS & HOME ADVANTAGE
 ===================================================== */
@@ -156,7 +120,7 @@ max:2
 },
 
 /* =====================================================
-TAKTIK
+TACTICS
 ===================================================== */
 
 tactics:{
@@ -195,24 +159,6 @@ width:{
 type:String,
 enum:["sehr_eng","eng","normal","breit"],
 default:"normal"
-},
-
-transitionAfterWin:{
-type:String,
-enum:["vertikal","kontrolliert","fluegel"],
-default:"kontrolliert"
-},
-
-transitionAfterLoss:{
-type:String,
-enum:["gegenpressing","mittelfeldpressing","rueckzug"],
-default:"mittelfeldpressing"
-},
-
-mentality:{
-type:String,
-enum:["defensiv","ausgewogen","offensiv","sehr_offensiv"],
-default:"ausgewogen"
 }
 
 },
@@ -223,19 +169,6 @@ FORMATION
 
 formation:{
 type:String,
-enum:[
-"4-4-2",
-"4-2-3-1",
-"4-3-3",
-"4-1-2-1-2",
-"4-1-4-1",
-"3-5-2",
-"3-4-3",
-"3-4-2-1",
-"5-3-2",
-"5-4-1",
-"5-2-1-2"
-],
 default:"4-4-2"
 },
 
@@ -260,59 +193,6 @@ default:7
 },
 
 /* =====================================================
-LINEUP LOCK SYSTEM
-===================================================== */
-
-lineupLocked:{
-type:Boolean,
-default:false
-},
-
-lockedLineup:{
-type:Map,
-of:mongoose.Schema.Types.ObjectId,
-default:{}
-},
-
-lockedBench:[{
-type:mongoose.Schema.Types.ObjectId,
-ref:"Player"
-}],
-
-/* =====================================================
-MATCHDAY SYSTEM
-===================================================== */
-
-currentMatchday:{
-type:Number,
-default:1
-},
-
-lastMatch:{
-type:Date,
-default:null
-},
-
-/* =====================================================
-SEASON SYSTEM
-===================================================== */
-
-seasonReady:{
-type:Boolean,
-default:false
-},
-
-seasonPaused:{
-type:Boolean,
-default:false
-},
-
-season:{
-type:Number,
-default:1
-},
-
-/* =====================================================
 TEAM STRENGTH
 ===================================================== */
 
@@ -332,7 +212,7 @@ default:50
 },
 
 /* =====================================================
-TEAM DYNAMICS
+TEAM CHEMISTRY
 ===================================================== */
 
 teamChemistry:{
@@ -349,7 +229,7 @@ index:true
 },
 
 /* =====================================================
-TABELLE
+TABLE
 ===================================================== */
 
 played:{ type:Number, default:0 },
@@ -368,85 +248,26 @@ goalDifference:{ type:Number, default:0 },
 tablePosition:{ type:Number, default:0 },
 
 /* =====================================================
-FINANZEN
+FINANCE
 ===================================================== */
 
 balance:{
 type:Number,
 default:50000000,
 index:true
-},
-
-lastMatchRevenue:{
-type:Number,
-default:0
-},
-
-transferIncome:{
-type:Number,
-default:0
-},
-
-transferSpending:{
-type:Number,
-default:0
-},
-
-/* =====================================================
-SPONSOR SYSTEM
-===================================================== */
-
-sponsor:{
-type:String,
-default:null
-},
-
-sponsorPayment:{
-type:Number,
-default:0
-},
-
-sponsorWinBonus:{
-type:Number,
-default:0
-},
-
-sponsorSeasonBonus:{
-
-top10:{ type:Number, default:0 },
-top5:{ type:Number, default:0 },
-top3:{ type:Number, default:0 },
-champion:{ type:Number, default:0 }
-
-},
-
-sponsorReputation:{
-type:Number,
-default:1
-},
-
-lastSeasonPosition:{
-type:Number,
-default:10
-},
-
-sponsorGamesLeft:{
-type:Number,
-default:0
 }
 
-},{timestamps:true});
+},{
+timestamps:true
+});
 
 /* =====================================================
 INDEXES
 ===================================================== */
 
 teamSchema.index({ owner: 1 });
-
 teamSchema.index({ league: 1 });
-
 teamSchema.index({ points: -1 });
-
 teamSchema.index({ tablePosition: 1 });
 
 module.exports = mongoose.model("Team",teamSchema);

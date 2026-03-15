@@ -136,6 +136,7 @@ index:true
 pace:{ type:Number, min:0, max:99, default:50 },
 shooting:{ type:Number, min:0, max:99, default:50 },
 passing:{ type:Number, min:0, max:99, default:50 },
+dribbling:{ type:Number, min:0, max:99, default:50 }, // NEU
 defending:{ type:Number, min:0, max:99, default:50 },
 physical:{ type:Number, min:0, max:99, default:50 },
 mentality:{ type:Number, min:0, max:99, default:50 },
@@ -284,18 +285,29 @@ index:true
 timestamps:true
 });
 
+
+/* =====================================================
+MARKET VALUE CALCULATION
+===================================================== */
+
 playerSchema.pre("save", function(){
 
 if(!this.marketValue || this.marketValue === 0){
 
-let value = this.stars * 2000000;
+let value = this.stars * 3000000;
 
-value += this.potential * 500000;
+value += this.potential * 700000;
 
-if(this.age <= 21) value *= 1.5;
+// junge Spieler wertvoller
+if(this.age <= 21) value *= 1.7;
+else if(this.age <= 24) value *= 1.3;
+
+// ältere Spieler günstiger
 if(this.age >= 30) value *= 0.7;
+if(this.age >= 33) value *= 0.5;
 
-if(this.stars >= 4.5) value *= 2;
+// Weltklassespieler
+if(this.stars >= 4.5) value *= 2.2;
 
 this.marketValue = Math.round(value);
 
@@ -303,16 +315,14 @@ this.marketValue = Math.round(value);
 
 });
 
+
 /* =====================================================
 INDEXES (PERFORMANCE)
 ===================================================== */
 
 playerSchema.index({ transferType: 1 });
-
 playerSchema.index({ auctionEnd: 1 });
-
 playerSchema.index({ marketValue: -1 });
-
 playerSchema.index({ stars: -1 });
 
 module.exports = mongoose.model("Player",playerSchema);

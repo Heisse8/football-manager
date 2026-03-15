@@ -1,0 +1,81 @@
+function generateCoachDNA(coach){
+
+let dna = {
+tempo:0.5,
+pressing:0.5,
+width:0.5,
+directness:0.5,
+risk:0.5,
+defensiveLine:0.5
+}
+
+/* Spielstil */
+
+switch(coach.style){
+
+case "ballbesitz":
+dna.tempo = 0.65
+dna.directness = 0.35
+dna.width = 0.7
+dna.risk = 0.65
+break
+
+case "gegenpressing":
+dna.tempo = 0.85
+dna.pressing = 0.9
+dna.defensiveLine = 0.8
+dna.risk = 0.75
+break
+
+case "konter":
+dna.tempo = 0.75
+dna.directness = 0.85
+dna.defensiveLine = 0.35
+dna.pressing = 0.4
+break
+
+case "defensiv":
+dna.tempo = 0.35
+dna.pressing = 0.3
+dna.defensiveLine = 0.25
+dna.risk = 0.2
+break
+
+}
+
+/* Persönlichkeit */
+
+switch(coach.personality){
+
+case "possession_master":
+dna.tempo += 0.1
+dna.width += 0.1
+break
+
+case "gegenpress_monster":
+dna.pressing += 0.1
+dna.defensiveLine += 0.1
+break
+
+case "defensive_wall":
+dna.defensiveLine -= 0.1
+dna.risk -= 0.1
+break
+
+case "direct_play":
+dna.directness += 0.15
+break
+
+}
+
+/* clamp */
+
+Object.keys(dna).forEach(k=>{
+dna[k] = Math.max(0,Math.min(1,dna[k]))
+})
+
+return dna
+
+}
+
+module.exports = { generateCoachDNA }
